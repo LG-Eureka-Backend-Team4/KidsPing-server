@@ -1,24 +1,36 @@
 package com.kidsworld.kidsping.domain.user.entity;
 
+import com.kidsworld.kidsping.domain.event.entity.EventParticipant;
+import com.kidsworld.kidsping.domain.user.entity.enums.Role;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
+    private String userName;
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String phone;
+    private boolean isDeleted;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<EventParticipant> eventParticipants = new ArrayList<>();
 }
