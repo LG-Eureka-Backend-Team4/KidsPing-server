@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.child.entity;
+package com.kidsworld.kidsping.domain.kid.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class KidMbtiHistory {
+public class KidMbti {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "kid_mbti_history_id")
+    @Column(name = "kid_mbti_id")
     private Long id;
-
 }

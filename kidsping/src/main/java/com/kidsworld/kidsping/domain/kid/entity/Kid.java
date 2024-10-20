@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.child.entity;
+package com.kidsworld.kidsping.domain.kid.entity;
 
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
