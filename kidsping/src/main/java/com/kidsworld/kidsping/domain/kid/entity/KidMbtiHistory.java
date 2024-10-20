@@ -1,12 +1,9 @@
-package com.kidsworld.kidsping.domain.like.entity;
+package com.kidsworld.kidsping.domain.kid.entity;
 
-import com.kidsworld.kidsping.domain.kid.entity.Kid;
-import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
+import com.kidsworld.kidsping.domain.kid.entity.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,17 +17,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LikeMbti extends BaseTimeEntity {
+public class KidMbtiHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_mbti_id")
+    @Column(name = "kid_mbti_history_id")
     private Long id;
 
-    private boolean isDeleted;
+    private MbtiStatus mbtiStatus;
 
-    @Enumerated(EnumType.STRING)
-    private LikeStatus likeStatus;
+    private boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kid_id")
