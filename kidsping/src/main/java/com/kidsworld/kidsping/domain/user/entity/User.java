@@ -22,13 +22,14 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    private String userName;
+    private String email;
     private String password;
+    private String userName;
+    private String phone;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private String phone;
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
