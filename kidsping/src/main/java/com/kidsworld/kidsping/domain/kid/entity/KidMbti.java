@@ -1,7 +1,7 @@
 package com.kidsworld.kidsping.domain.kid.entity;
 
-import com.kidsworld.kidsping.domain.mbti.entity.enums.MbtiStatus;
 import com.kidsworld.kidsping.domain.mbti.entity.MbtiScore;
+import com.kidsworld.kidsping.domain.mbti.entity.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,4 +36,11 @@ public class KidMbti extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mbti_score_id")
     private MbtiScore mbtiScore;
+
+    @Builder
+    public KidMbti(boolean isDeleted, MbtiStatus mbtiStatus, MbtiScore mbtiScore) {
+        this.isDeleted = isDeleted;
+        this.mbtiStatus = mbtiStatus;
+        this.mbtiScore = mbtiScore;
+    }
 }
