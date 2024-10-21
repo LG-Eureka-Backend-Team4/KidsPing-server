@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.like.entity;
 
+import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
@@ -35,4 +36,8 @@ public class LikeMbti extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kid_id")
     private Kid kid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private Book book;
 }

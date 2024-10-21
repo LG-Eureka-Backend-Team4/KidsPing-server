@@ -20,14 +20,14 @@ public class MbtiScore extends BaseTimeEntity {
     @Column(name = "mbti_score_id")
     private Long id;
 
-    private int extroversionScore;
-    private int introversionScore;
-    private int sensingScore;
-    private int intuitionScore;
-    private int thinkingScore;
-    private int feelingScore;
-    private int judgingScore;
-    private int perceivingScore;
+    private int eScore;
+    private int iScore;
+    private int sScore;
+    private int nScore;
+    private int tScore;
+    private int fScore;
+    private int jScore;
+    private int pScore;
 
     private boolean isDeleted;
 }
