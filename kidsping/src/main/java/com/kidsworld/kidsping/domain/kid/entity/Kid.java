@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -42,4 +43,18 @@ public class Kid extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void updateKidMbti(KidMbti kidMbti) {
+        this.kidMbti = kidMbti;
+    }
+
+    @Builder
+    public Kid(Gender gender, String name, LocalDate birth, boolean isDeleted, KidMbti kidMbti, User user) {
+        this.gender = gender;
+        this.name = name;
+        this.birth = birth;
+        this.isDeleted = isDeleted;
+        this.kidMbti = kidMbti;
+        this.user = user;
+    }
 }
