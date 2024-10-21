@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.question;
+package com.kidsworld.kidsping.domain.question.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +28,7 @@ public class MbtiResponse extends BaseTimeEntity{
     @JoinColumn(name = "mbti_question_id")
     private Long mbtiQuestionId;
 
-    @Column(length = 50) //보류
+    @Column(length = 10) //보류
     private String content;
 
     private Integer score;

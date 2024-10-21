@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.question;
+package com.kidsworld.kidsping.domain.question.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
