@@ -1,6 +1,7 @@
 package com.kidsworld.kidsping.domain.book.entity;
 
 import com.kidsworld.kidsping.domain.book.enums.MBTIType;
+import com.kidsworld.kidsping.domain.mbti.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,8 +24,9 @@ public class BookMbti extends BaseTimeEntity {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @Column(name = "mbti_score_id")
-    private Long mbtiScoreId;
+    @OneToOne
+    @JoinColumn(name = "mbti_score_id", nullable = false)
+    private MbtiScore mbtiScoreId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "book_mbti_type")

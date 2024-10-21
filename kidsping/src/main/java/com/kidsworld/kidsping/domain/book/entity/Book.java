@@ -23,16 +23,16 @@ public class Book extends BaseTimeEntity{
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
 
-    @Column(name = "title", length = 255, nullable = false)
+    @Column(name = "title", length = 50, nullable = false)
     private String title;
 
     @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 
-    @Column(name = "author", length = 255)
+    @Column(name = "author", length = 50, nullable = false)
     private String author;
 
-    @Column(name = "publisher", length = 255)
+    @Column(name = "publisher", length = 50)
     private String publisher;
 
     @Column(name = "age")
