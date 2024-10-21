@@ -26,8 +26,6 @@ public class MbtiInfo extends BaseTimeEntity {
 
     private MbtiStatus mbtiStatus;
 
-    private String type;
-
     private String title;
 
     @Enumerated(EnumType.STRING)
