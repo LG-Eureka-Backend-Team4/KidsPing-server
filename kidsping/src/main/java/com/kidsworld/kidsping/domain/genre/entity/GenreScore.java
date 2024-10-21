@@ -22,7 +22,7 @@ public class GenreScore extends BaseTimeEntity {
     private Kid kid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "genre_id", nullable = false)
+    @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
 
     @Column(name = "score", nullable = false)
