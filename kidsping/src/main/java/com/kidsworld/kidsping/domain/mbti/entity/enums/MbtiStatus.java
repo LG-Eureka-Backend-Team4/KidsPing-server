@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.kid.entity.enums;
+package com.kidsworld.kidsping.domain.mbti.entity.enums;
 
 public enum MbtiStatus {
     ISTJ,
