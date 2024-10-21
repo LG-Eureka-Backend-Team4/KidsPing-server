@@ -10,13 +10,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MbtiQuestion extends BaseTimeEntity {
 
@@ -33,4 +31,10 @@ public class MbtiQuestion extends BaseTimeEntity {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    public MbtiQuestion(String content, PersonalityTrait personalityTrait, Boolean isDeleted) {
+        this.content = content;
+        this.personalityTrait = personalityTrait;
+        this.isDeleted = isDeleted;
+    }
 }
