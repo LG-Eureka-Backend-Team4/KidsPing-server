@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.genre.entity;
 
+import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,12 +26,12 @@ public class Genre extends BaseTimeEntity {
     @Column(name= "is_deleted")
     private Boolean isDeleted;
 
-    @Column(name = "file_id")
-    private Long fileId;
-
     @OneToOne(mappedBy = "genre", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private GenreFile genreFile;
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GenreScore> genreScores = new ArrayList<>();
+
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Book> books = new ArrayList<>();
 }

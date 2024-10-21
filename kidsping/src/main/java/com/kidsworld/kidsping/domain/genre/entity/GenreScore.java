@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.genre.entity;
 
+import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,8 +17,9 @@ public class GenreScore extends BaseTimeEntity {
     @Column(name = "genre_score_id")
     private Long id;
 
-    @Column(name = "child_id", nullable = false)
-    private Long childId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kid_id", nullable = false)
+    private Kid kid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "genre_id", nullable = false)
