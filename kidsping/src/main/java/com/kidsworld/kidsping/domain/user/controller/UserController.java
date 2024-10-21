@@ -5,7 +5,7 @@ import com.kidsworld.kidsping.domain.user.dto.request.RegisterRequest;
 import com.kidsworld.kidsping.domain.user.dto.response.LoginResponse;
 import com.kidsworld.kidsping.domain.user.dto.response.RegisterResponse;
 import com.kidsworld.kidsping.domain.user.entity.User;
-import com.kidsworld.kidsping.domain.user.service.UserService;
+import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
 import com.kidsworld.kidsping.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;

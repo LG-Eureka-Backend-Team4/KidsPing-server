@@ -19,6 +19,12 @@ public class RegisterRequest implements Serializable {
     private Role role;
 
     public User toEntity() {
-        return User.builder().email(email).userName(username).password(password).role(role).build();
+        return User.builder()
+                .email(email)
+                .password(password)
+                .userName(username)
+                .phone(phone)
+                .role(role)
+                .build();
     }
 }
