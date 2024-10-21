@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.global.jwt;
 
-import com.kidsworld.kidsping.domain.user.service.UserService;
+import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Autowired
     private JwtUtil jwtUtil;
