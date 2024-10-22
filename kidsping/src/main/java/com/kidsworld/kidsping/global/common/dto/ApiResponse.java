@@ -48,4 +48,9 @@ public class ApiResponse<T> {
     public static <T> ResponseEntity<ApiResponse<T>> unAuthorized(Integer code, String message) {
         return ResponseEntity.status(401).body(new ApiResponse<>(code, null, message));
     }
+
+    public static <T> ResponseEntity<ApiResponse<T>> notFound(Integer code, String message) {
+        return ResponseEntity.status(404).body(new ApiResponse<>(code, null, message));
+    }
+
 }

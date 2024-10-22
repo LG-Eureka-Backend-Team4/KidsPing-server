@@ -11,10 +11,14 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionCode {
 
     // 정상 응답 코드
-    OK(200, HttpStatus.OK, "OK"),
+    OK(200, HttpStatus.OK, "success"),
 
     // 예외 코드 예시
     NOT_FOUND_BOOK(10101, HttpStatus.NOT_FOUND, "존재하지 않는 책입니다."),
+
+    // 회원
+    UNAUTHORIZED_USER(80201, HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
+    NOT_FOUND_USER(80202, HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
 
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
