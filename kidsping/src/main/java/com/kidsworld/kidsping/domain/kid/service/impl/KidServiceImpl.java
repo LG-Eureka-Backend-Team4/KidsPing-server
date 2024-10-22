@@ -116,13 +116,13 @@ public class KidServiceImpl implements KidService {
     public void diagnoseKidMbti(KidMbtiDiagnosisRequest diagnosisRequest) {
         Kid kid = findKidById(diagnosisRequest);
 
-        saveMBTIResponse(diagnosisRequest, kid);
+        saveMbtiResponse(diagnosisRequest, kid);
 
         MbtiStatus mbtiStatus = calculateMbtiStatus(diagnosisRequest);
 
         updateOrCreateKidMbti(kid, diagnosisRequest, mbtiStatus);
 
-        saveKidMBTIHistory(kid, mbtiStatus);
+        saveKidMbtiHistory(kid, mbtiStatus);
     }
 
     private Kid findKidById(KidMbtiDiagnosisRequest diagnosisRequest) {
@@ -130,7 +130,7 @@ public class KidServiceImpl implements KidService {
                 .orElseThrow(() -> new RuntimeException("no kid"));
     }
 
-    private void saveMBTIResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
+    private void saveMbtiResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
         MbtiAnswer mbtiAnswer = KidMbtiDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
         mbtiAnswerRepository.save(mbtiAnswer);
     }
@@ -190,7 +190,7 @@ public class KidServiceImpl implements KidService {
         );
     }
 
-    private void saveKidMBTIHistory(Kid kid, MbtiStatus mbtiStatus) {
+    private void saveKidMbtiHistory(Kid kid, MbtiStatus mbtiStatus) {
         KidMbtiHistory kidMbtiHistory = KidMbtiHistory.builder()
                 .kid(kid)
                 .mbtiStatus(mbtiStatus)
