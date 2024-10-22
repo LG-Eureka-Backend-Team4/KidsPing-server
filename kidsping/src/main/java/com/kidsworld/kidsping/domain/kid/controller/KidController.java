@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.kid.controller;
 
-
+import com.kidsworld.kidsping.domain.kid.dto.request.KidMBTIDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidCreateRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidUpdateRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidCreateResponse;
@@ -10,6 +10,7 @@ import com.kidsworld.kidsping.domain.kid.dto.response.KidUpdateResponse;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/children")
+@RequestMapping("/api/kids")
+@RequiredArgsConstructor
 public class KidController {
+  
     private final KidService kidService;
-
-    public KidController(KidService kidService) {
-        this.kidService = kidService;
-    }
-
 
     /*
     자녀 프로필 생성
@@ -45,8 +43,6 @@ public class KidController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 프로필을 성공적으로 조회했습니다.");
     }
 
-
-
     /*
     자녀 프로필 수정
     */
@@ -55,7 +51,6 @@ public class KidController {
         KidUpdateResponse response = kidService.updateKid(kidId, request);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 프로필을 성공적으로 수정했습니다.");
     }
-
 
     /*
     자녀 프로필 삭제
@@ -66,5 +61,8 @@ public class KidController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 프로필을 성공적으로 삭제했습니다.");
     }
 
-
+    @PostMapping("/mbti/diagonosis")
+    public void diagnoseKidMBTI(@RequestBody KidMBTIDiagnosisRequest diagnosisRequest) {
+        kidService.diagnoseKidMBTI(diagnosisRequest);
+    }
 }

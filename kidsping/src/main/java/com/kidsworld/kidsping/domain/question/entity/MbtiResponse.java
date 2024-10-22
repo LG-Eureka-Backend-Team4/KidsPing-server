@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,4 +40,20 @@ public class MbtiResponse extends BaseTimeEntity {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @Builder
+    public MbtiResponse(Kid kid, int eScore, int iScore, int sScore, int nScore, int tScore, int fScore, int jScore,
+                        int pScore,
+                        Boolean isDeleted) {
+        this.kid = kid;
+        this.eScore = eScore;
+        this.iScore = iScore;
+        this.sScore = sScore;
+        this.nScore = nScore;
+        this.tScore = tScore;
+        this.fScore = fScore;
+        this.jScore = jScore;
+        this.pScore = pScore;
+        this.isDeleted = isDeleted;
+    }
 }

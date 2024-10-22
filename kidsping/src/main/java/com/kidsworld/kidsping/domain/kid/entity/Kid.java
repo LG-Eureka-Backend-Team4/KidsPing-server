@@ -13,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
-
 import lombok.*;
 
 @Entity
@@ -44,11 +43,9 @@ public class Kid extends BaseTimeEntity {
     @JoinColumn(name="file_id")
     private KidFile kidfile;
 
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kid_mbti_id")
     private KidMbti kidMbti;
-
 
     public void update(Gender gender, String name, LocalDate birth) {
         this.gender = gender;
@@ -56,5 +53,17 @@ public class Kid extends BaseTimeEntity {
         this.birth = birth;
     }
 
+    public void updateKidMbti(KidMbti kidMbti) {
+        this.kidMbti = kidMbti;
+    }
 
+    @Builder
+    public Kid(Gender gender, String name, LocalDate birth, boolean isDeleted, KidMbti kidMbti, User user) {
+        this.gender = gender;
+        this.name = name;
+        this.birth = birth;
+        this.isDeleted = isDeleted;
+        this.kidMbti = kidMbti;
+        this.user = user;
+    }
 }

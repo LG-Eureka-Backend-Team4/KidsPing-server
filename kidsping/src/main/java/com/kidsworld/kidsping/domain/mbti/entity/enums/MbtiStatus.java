@@ -16,5 +16,13 @@ public enum MbtiStatus {
     ESTJ,
     ESFJ,
     ENFJ,
-    ENTJ
+    ENTJ;
+
+    public static MbtiStatus toMbtiStatus(String mbti) {
+        try {
+            return MbtiStatus.valueOf(mbti);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid MBTI type: " + mbti);
+        }
+    }
 }

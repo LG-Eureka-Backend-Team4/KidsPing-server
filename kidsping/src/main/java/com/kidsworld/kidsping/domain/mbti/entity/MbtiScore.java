@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,18 @@ public class MbtiScore extends BaseTimeEntity {
     private int pScore;
 
     private boolean isDeleted;
+
+    @Builder
+    public MbtiScore(int eScore, int iScore, int sScore, int nScore, int tScore, int fScore, int jScore, int pScore,
+                     boolean isDeleted) {
+        this.eScore = eScore;
+        this.iScore = iScore;
+        this.sScore = sScore;
+        this.nScore = nScore;
+        this.tScore = tScore;
+        this.fScore = fScore;
+        this.jScore = jScore;
+        this.pScore = pScore;
+        this.isDeleted = isDeleted;
+    }
 }
