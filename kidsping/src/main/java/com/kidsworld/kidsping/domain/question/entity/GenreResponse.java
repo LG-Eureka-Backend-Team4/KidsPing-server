@@ -24,20 +24,12 @@ public class GenreResponse extends BaseTimeEntity {
     @Column(name = "genre_response_id")
     private Long id;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "genre_question_id")
-    private GenreQuestion genreQuestion;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kid_id")
     private Kid kid;
 
     @Column(length = 10)
     private String content;
-
-    private Integer score;
 
     @Column(name= "is_deleted")
     private Boolean isDeleted;
