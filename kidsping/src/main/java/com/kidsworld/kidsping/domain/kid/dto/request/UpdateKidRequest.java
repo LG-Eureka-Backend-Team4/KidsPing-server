@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KidUpdateRequest {
+public class UpdateKidRequest {
     private String kidName;
     private String gender;
     private String birth;

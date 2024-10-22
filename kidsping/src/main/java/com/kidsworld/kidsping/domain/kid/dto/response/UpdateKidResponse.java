@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KidUpdateResponse {
+public class UpdateKidResponse {
     private Long kidId;
     private Long userId;
     private String kidName;
     private String gender;
     private String birth;
 
-    public static KidUpdateResponse from(Kid kid) {
-        return KidUpdateResponse.builder()
+    public static UpdateKidResponse from(Kid kid) {
+        return UpdateKidResponse.builder()
                 .kidId(kid.getId())
                 .userId(kid.getUser().getId())
                 .kidName(kid.getName())
