@@ -13,17 +13,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Kid extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "kid_id")
     private Long id;
 
@@ -33,13 +33,28 @@ public class Kid extends BaseTimeEntity {
 
     private LocalDate birth;
 
-    private boolean isDeleted;
+    private boolean isDeleted = Boolean.FALSE;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="file_id")
+    private KidFile kidfile;
+
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kid_mbti_id")
     private KidMbti kidMbti;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+
+    public void update(Gender gender, String name, LocalDate birth) {
+        this.gender = gender;
+        this.name = name;
+        this.birth = birth;
+    }
+
+
 }
