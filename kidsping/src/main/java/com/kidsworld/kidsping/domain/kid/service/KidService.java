@@ -1,18 +1,20 @@
 package com.kidsworld.kidsping.domain.kid.service;
 
-import com.kidsworld.kidsping.domain.kid.dto.request.KidCreateRequest;
-import com.kidsworld.kidsping.domain.kid.dto.request.KidUpdateRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.KidCreateResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.KidDeleteResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.KidGetResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.KidUpdateResponse;
+import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMBTIDiagnosisRequest;
 
 public interface KidService {
 
-    KidCreateResponse createKid(KidCreateRequest request);
-    KidGetResponse getKid(Long kidId);
-    KidUpdateResponse updateKid(Long kidId, KidUpdateRequest request);
-    KidDeleteResponse deleteKid(Long kidId);
+    CreateKidResponse createKid(CreateKidRequest request);
+    GetKidResponse getKid(Long kidId);
+    UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request);
+    DeleteKidResponse deleteKid(Long kidId);
     void diagnoseKidMBTI(KidMBTIDiagnosisRequest diagnosisRequest);
+
+
 }

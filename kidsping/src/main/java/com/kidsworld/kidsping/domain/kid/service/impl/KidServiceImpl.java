@@ -2,6 +2,7 @@ package com.kidsworld.kidsping.domain.kid.service.impl;
 
 
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.request.KidMBTIDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
@@ -107,6 +108,15 @@ public class KidServiceImpl implements KidService {
         return kidRepository.findById(kidId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 자녀를 찾을 수 없습니다: " + kidId));
     }
+
+
+
+    /*
+    자녀 성향 조회
+    */
+
+
+
 
     @Transactional
     @Override
