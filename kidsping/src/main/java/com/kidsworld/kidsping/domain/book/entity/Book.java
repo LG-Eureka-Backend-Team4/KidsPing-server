@@ -3,15 +3,15 @@ package com.kidsworld.kidsping.domain.book.entity;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Book extends BaseTimeEntity{
 
     @Id
@@ -46,4 +46,8 @@ public class Book extends BaseTimeEntity{
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private BookMbti mbti;
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
