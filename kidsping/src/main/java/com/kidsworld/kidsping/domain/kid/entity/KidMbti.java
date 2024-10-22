@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "kid_mbti")
-public class KidMBTI extends BaseTimeEntity {
+public class KidMbti extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,7 +58,7 @@ public class KidMBTI extends BaseTimeEntity {
     private MbtiStatus mbtiStatus;
 
     @Builder
-    public KidMBTI(Integer eScore, Integer iScore, Integer sScore, Integer nScore, Integer tScore, Integer fScore,
+    public KidMbti(Integer eScore, Integer iScore, Integer sScore, Integer nScore, Integer tScore, Integer fScore,
                    Integer jScore, Integer pScore, MbtiStatus mbtiStatus) {
         this.eScore = eScore;
         this.iScore = iScore;
@@ -71,7 +71,7 @@ public class KidMBTI extends BaseTimeEntity {
         this.mbtiStatus = mbtiStatus;
     }
 
-    public void updateMBTIScore(Integer eScore, Integer iScore, Integer sScore, Integer nScore,
+    public void updateMbtiScore(Integer eScore, Integer iScore, Integer sScore, Integer nScore,
                                 Integer tScore, Integer fScore, Integer jScore, Integer pScore,
                                 MbtiStatus mbtiStatus) {
         this.eScore = eScore;

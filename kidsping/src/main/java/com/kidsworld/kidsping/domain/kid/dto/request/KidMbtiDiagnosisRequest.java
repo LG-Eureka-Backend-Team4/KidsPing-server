@@ -1,13 +1,13 @@
 package com.kidsworld.kidsping.domain.kid.dto.request;
 
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
-import com.kidsworld.kidsping.domain.question.entity.MBTIResponse;
+import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class KidMBTIDiagnosisRequest {
+public class KidMbtiDiagnosisRequest {
 
     private Long userId;
     private int extraversionScore;
@@ -19,8 +19,8 @@ public class KidMBTIDiagnosisRequest {
     private int judgingScore;
     private int perceivingScore;
 
-    public static MBTIResponse getMBTIResponse(KidMBTIDiagnosisRequest diagnosisRequest, Kid kid) {
-        return MBTIResponse.builder()
+    public static MbtiAnswer getMBTIResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
+        return MbtiAnswer.builder()
                 .kid(kid)
                 .eScore(diagnosisRequest.getExtraversionScore())
                 .iScore(diagnosisRequest.getIntroversionScore())

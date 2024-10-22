@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mbti_question")
-public class MBTIQuestion extends BaseTimeEntity {
+public class MbtiQuestion extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class MBTIQuestion extends BaseTimeEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    public MBTIQuestion(String content, PersonalityTrait personalityTrait, Boolean isDeleted) {
+    public MbtiQuestion(String content, PersonalityTrait personalityTrait, Boolean isDeleted) {
         this.content = content;
         this.personalityTrait = personalityTrait;
         this.isDeleted = isDeleted;

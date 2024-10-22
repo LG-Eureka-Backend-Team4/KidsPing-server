@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.question.dto.response;
 
-import com.kidsworld.kidsping.domain.question.entity.MBTIQuestion;
+import com.kidsworld.kidsping.domain.question.entity.MbtiQuestion;
 import com.kidsworld.kidsping.global.common.enums.PersonalityTrait;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MBTIQuestionResponse {
+public class MbtiQuestionResponse {
 
     private Long id;
     private String content;
@@ -16,15 +16,15 @@ public class MBTIQuestionResponse {
     private boolean isDeleted;
 
     @Builder
-    private MBTIQuestionResponse(Long id, String content, PersonalityTrait personalityTrait, boolean isDeleted) {
+    private MbtiQuestionResponse(Long id, String content, PersonalityTrait personalityTrait, boolean isDeleted) {
         this.id = id;
         this.content = content;
         this.personalityTrait = personalityTrait;
         this.isDeleted = isDeleted;
     }
 
-    public static MBTIQuestionResponse from(MBTIQuestion mbtiQuestion) {
-        return MBTIQuestionResponse.builder()
+    public static MbtiQuestionResponse from(MbtiQuestion mbtiQuestion) {
+        return MbtiQuestionResponse.builder()
                 .id(mbtiQuestion.getId())
                 .content(mbtiQuestion.getContent())
                 .personalityTrait(mbtiQuestion.getPersonalityTrait())
