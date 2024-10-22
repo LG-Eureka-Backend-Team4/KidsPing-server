@@ -19,6 +19,7 @@ public class ApiResponse<T> {
     public ApiResponse(String message, Integer code) {
         this.message = message;
         this.code = code;
+        this.timestamp = LocalDateTime.now();
     }
 
     private ApiResponse(Integer code, T data, String message) {
@@ -37,7 +38,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ResponseEntity<ApiResponse<T>> badRequest(Integer code, String message) {
-        return ResponseEntity.badRequest().body(new ApiResponse<>(code, null, message));
+        return ResponseEntity.status(400).body(new ApiResponse<>(code, null, message));
     }
 
     public static <T> ResponseEntity<ApiResponse<T>> forbidden(Integer code, String message) {
