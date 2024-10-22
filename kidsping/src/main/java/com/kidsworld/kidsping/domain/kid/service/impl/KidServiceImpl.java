@@ -16,8 +16,8 @@ import com.kidsworld.kidsping.domain.kid.repository.KidMBTIHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMBTIRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
-import com.kidsworld.kidsping.domain.question.entity.MBTIResponse;
-import com.kidsworld.kidsping.domain.question.repository.MBTIResponseRepository;
+import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
+import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class KidServiceImpl implements KidService {
 
     private final KidRepository kidRepository;
-    private final MBTIResponseRepository mbtiResponseRepository;
+    private final MbtiAnswerRepository mbtiAnswerRepository;
     private final UserRepository userRepository;
     private final KidMBTIRepository kidMBTIRepository;
     private final KidMBTIHistoryRepository kidMBTIHistoryRepository;
@@ -116,8 +116,6 @@ public class KidServiceImpl implements KidService {
     */
 
 
-
-
     @Transactional
     @Override
     public void diagnoseKidMBTI(KidMBTIDiagnosisRequest diagnosisRequest) {
@@ -138,8 +136,8 @@ public class KidServiceImpl implements KidService {
     }
 
     private void saveMBTIResponse(KidMBTIDiagnosisRequest diagnosisRequest, Kid kid) {
-        MBTIResponse mbtiResponse = KidMBTIDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
-        mbtiResponseRepository.save(mbtiResponse);
+        MbtiAnswer mbtiAnswer = KidMBTIDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
+        mbtiAnswerRepository.save(mbtiAnswer);
     }
 
     private MbtiStatus calculateMbtiStatus(KidMBTIDiagnosisRequest request) {

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "mbti_response")
-public class MBTIResponse extends BaseTimeEntity {
+public class MbtiAnswer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,9 +44,9 @@ public class MBTIResponse extends BaseTimeEntity {
     private Boolean isDeleted;
 
     @Builder
-    public MBTIResponse(Kid kid, int eScore, int iScore, int sScore, int nScore, int tScore, int fScore, int jScore,
-                        int pScore,
-                        Boolean isDeleted) {
+    public MbtiAnswer(Kid kid, int eScore, int iScore, int sScore, int nScore, int tScore, int fScore, int jScore,
+                      int pScore,
+                      Boolean isDeleted) {
         this.kid = kid;
         this.eScore = eScore;
         this.iScore = iScore;
