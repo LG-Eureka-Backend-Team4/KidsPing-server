@@ -59,6 +59,9 @@ public class KidController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 프로필을 성공적으로 삭제했습니다.");
     }
 
+
+
+
     @PostMapping("/mbti/diagonosis")
     public void diagnoseKidMBTI(@RequestBody KidMBTIDiagnosisRequest diagnosisRequest) {
         kidService.diagnoseKidMBTI(diagnosisRequest);
