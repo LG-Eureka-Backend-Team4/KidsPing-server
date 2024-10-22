@@ -1,7 +1,7 @@
 package com.kidsworld.kidsping.domain.question.entity;
 
-import com.kidsworld.kidsping.domain.mbti.entity.enums.PersonalityTrait;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
+import com.kidsworld.kidsping.global.common.enums.PersonalityTrait;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

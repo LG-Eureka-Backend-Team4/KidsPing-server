@@ -1,7 +1,7 @@
 package com.kidsworld.kidsping.domain.question.dto.response;
 
-import com.kidsworld.kidsping.domain.mbti.entity.enums.PersonalityTrait;
 import com.kidsworld.kidsping.domain.question.entity.MBTIQuestion;
+import com.kidsworld.kidsping.global.common.enums.PersonalityTrait;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

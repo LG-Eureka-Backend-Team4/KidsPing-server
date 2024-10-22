@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.mbti.entity.enums;
+package com.kidsworld.kidsping.global.common.enums;
 
 import lombok.Getter;
 
