@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KidCreateRequest {
+public class CreateKidRequest {
     private Long userId;
     private String kidName;
     private String gender;

@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KidGetResponse {
+public class GetKidResponse {
     private Long kidId;
     private Long userId;
     private String kidName;
     private String gender;
     private String birth;
 
-    public KidGetResponse(Kid kid) {
+    public GetKidResponse(Kid kid) {
         this.kidId = kid.getId();
         this.userId = kid.getUser().getId();
         this.kidName = kid.getName();

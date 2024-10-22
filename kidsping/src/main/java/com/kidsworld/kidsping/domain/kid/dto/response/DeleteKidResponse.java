@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class KidDeleteResponse {
+public class DeleteKidResponse {
     private Long kidId;
 }
