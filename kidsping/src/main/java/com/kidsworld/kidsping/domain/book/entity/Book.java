@@ -5,8 +5,6 @@ import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +16,10 @@ public class Book extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "mbti_id", nullable = false)
+    private BookMBTI bookMBTI;
 
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
@@ -43,9 +45,6 @@ public class Book extends BaseTimeEntity{
 
     @Column(name = "image_url")
     private String imageUrl;
-
-    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    private BookMbti mbti;
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
