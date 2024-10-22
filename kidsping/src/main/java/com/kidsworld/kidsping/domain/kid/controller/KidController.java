@@ -11,11 +11,9 @@ import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/kids")
@@ -30,7 +28,7 @@ public class KidController {
     @PostMapping
     public ResponseEntity<ApiResponse<KidCreateResponse>> createKid(@RequestBody KidCreateRequest request) {
         KidCreateResponse response = kidService.createKid(request);
-        return ApiResponse.created("/api/children/" + response.getKidId(), ExceptionCode.OK.getCode(), response, "자녀 프로필이 성공적으로 추가되었습니다.");
+        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.OK.getCode(), response, "자녀 프로필이 성공적으로 추가되었습니다.");
     }
 
 
