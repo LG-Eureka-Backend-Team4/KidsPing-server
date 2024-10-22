@@ -1,6 +1,5 @@
 package com.kidsworld.kidsping.domain.kid.entity;
 
-import com.kidsworld.kidsping.domain.mbti.entity.MbtiScore;
 import com.kidsworld.kidsping.domain.mbti.entity.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -12,7 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,26 +21,27 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class KidMbti extends BaseTimeEntity {
+@Table(name = "kid_mbti_history")
+public class KidMBTIHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "kid_mbti_id")
+    @Column(name = "kid_mbti_history_id")
     private Long id;
-
-    private boolean isDeleted;
 
     @Enumerated(EnumType.STRING)
     private MbtiStatus mbtiStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mbti_score_id")
-    private MbtiScore mbtiScore;
+    private boolean isDeleted;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kid_id")
+    private Kid kid;
 
     @Builder
-    public KidMbti(boolean isDeleted, MbtiStatus mbtiStatus, MbtiScore mbtiScore) {
-        this.isDeleted = isDeleted;
+    public KidMBTIHistory(MbtiStatus mbtiStatus, boolean isDeleted, Kid kid) {
         this.mbtiStatus = mbtiStatus;
-        this.mbtiScore = mbtiScore;
+        this.isDeleted = isDeleted;
+        this.kid = kid;
     }
 }

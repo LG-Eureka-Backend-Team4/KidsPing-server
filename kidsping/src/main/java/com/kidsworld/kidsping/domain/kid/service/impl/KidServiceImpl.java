@@ -1,34 +1,30 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
-import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
-import com.kidsworld.kidsping.domain.kid.entity.Kid;
-import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
-import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
-import com.kidsworld.kidsping.domain.kid.service.KidService;
-import com.kidsworld.kidsping.domain.user.entity.User;
-import com.kidsworld.kidsping.domain.user.repository.UserRepository;
+import com.kidsworld.kidsping.domain.kid.dto.request.KidCreateRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMBTIDiagnosisRequest;
-import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
-import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
+import com.kidsworld.kidsping.domain.kid.dto.request.KidUpdateRequest;
+import com.kidsworld.kidsping.domain.kid.dto.response.KidCreateResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.KidDeleteResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.KidGetResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.KidUpdateResponse;
+import com.kidsworld.kidsping.domain.kid.entity.Kid;
+import com.kidsworld.kidsping.domain.kid.entity.KidMBTI;
+import com.kidsworld.kidsping.domain.kid.entity.KidMBTIHistory;
+import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
 import com.kidsworld.kidsping.domain.kid.repository.KidMBTIHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMBTIRepository;
-import com.kidsworld.kidsping.domain.mbti.entity.MbtiScore;
+import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.domain.mbti.entity.enums.MbtiStatus;
 import com.kidsworld.kidsping.domain.mbti.entity.enums.PersonalityTrait;
-import com.kidsworld.kidsping.domain.mbti.repository.MBTIScoreRepository;
-import com.kidsworld.kidsping.domain.question.entity.MbtiResponse;
-import com.kidsworld.kidsping.domain.question.repository.MbtiResponseRepository;
-
+import com.kidsworld.kidsping.domain.question.entity.MBTIResponse;
+import com.kidsworld.kidsping.domain.question.repository.MBTIResponseRepository;
+import com.kidsworld.kidsping.domain.user.entity.User;
+import com.kidsworld.kidsping.domain.user.repository.UserRepository;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,9 +32,8 @@ import java.time.LocalDate;
 public class KidServiceImpl implements KidService {
 
     private final KidRepository kidRepository;
+    private final MBTIResponseRepository mbtiResponseRepository;
     private final UserRepository userRepository;
-    private final MbtiResponseRepository mbtiResponseRepository;
-    private final MBTIScoreRepository mbtiScoreRepository;
     private final KidMBTIRepository kidMBTIRepository;
     private final KidMBTIHistoryRepository kidMBTIHistoryRepository;
 
@@ -48,7 +43,7 @@ public class KidServiceImpl implements KidService {
     */
     @Override
     @Transactional
-    public CreateKidResponse createKid(CreateKidRequest request) {
+    public KidCreateResponse createKid(KidCreateRequest request) {
         long kidCount = kidRepository.countByUserId(request.getUserId());
         if (kidCount >= 5) {
             throw new IllegalStateException("최대 5명의 자녀만 등록할 수 있습니다.");
@@ -67,7 +62,7 @@ public class KidServiceImpl implements KidService {
 
         Kid savedKid = kidRepository.save(kid);
 
-        return CreateKidResponse.from(savedKid);
+        return KidCreateResponse.from(savedKid);
     }
 
     /*
@@ -75,9 +70,9 @@ public class KidServiceImpl implements KidService {
     */
     @Override
     @Transactional
-    public GetKidResponse getKid(Long kidId) {
+    public KidGetResponse getKid(Long kidId) {
         Kid kid = findKidOrThrow(kidId);
-        return new GetKidResponse(kid);
+        return new KidGetResponse(kid);
     }
 
     /*
@@ -85,7 +80,7 @@ public class KidServiceImpl implements KidService {
     */
     @Override
     @Transactional
-    public UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request) {
+    public KidUpdateResponse updateKid(Long kidId, KidUpdateRequest request) {
         Kid kid = findKidOrThrow(kidId);
 
         kid.update(
@@ -94,7 +89,7 @@ public class KidServiceImpl implements KidService {
                 LocalDate.parse(request.getBirth())
         );
 
-        return UpdateKidResponse.from(kid);
+        return KidUpdateResponse.from(kid);
     }
 
     /*
@@ -102,10 +97,10 @@ public class KidServiceImpl implements KidService {
     */
     @Override
     @Transactional
-    public DeleteKidResponse deleteKid(Long kidId) {
+    public KidDeleteResponse deleteKid(Long kidId) {
         Kid kid = findKidOrThrow(kidId);
         kidRepository.delete(kid);
-        return new DeleteKidResponse(kidId);
+        return new KidDeleteResponse(kidId);
     }
 
     private Kid findKidOrThrow(Long kidId) {
@@ -116,26 +111,25 @@ public class KidServiceImpl implements KidService {
     @Transactional
     @Override
     public void diagnoseKidMBTI(KidMBTIDiagnosisRequest diagnosisRequest) {
-        Kid kid = findKid(diagnosisRequest);
+        Kid kid = findKidById(diagnosisRequest);
 
-        MbtiResponse mbtiResponse = KidMBTIDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
-        mbtiResponseRepository.save(mbtiResponse);
-
-        MbtiScore mbtiScore = KidMBTIDiagnosisRequest.getMBTIScore(diagnosisRequest);
-        mbtiScoreRepository.save(mbtiScore);
+        saveMBTIResponse(diagnosisRequest, kid);
 
         MbtiStatus mbtiStatus = calculateMbtiStatus(diagnosisRequest);
 
-        KidMbti kidMbti = saveKidMBTI(mbtiStatus, mbtiScore);
-
-        kid.updateKidMbti(kidMbti);
+        updateOrCreateKidMbti(kid, diagnosisRequest, mbtiStatus);
 
         saveKidMBTIHistory(kid, mbtiStatus);
     }
 
-    private Kid findKid(KidMBTIDiagnosisRequest diagnosisRequest) {
+    private Kid findKidById(KidMBTIDiagnosisRequest diagnosisRequest) {
         return kidRepository.findById(diagnosisRequest.getUserId())
                 .orElseThrow(() -> new RuntimeException("no kid"));
+    }
+
+    private void saveMBTIResponse(KidMBTIDiagnosisRequest diagnosisRequest, Kid kid) {
+        MBTIResponse mbtiResponse = KidMBTIDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
+        mbtiResponseRepository.save(mbtiResponse);
     }
 
     private MbtiStatus calculateMbtiStatus(KidMBTIDiagnosisRequest request) {
@@ -154,17 +148,47 @@ public class KidServiceImpl implements KidService {
         return firstScore >= secondScore ? firstType : secondType;
     }
 
-    private KidMbti saveKidMBTI(MbtiStatus mbtiStatus, MbtiScore mbtiScore) {
-        KidMbti kidMbti = KidMbti.builder()
-                .isDeleted(false)
+    private void updateOrCreateKidMbti(Kid kid, KidMBTIDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
+        KidMBTI kidMbti = kid.getKidMbti();
+        if (kidMbti == null) {
+            kidMbti = createKidMbti(diagnosisRequest, mbtiStatus);
+        } else {
+            updateKidMbti(kidMbti, diagnosisRequest, mbtiStatus);
+        }
+        kid.updateKidMbti(kidMbti);
+    }
+
+    private KidMBTI createKidMbti(KidMBTIDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
+        KidMBTI kidMbti = KidMBTI.builder()
+                .eScore(diagnosisRequest.getExtraversionScore())
+                .iScore(diagnosisRequest.getIntroversionScore())
+                .sScore(diagnosisRequest.getSensingScore())
+                .nScore(diagnosisRequest.getIntuitionScore())
+                .fScore(diagnosisRequest.getFeelingScore())
+                .tScore(diagnosisRequest.getThinkingScore())
+                .jScore(diagnosisRequest.getJudgingScore())
+                .pScore(diagnosisRequest.getPerceivingScore())
                 .mbtiStatus(mbtiStatus)
-                .mbtiScore(mbtiScore)
                 .build();
         return kidMBTIRepository.save(kidMbti);
     }
 
+    private void updateKidMbti(KidMBTI kidMbti, KidMBTIDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
+        kidMbti.updateMBTIScore(
+                diagnosisRequest.getExtraversionScore(),
+                diagnosisRequest.getIntroversionScore(),
+                diagnosisRequest.getSensingScore(),
+                diagnosisRequest.getIntuitionScore(),
+                diagnosisRequest.getThinkingScore(),
+                diagnosisRequest.getFeelingScore(),
+                diagnosisRequest.getJudgingScore(),
+                diagnosisRequest.getPerceivingScore(),
+                mbtiStatus
+        );
+    }
+
     private void saveKidMBTIHistory(Kid kid, MbtiStatus mbtiStatus) {
-        KidMbtiHistory kidMbtiHistory = KidMbtiHistory.builder()
+        KidMBTIHistory kidMbtiHistory = KidMBTIHistory.builder()
                 .kid(kid)
                 .mbtiStatus(mbtiStatus)
                 .isDeleted(false)
