@@ -19,7 +19,7 @@ public class Book extends BaseTimeEntity{
 
     @OneToOne
     @JoinColumn(name = "mbti_id", nullable = false)
-    private BookMBTI bookMBTI;
+    private BookMbti bookMBTI;
 
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
