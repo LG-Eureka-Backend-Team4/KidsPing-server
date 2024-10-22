@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KidMBTIDiagnosisRequest {
+public class KidMbtiDiagnosisRequest {
 
     private Long userId;
     private int extraversionScore;
@@ -19,7 +19,7 @@ public class KidMBTIDiagnosisRequest {
     private int judgingScore;
     private int perceivingScore;
 
-    public static MbtiAnswer getMBTIResponse(KidMBTIDiagnosisRequest diagnosisRequest, Kid kid) {
+    public static MbtiAnswer getMBTIResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
         return MbtiAnswer.builder()
                 .kid(kid)
                 .eScore(diagnosisRequest.getExtraversionScore())

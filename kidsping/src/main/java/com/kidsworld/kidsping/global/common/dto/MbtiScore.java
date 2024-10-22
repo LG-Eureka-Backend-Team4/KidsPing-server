@@ -1,7 +1,7 @@
 package com.kidsworld.kidsping.global.common.dto;
 
-import com.kidsworld.kidsping.domain.book.entity.BookMBTI;
-import com.kidsworld.kidsping.domain.kid.entity.KidMBTI;
+import com.kidsworld.kidsping.domain.book.entity.BookMbti;
+import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +32,7 @@ public class MbtiScore {
         this.pScore = pScore;
     }
 
-    public static MbtiScore from(KidMBTI kidMBTI) {
+    public static MbtiScore from(KidMbti kidMBTI) {
         return MbtiScore.builder()
                 .eScore(kidMBTI.getEScore())
                 .iScore(kidMBTI.getIScore())
@@ -45,17 +45,17 @@ public class MbtiScore {
                 .build();
     }
 
-    public void updateMbtiScore(BookMBTI bookMBTI, LikeStatus previousStatus, LikeStatus currentStatus) {
+    public void updateMbtiScore(BookMbti bookMbti, LikeStatus previousStatus, LikeStatus currentStatus) {
         int multiplier = calculateMultiplier(previousStatus, currentStatus);
 
-        this.eScore += multiplier * bookMBTI.getEScore();
-        this.iScore += multiplier * bookMBTI.getIScore();
-        this.sScore += multiplier * bookMBTI.getSScore();
-        this.nScore += multiplier * bookMBTI.getNScore();
-        this.tScore += multiplier * bookMBTI.getTScore();
-        this.fScore += multiplier * bookMBTI.getFScore();
-        this.jScore += multiplier * bookMBTI.getJScore();
-        this.pScore += multiplier * bookMBTI.getPScore();
+        this.eScore += multiplier * bookMbti.getEScore();
+        this.iScore += multiplier * bookMbti.getIScore();
+        this.sScore += multiplier * bookMbti.getSScore();
+        this.nScore += multiplier * bookMbti.getNScore();
+        this.tScore += multiplier * bookMbti.getTScore();
+        this.fScore += multiplier * bookMbti.getFScore();
+        this.jScore += multiplier * bookMbti.getJScore();
+        this.pScore += multiplier * bookMbti.getPScore();
     }
 
     /*

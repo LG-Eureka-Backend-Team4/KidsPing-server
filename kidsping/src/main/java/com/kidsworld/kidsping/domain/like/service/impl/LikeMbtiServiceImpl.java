@@ -3,9 +3,9 @@ package com.kidsworld.kidsping.domain.like.service.impl;
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
-import com.kidsworld.kidsping.domain.kid.entity.KidMBTI;
-import com.kidsworld.kidsping.domain.kid.entity.KidMBTIHistory;
-import com.kidsworld.kidsping.domain.kid.repository.KidMBTIHistoryRepository;
+import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
+import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
+import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
@@ -26,7 +26,7 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     private final LikeMbtiRepository likeMbtiRepository;
     private final BookRepository bookRepository;
     private final KidRepository kidRepository;
-    private final KidMBTIHistoryRepository kidMBTIHistoryRepository;
+    private final KidMbtiHistoryRepository kidMbtiHistoryRepository;
 
     @Transactional
     @Override
@@ -36,11 +36,11 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
         checkIfAlreadyLiked(kid, book);
         LikeMbti like = createLike(kid, book);
 
-        KidMBTI kidMbti = kid.getKidMbti();
+        KidMbti kidMbti = kid.getKidMbti();
         MbtiStatus currentKidMbtiStatus = kidMbti.getMbtiStatus();
 
         MbtiScore mbtiScore = MbtiScore.from(kidMbti);
-        mbtiScore.updateMbtiScore(book.getBookMBTI(), like.getLikeStatus(), LikeStatus.LIKE);
+        mbtiScore.updateMbtiScore(book.getBookMbti(), like.getLikeStatus(), LikeStatus.LIKE);
         MbtiStatus updatedKidMbtiStatus = MbtiCalculator.determineMbtiType(mbtiScore);
 
         kidMbti.updateMbti(mbtiScore, updatedKidMbtiStatus);
@@ -77,11 +77,11 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     }
 
     private void createKidMBTIHistory(Kid kid, MbtiStatus mbtiStatus) {
-        KidMBTIHistory kidMbtiHistory = KidMBTIHistory.builder()
+        KidMbtiHistory kidMbtiHistory = KidMbtiHistory.builder()
                 .kid(kid)
                 .mbtiStatus(mbtiStatus)
                 .isDeleted(false)
                 .build();
-        kidMBTIHistoryRepository.save(kidMbtiHistory);
+        kidMbtiHistoryRepository.save(kidMbtiHistory);
     }
 }

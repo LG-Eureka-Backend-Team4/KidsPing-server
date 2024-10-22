@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "kid_mbti_history")
-public class KidMBTIHistory extends BaseTimeEntity {
+public class KidMbtiHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class KidMBTIHistory extends BaseTimeEntity {
     private Kid kid;
 
     @Builder
-    public KidMBTIHistory(MbtiStatus mbtiStatus, boolean isDeleted, Kid kid) {
+    public KidMbtiHistory(MbtiStatus mbtiStatus, boolean isDeleted, Kid kid) {
         this.mbtiStatus = mbtiStatus;
         this.isDeleted = isDeleted;
         this.kid = kid;
