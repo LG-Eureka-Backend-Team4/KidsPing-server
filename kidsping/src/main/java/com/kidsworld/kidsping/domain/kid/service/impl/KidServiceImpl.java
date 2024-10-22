@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,13 +42,13 @@ public class KidServiceImpl implements KidService {
     private final KidMBTIRepository kidMBTIRepository;
     private final KidMBTIHistoryRepository kidMBTIHistoryRepository;
 
+
     /*
     자녀 프로필 생성
     */
     @Override
     @Transactional
     public KidCreateResponse createKid(KidCreateRequest request) {
-        // 사용자의 자녀 수 확인
         long kidCount = kidRepository.countByUserId(request.getUserId());
         if (kidCount >= 5) {
             throw new IllegalStateException("최대 5명의 자녀만 등록할 수 있습니다.");
@@ -58,17 +57,7 @@ public class KidServiceImpl implements KidService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 ID입니다."));
 
-        // 현재 사용 중인 ID들을 가져와서 빈 번호 찾기
-        List<Long> existingIds = kidRepository.findKidIdsByUserId(request.getUserId());
-        Long nextId = 1L;
-
-        // 1부터 순서대로 확인하면서 비어있는 첫 번호 찾기
-        while (existingIds.contains(nextId)) {
-            nextId++;
-        }
-
         Kid kid = Kid.builder()
-                .id(nextId)
                 .gender(Gender.valueOf(request.getGender()))
                 .name(request.getKidName())
                 .birth(LocalDate.parse(request.getBirth()))
@@ -77,6 +66,7 @@ public class KidServiceImpl implements KidService {
                 .build();
 
         Kid savedKid = kidRepository.save(kid);
+
         return KidCreateResponse.from(savedKid);
     }
 
