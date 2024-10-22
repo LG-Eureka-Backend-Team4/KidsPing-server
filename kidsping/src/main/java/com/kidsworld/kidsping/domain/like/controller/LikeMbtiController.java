@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.like.controller;
 
+import com.kidsworld.kidsping.domain.like.dto.request.LikeCancelMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.service.LikeMbtiService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/mbti")
+@RequestMapping("/api/mbti/book")
 public class LikeMbtiController {
 
     private final LikeMbtiService likeMbtiService;
@@ -22,8 +23,8 @@ public class LikeMbtiController {
     }
 
     @DeleteMapping("/like")
-    public void likeCancel() {
-
+    public void likeCancel(@RequestBody LikeCancelMbtiRequest likeCancelMbtiRequest) {
+        likeMbtiService.likeCancel(likeCancelMbtiRequest);
     }
 
     @PostMapping("/dislike")
