@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MbtiQuestion extends BaseTimeEntity {
+@Table(name = "mbti_question")
+public class MBTIQuestion extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class MbtiQuestion extends BaseTimeEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    public MbtiQuestion(String content, PersonalityTrait personalityTrait, Boolean isDeleted) {
+    public MBTIQuestion(String content, PersonalityTrait personalityTrait, Boolean isDeleted) {
         this.content = content;
         this.personalityTrait = personalityTrait;
         this.isDeleted = isDeleted;

@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.book.enums;
 
-public enum MBTIType {
+public enum MbtiType {
     // 16가지 MBTI 유형 정의
     ISTJ("ISTJ"),
     ISFJ("ISFJ"),
@@ -21,7 +21,7 @@ public enum MBTIType {
 
     private final String mbtiType;
 
-    MBTIType(String mbtiType) {
+    MbtiType(String mbtiType) {
         this.mbtiType = mbtiType;
     }
 
