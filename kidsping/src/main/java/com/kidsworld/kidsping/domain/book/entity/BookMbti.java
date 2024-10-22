@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.book.entity;
 
-import com.kidsworld.kidsping.domain.book.enums.MBTIType;
+import com.kidsworld.kidsping.domain.book.enums.MbtiType;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +25,7 @@ public class BookMbti extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "book_mbti_type")
-    private MBTIType bookMBTIType;
+    private MbtiType bookMbtiType;
 
     @Column(name = "e_score")
     private Integer eScore;
