@@ -8,32 +8,43 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookMbti extends BaseTimeEntity {
+public class BookMBTI extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_mbti_id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "book_id", nullable = false)
-    private Book book;
-
-    @OneToOne
-    @JoinColumn(name = "mbti_score_id", nullable = false)
-    private MbtiScore mbtiScoreId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "book_mbti_type")
-    private MBTIType bookMbtiType;
+    private MBTIType bookMBTIType;
 
-    @Column(name = "mbti_description", columnDefinition = "TEXT")
-    private String mbtiDescription;
+    @Column(name = "e_score")
+    private Integer eScore;
+
+    @Column(name = "i_score")
+    private Integer iScore;
+
+    @Column(name = "s_score")
+    private Integer sScore;
+
+    @Column(name = "n_score")
+    private Integer nScore;
+
+    @Column(name = "t_score")
+    private Integer tScore;
+
+    @Column(name = "f_score")
+    private Integer fScore;
+
+    @Column(name = "j_score")
+    private Integer jScore;
+
+    @Column(name = "p_score")
+    private Integer pScore;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
