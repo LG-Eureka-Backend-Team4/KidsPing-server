@@ -22,7 +22,9 @@ public enum ExceptionCode {
 
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
-    DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error");
+    DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
+
+    NOT_FOUND_GENRE_ANSWER(70201, HttpStatus.NOT_FOUND, "존재하지 않는 장르 응답입니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;
