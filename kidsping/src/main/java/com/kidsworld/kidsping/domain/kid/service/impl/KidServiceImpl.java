@@ -1,6 +1,7 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
 import com.kidsworld.kidsping.domain.kid.dto.request.KidCreateRequest;
+import com.kidsworld.kidsping.domain.kid.dto.request.KidMBTIDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidUpdateRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidCreateResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidDeleteResponse;
@@ -9,27 +10,21 @@ import com.kidsworld.kidsping.domain.kid.dto.response.KidUpdateResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMBTI;
 import com.kidsworld.kidsping.domain.kid.entity.KidMBTIHistory;
+import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
 import com.kidsworld.kidsping.domain.kid.repository.KidMBTIHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMBTIRepository;
-import com.kidsworld.kidsping.domain.question.entity.MBTIResponse;
-import com.kidsworld.kidsping.domain.question.repository.MBTIResponseRepository;
-import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
-import com.kidsworld.kidsping.domain.user.entity.User;
-import com.kidsworld.kidsping.domain.user.repository.UserRepository;
-import com.kidsworld.kidsping.domain.kid.dto.request.KidMBTIDiagnosisRequest;
-import com.kidsworld.kidsping.domain.kid.repository.KidMBTIHistoryRepository;
-import com.kidsworld.kidsping.domain.kid.repository.KidMBTIRepository;
 import com.kidsworld.kidsping.domain.mbti.entity.enums.MbtiStatus;
 import com.kidsworld.kidsping.domain.mbti.entity.enums.PersonalityTrait;
-import com.kidsworld.kidsping.domain.mbti.repository.MBTIScoreRepository;
-
+import com.kidsworld.kidsping.domain.question.entity.MBTIResponse;
+import com.kidsworld.kidsping.domain.question.repository.MBTIResponseRepository;
+import com.kidsworld.kidsping.domain.user.entity.User;
+import com.kidsworld.kidsping.domain.user.repository.UserRepository;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Service
 @Transactional(readOnly = true)
