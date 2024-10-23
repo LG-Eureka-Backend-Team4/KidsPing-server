@@ -20,7 +20,7 @@ public class BookMbti extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_mbti_id")
+    @Column(name = "book_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
