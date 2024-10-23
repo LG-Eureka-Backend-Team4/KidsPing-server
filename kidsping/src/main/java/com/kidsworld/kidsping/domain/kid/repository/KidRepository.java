@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface KidRepository extends JpaRepository<Kid, Long> {
     long countByUserId(Long userId);
-    
+
     @Query("select k from Kid k join fetch k.kidMbti where k.id = :kidId")
-    Optional<Kid> findKidWithMbtiByKidId(@Param("kidId") Long kidId);
+    Optional<Kid> findKidWithMbti(@Param("kidId") Long kidId);
 }
