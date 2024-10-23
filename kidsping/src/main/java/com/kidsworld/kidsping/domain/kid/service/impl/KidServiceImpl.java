@@ -20,8 +20,9 @@ import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
+import com.kidsworld.kidsping.global.common.dto.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
-import com.kidsworld.kidsping.global.common.enums.PersonalityTrait;
+import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -109,46 +110,29 @@ public class KidServiceImpl implements KidService {
     }
 
     /*
-    자녀 성향 조회
+    자녀 성향 진단
     */
     @Transactional
     @Override
     public void diagnoseKidMbti(KidMbtiDiagnosisRequest diagnosisRequest) {
-        Kid kid = findKidById(diagnosisRequest);
-
+        Kid kid = findKidById(diagnosisRequest.getUserId());
         saveMbtiResponse(diagnosisRequest, kid);
 
-        MbtiStatus mbtiStatus = calculateMbtiStatus(diagnosisRequest);
-
+        MbtiScore mbtiScore = MbtiScore.from(diagnosisRequest);
+        MbtiStatus mbtiStatus = MbtiCalculator.determineMbtiType(mbtiScore);
         updateOrCreateKidMbti(kid, diagnosisRequest, mbtiStatus);
 
         saveKidMbtiHistory(kid, mbtiStatus);
     }
 
-    private Kid findKidById(KidMbtiDiagnosisRequest diagnosisRequest) {
-        return kidRepository.findById(diagnosisRequest.getUserId())
+    private Kid findKidById(Long userId) {
+        return kidRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("no kid"));
     }
 
     private void saveMbtiResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
         MbtiAnswer mbtiAnswer = KidMbtiDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
         mbtiAnswerRepository.save(mbtiAnswer);
-    }
-
-    private MbtiStatus calculateMbtiStatus(KidMbtiDiagnosisRequest request) {
-        String mbti = compareScores(request.getExtraversionScore(), request.getIntroversionScore(),
-                PersonalityTrait.EXTRAVERSION.getType(), PersonalityTrait.INTROVERSION.getType())
-                + compareScores(request.getSensingScore(), request.getIntuitionScore(),
-                PersonalityTrait.SENSING.getType(), PersonalityTrait.INTUITION.getType())
-                + compareScores(request.getFeelingScore(), request.getThinkingScore(),
-                PersonalityTrait.FEELING.getType(), PersonalityTrait.THINKING.getType())
-                + compareScores(request.getPerceivingScore(), request.getJudgingScore(),
-                PersonalityTrait.PERCEIVING.getType(), PersonalityTrait.JUDGING.getType());
-        return MbtiStatus.toMbtiStatus(mbti);
-    }
-
-    private String compareScores(int firstScore, int secondScore, String firstType, String secondType) {
-        return firstScore >= secondScore ? firstType : secondType;
     }
 
     private void updateOrCreateKidMbti(Kid kid, KidMbtiDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
