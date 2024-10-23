@@ -1,6 +1,9 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
 
+import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
+import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
+import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
@@ -45,13 +48,13 @@ public class KidServiceImpl implements KidService {
     @Override
     @Transactional
     public CreateKidResponse createKid(CreateKidRequest request) {
-        long kidCount = kidRepository.countByUserId(request.getUserId());
-        if (kidCount >= 5) {
-            throw new IllegalStateException("최대 5명의 자녀만 등록할 수 있습니다.");
-        }
-
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 ID입니다."));
+                .orElseThrow(UnauthorizedUserException::new);
+
+        long userKidCount = kidRepository.countByUserId(user.getId());
+        if (userKidCount >= 5) {
+            throw new MaxKidLimitReachedException();
+        }
 
         Kid kid = Kid.builder()
                 .gender(Gender.valueOf(request.getGender()))
@@ -70,9 +73,11 @@ public class KidServiceImpl implements KidService {
     자녀 프로필 조회
     */
     @Override
-    @Transactional
     public GetKidResponse getKid(Long kidId) {
-        Kid kid = findKidOrThrow(kidId);
+
+        Kid kid = kidRepository.findById(kidId)
+                .orElseThrow(NotFoundKidException::new);
+
         return new GetKidResponse(kid);
     }
 
@@ -82,7 +87,8 @@ public class KidServiceImpl implements KidService {
     @Override
     @Transactional
     public UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request) {
-        Kid kid = findKidOrThrow(kidId);
+        Kid kid = kidRepository.findById(kidId)
+                .orElseThrow(NotFoundKidException::new);
 
         kid.update(
                 Gender.valueOf(request.getGender()),
@@ -99,15 +105,12 @@ public class KidServiceImpl implements KidService {
     @Override
     @Transactional
     public DeleteKidResponse deleteKid(Long kidId) {
-        Kid kid = findKidOrThrow(kidId);
+        Kid kid = kidRepository.findById(kidId)
+                .orElseThrow(NotFoundKidException::new);
         kidRepository.delete(kid);
         return new DeleteKidResponse(kidId);
     }
 
-    private Kid findKidOrThrow(Long kidId) {
-        return kidRepository.findById(kidId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 자녀를 찾을 수 없습니다: " + kidId));
-    }
 
     /*
     자녀 성향 진단
