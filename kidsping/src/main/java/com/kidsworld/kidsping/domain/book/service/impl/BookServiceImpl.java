@@ -123,4 +123,15 @@ public class BookServiceImpl implements BookService {
         book.getBookMbti().setIsDeleted(true);
         bookRepository.save(book);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookResponse> getBooksByGenre(Long genreId, Pageable pageable) {
+        if (!genreRepository.existsById(genreId)) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_GENRE);
+        }
+
+        Page<Book> books = bookRepository.findBookByGenreId(genreId, pageable);
+        return books.map(BookResponse::from);
+    }
 }
