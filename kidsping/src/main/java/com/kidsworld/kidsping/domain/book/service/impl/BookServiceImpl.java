@@ -1,9 +1,10 @@
-package com.kidsworld.kidsping.domain.book.service;
+package com.kidsworld.kidsping.domain.book.service.impl;
 
 import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponseDto;
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
+import com.kidsworld.kidsping.domain.book.service.BookService;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
