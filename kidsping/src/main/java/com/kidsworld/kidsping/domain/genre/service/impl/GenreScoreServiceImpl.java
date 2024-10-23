@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.genre.service.impl;
 
+import com.kidsworld.kidsping.domain.genre.dto.response.TopGenreResponse;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.entity.GenreScore;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
@@ -51,5 +52,17 @@ public class GenreScoreServiceImpl implements GenreScoreService {
             genreScore.updateScore(5);
             genreScoreRepository.save(genreScore);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TopGenreResponse getTopGenre(Long kidId) {
+        Kid kid = kidRepository.findById(kidId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        GenreScore topGenreScore = genreScoreRepository.findTopGenreByKidId(kidId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_GENRE, "아이의 장르 점수가 존재하지 않습니다"));
+
+        return TopGenreResponse.from(topGenreScore.getGenre(), topGenreScore);
     }
 }
