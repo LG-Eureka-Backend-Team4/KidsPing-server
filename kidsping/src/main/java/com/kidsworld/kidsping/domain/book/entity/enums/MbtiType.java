@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.book.enums;
+package com.kidsworld.kidsping.domain.book.entity.enums;
 
 public enum MbtiType {
     // 16가지 MBTI 유형 정의
