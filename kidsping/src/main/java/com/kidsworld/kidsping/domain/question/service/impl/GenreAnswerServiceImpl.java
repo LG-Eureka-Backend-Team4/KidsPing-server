@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.question.service.impl;
 
-import com.kidsworld.kidsping.domain.question.dto.response.GenreAnswerResponseDto;
+import com.kidsworld.kidsping.domain.question.dto.response.GenreAnswerResponse;
 import com.kidsworld.kidsping.domain.question.entity.GenreAnswer;
 import com.kidsworld.kidsping.domain.question.repository.GenreAnswerRepository;
 import com.kidsworld.kidsping.domain.question.service.GenreAnswerService;
@@ -21,18 +21,18 @@ public class GenreAnswerServiceImpl implements GenreAnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public GenreAnswerResponseDto getGenreAnswer(Long id) {
+    public GenreAnswerResponse getGenreAnswer(Long id) {
         GenreAnswer genreAnswer = genreAnswerRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_GENRE_ANSWER));
-        return GenreAnswerResponseDto.from(genreAnswer);
+        return GenreAnswerResponse.from(genreAnswer);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<GenreAnswerResponseDto> getGenreAnswersByKidId(Long kidId) {
+    public List<GenreAnswerResponse> getGenreAnswersByKidId(Long kidId) {
         return genreAnswerRepository.findByKidIdAndIsDeletedFalse(kidId)
                 .stream()
-                .map(GenreAnswerResponseDto::from)
+                .map(GenreAnswerResponse::from)
                 .collect(Collectors.toList());
     }
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BookRequestDto {
+public class BookRequest {
     private Long genreId;
     private String title;
     private String summary;
