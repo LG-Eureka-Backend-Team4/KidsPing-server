@@ -11,6 +11,7 @@ import com.kidsworld.kidsping.domain.like.dto.request.DislikeCancelMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.DislikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeCancelMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
+import com.kidsworld.kidsping.domain.like.dto.response.LikeBookResponse;
 import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
@@ -21,6 +22,8 @@ import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,13 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     private final BookRepository bookRepository;
     private final KidRepository kidRepository;
     private final KidMbtiHistoryRepository kidMbtiHistoryRepository;
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<LikeBookResponse> getBooksLiked(Long kidId, Pageable pageable) {
+        Page<LikeMbti> bookPage = likeMbtiRepository.findBooksByLikeMbtiId(kidId, pageable);
+        return bookPage.map(likeMbti -> LikeBookResponse.from(likeMbti.getBook()));
+    }
 
     @Override
     public void like(LikeMbtiRequest likeMbtiRequest) {
