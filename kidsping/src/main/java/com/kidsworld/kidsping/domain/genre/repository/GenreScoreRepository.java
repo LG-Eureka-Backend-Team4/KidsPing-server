@@ -19,4 +19,10 @@ public interface GenreScoreRepository extends JpaRepository<GenreScore, Long> {
             "ORDER BY gs.score DESC " +
             "LIMIT 1")
     Optional<GenreScore> findTopGenreByKidId(@Param("kidId") Long kidId);
+
+    @Query("SELECT gs.genre FROM GenreScore gs " +
+            "GROUP BY gs.genre " +
+            "ORDER BY SUM(gs.score) DESC " +
+            "LIMIT 1")
+    Optional<Genre> findTopGenre();
 }

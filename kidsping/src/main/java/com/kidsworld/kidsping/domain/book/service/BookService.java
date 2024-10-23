@@ -12,4 +12,5 @@ public interface BookService {
     BookResponse updateBook(Long id, BookRequest bookRequest);
     void deleteBook(Long id);
     Page<BookResponse> getBooksByGenre(Long genreId, Pageable pageable);
+    Page<BookResponse> getTopGenreBooks(Pageable pageable);
 }
