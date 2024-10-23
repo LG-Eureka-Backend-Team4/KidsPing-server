@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.book.entity;
 
-import com.kidsworld.kidsping.domain.book.enums.MbtiType;
+import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
