@@ -1,11 +1,15 @@
 package com.kidsworld.kidsping.domain.book.service.impl;
 
 import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
-import com.kidsworld.kidsping.domain.book.dto.response.BookResponseDto;
+import com.kidsworld.kidsping.domain.book.dto.response.BookResponse;
 import com.kidsworld.kidsping.domain.book.entity.Book;
+import com.kidsworld.kidsping.domain.book.entity.BookMbti;
+import com.kidsworld.kidsping.domain.book.repository.BookMbtiRepository;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.book.service.BookService;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
+import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import com.kidsworld.kidsping.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,14 +22,30 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
+    private final BookMbtiRepository bookMbtiRepository;
 
     @Override
     @Transactional
-    public BookResponseDto createBook(BookRequest bookRequest) {
+    public BookResponse createBook(BookRequest bookRequest) {
+        BookMbti bookMbti = BookMbti.builder()
+                .bookMbtiType(bookRequest.getBookMbtiType())
+                .eScore(bookRequest.getEScore())
+                .iScore(bookRequest.getIScore())
+                .sScore(bookRequest.getSScore())
+                .nScore(bookRequest.getNScore())
+                .tScore(bookRequest.getTScore())
+                .fScore(bookRequest.getFScore())
+                .jScore(bookRequest.getJScore())
+                .pScore(bookRequest.getPScore())
+                .isDeleted(false)
+                .build();
+
+        BookMbti savedBookMbti = bookMbtiRepository.save(bookMbti);
+
         Book book = Book.builder()
                 .genre(genreRepository.findById(bookRequest.getGenreId())
-                        .orElseThrow(() -> new RuntimeException("Genre not found")))
-                .bookMbti(null)
+                        .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_GENRE)))
+                .bookMbti(savedBookMbti)
                 .title(bookRequest.getTitle())
                 .summary(bookRequest.getSummary())
                 .author(bookRequest.getAuthor())
@@ -34,54 +54,73 @@ public class BookServiceImpl implements BookService {
                 .imageUrl(bookRequest.getImageUrl())
                 .isDeleted(false)
                 .build();
+
         Book savedBook = bookRepository.save(book);
-        return BookResponseDto.from(savedBook);
+        return BookResponse.from(savedBook);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BookResponseDto getBook(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-        return BookResponseDto.from(book);
+    public BookResponse getBook(Long id) {
+        Book book = bookRepository.findBookWithMbtiByBookId(id)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
+        return BookResponse.from(book);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<BookResponseDto> getAllBooks(Pageable pageable) {
-        return bookRepository.findAll(pageable).map(BookResponseDto::from);
+    public Page<BookResponse> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(BookResponse::from);
     }
 
     @Override
     @Transactional
-    public BookResponseDto updateBook(Long id, BookRequest bookRequest) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+    public BookResponse updateBook(Long id, BookRequest bookRequest) {
+        Book book = bookRepository.findBookWithMbtiByBookId(id)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
 
-        book.getGenre().getId();
+        BookMbti updatedBookMbti = BookMbti.builder()
+                .id(book.getBookMbti().getId())
+                .bookMbtiType(bookRequest.getBookMbtiType())
+                .eScore(bookRequest.getEScore())
+                .iScore(bookRequest.getIScore())
+                .sScore(bookRequest.getSScore())
+                .nScore(bookRequest.getNScore())
+                .tScore(bookRequest.getTScore())
+                .fScore(bookRequest.getFScore())
+                .jScore(bookRequest.getJScore())
+                .pScore(bookRequest.getPScore())
+                .isDeleted(false)
+                .build();
+
+        BookMbti savedBookMbti = bookMbtiRepository.save(updatedBookMbti);
+
         Book updatedBook = Book.builder()
                 .id(book.getId())
                 .genre(genreRepository.findById(bookRequest.getGenreId())
-                        .orElseThrow(() -> new RuntimeException("Genre not found")))
+                        .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_GENRE)))
+                .bookMbti(savedBookMbti)
                 .title(bookRequest.getTitle())
                 .summary(bookRequest.getSummary())
                 .author(bookRequest.getAuthor())
                 .publisher(bookRequest.getPublisher())
                 .age(bookRequest.getAge())
                 .imageUrl(bookRequest.getImageUrl())
-                .isDeleted(book.getIsDeleted())
+                .isDeleted(false)
                 .build();
 
         Book savedBook = bookRepository.save(updatedBook);
-        return BookResponseDto.from(savedBook);
+        return BookResponse.from(savedBook);
     }
 
     @Override
     @Transactional
     public void deleteBook(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+        Book book = bookRepository.findBookWithMbtiByBookId(id)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
         book.setIsDeleted(true);
+        book.getBookMbti().setIsDeleted(true);
         bookRepository.save(book);
     }
 }

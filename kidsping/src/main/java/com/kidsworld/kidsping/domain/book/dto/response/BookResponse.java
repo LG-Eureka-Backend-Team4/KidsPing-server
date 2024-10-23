@@ -1,12 +1,14 @@
 package com.kidsworld.kidsping.domain.book.dto.response;
 
 import com.kidsworld.kidsping.domain.book.entity.Book;
-import lombok.Builder;
-import lombok.Getter;
+import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
+import lombok.*;
 
 @Getter
 @Builder
-public class BookResponseDto {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class BookResponse {
     private Long id;
     private Long genreId;
     private String title;
@@ -15,9 +17,10 @@ public class BookResponseDto {
     private String publisher;
     private Integer age;
     private String imageUrl;
+    private MbtiType mbtiType;
 
-    public static BookResponseDto from(Book book) {
-        return BookResponseDto.builder()
+    public static BookResponse from(Book book) {
+        return BookResponse.builder()
                 .id(book.getId())
                 .genreId(book.getGenre().getId())
                 .title(book.getTitle())
@@ -26,6 +29,7 @@ public class BookResponseDto {
                 .publisher(book.getPublisher())
                 .age(book.getAge())
                 .imageUrl(book.getImageUrl())
+                .mbtiType(book.getBookMbti().getBookMbtiType())
                 .build();
     }
 }
