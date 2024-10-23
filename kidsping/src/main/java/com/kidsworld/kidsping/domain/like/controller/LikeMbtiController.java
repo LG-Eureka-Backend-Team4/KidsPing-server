@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.like.controller;
 
+import com.kidsworld.kidsping.domain.like.dto.request.DisLikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeCancelMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.service.LikeMbtiService;
@@ -28,8 +29,8 @@ public class LikeMbtiController {
     }
 
     @PostMapping("/dislike")
-    public void dislike() {
-
+    public void dislike(@RequestBody DisLikeMbtiRequest disLikeMbtiRequest) {
+        likeMbtiService.dislike(disLikeMbtiRequest);
     }
 
     @DeleteMapping("/dislike")
