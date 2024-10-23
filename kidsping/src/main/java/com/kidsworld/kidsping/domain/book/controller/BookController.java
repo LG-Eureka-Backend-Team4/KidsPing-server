@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.book.controller;
 
-import com.kidsworld.kidsping.domain.book.dto.request.BookRequestDto;
+import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponseDto;
 import com.kidsworld.kidsping.domain.book.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class BookController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BookResponseDto> createBook(@RequestBody BookRequestDto bookRequestDto) {
-        BookResponseDto createdBook = bookService.createBook(bookRequestDto);
+    public ResponseEntity<BookResponseDto> createBook(@RequestBody BookRequest bookRequest) {
+        BookResponseDto createdBook = bookService.createBook(bookRequest);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
@@ -41,8 +41,8 @@ public class BookController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id, @RequestBody BookRequestDto bookRequestDto) {
-        BookResponseDto updatedBook = bookService.updateBook(id, bookRequestDto);
+    public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id, @RequestBody BookRequest bookRequest) {
+        BookResponseDto updatedBook = bookService.updateBook(id, bookRequest);
         return ResponseEntity.ok(updatedBook);
     }
 

@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.book.service;
 
-import com.kidsworld.kidsping.domain.book.dto.request.BookRequestDto;
+import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponseDto;
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
@@ -20,16 +20,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponseDto createBook(BookRequestDto bookRequestDto) {
+    public BookResponseDto createBook(BookRequest bookRequest) {
         Book book = Book.builder()
-                .genre(genreRepository.findById(bookRequestDto.getGenreId())
+                .genre(genreRepository.findById(bookRequest.getGenreId())
                         .orElseThrow(() -> new RuntimeException("Genre not found")))
-                .title(bookRequestDto.getTitle())
-                .summary(bookRequestDto.getSummary())
-                .author(bookRequestDto.getAuthor())
-                .publisher(bookRequestDto.getPublisher())
-                .age(bookRequestDto.getAge())
-                .imageUrl(bookRequestDto.getImageUrl())
+                .bookMbti(null)
+                .title(bookRequest.getTitle())
+                .summary(bookRequest.getSummary())
+                .author(bookRequest.getAuthor())
+                .publisher(bookRequest.getPublisher())
+                .age(bookRequest.getAge())
+                .imageUrl(bookRequest.getImageUrl())
                 .isDeleted(false)
                 .build();
         Book savedBook = bookRepository.save(book);
@@ -52,21 +53,21 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponseDto updateBook(Long id, BookRequestDto bookRequestDto) {
+    public BookResponseDto updateBook(Long id, BookRequest bookRequest) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
 
         book.getGenre().getId();
         Book updatedBook = Book.builder()
                 .id(book.getId())
-                .genre(genreRepository.findById(bookRequestDto.getGenreId())
+                .genre(genreRepository.findById(bookRequest.getGenreId())
                         .orElseThrow(() -> new RuntimeException("Genre not found")))
-                .title(bookRequestDto.getTitle())
-                .summary(bookRequestDto.getSummary())
-                .author(bookRequestDto.getAuthor())
-                .publisher(bookRequestDto.getPublisher())
-                .age(bookRequestDto.getAge())
-                .imageUrl(bookRequestDto.getImageUrl())
+                .title(bookRequest.getTitle())
+                .summary(bookRequest.getSummary())
+                .author(bookRequest.getAuthor())
+                .publisher(bookRequest.getPublisher())
+                .age(bookRequest.getAge())
+                .imageUrl(bookRequest.getImageUrl())
                 .isDeleted(book.getIsDeleted())
                 .build();
 
