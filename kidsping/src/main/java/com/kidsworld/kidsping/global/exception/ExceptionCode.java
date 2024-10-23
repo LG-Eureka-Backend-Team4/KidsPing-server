@@ -23,16 +23,17 @@ public enum ExceptionCode {
     UNAUTHORIZED_USER(80201, HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     NOT_FOUND_USER(80202, HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
 
-
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
     DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
 
 
     NOT_FOUND_GENRE(30201, HttpStatus.NOT_FOUND, "존재하지 않는 장르입니다."),
+    NOT_FOUND_GENRE_ANSWER(70201, HttpStatus.NOT_FOUND, "존재하지 않는 장르 응답입니다."),
 
-    NOT_FOUND_GENRE_ANSWER(70201, HttpStatus.NOT_FOUND, "존재하지 않는 장르 응답입니다.");
 
+    //  MBTI (자녀 성향 조회)
+    NOT_FOUND_MBTI_INFO(10201, HttpStatus.NOT_FOUND, "MBTI 정보를 찾을 수 없습니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;
