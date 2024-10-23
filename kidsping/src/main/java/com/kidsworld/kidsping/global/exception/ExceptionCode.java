@@ -29,7 +29,7 @@ public enum ExceptionCode {
     DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
 
 
-    NOT_FOUND_GENRE(30201, HttpStatus.NOT_FOUND, "존재하지 않는 장르입니다.");
+    NOT_FOUND_GENRE(30201, HttpStatus.NOT_FOUND, "존재하지 않는 장르입니다."),
 
     NOT_FOUND_GENRE_ANSWER(70201, HttpStatus.NOT_FOUND, "존재하지 않는 장르 응답입니다.");
 
