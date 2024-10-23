@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundMbtiInfoException.class)
-    public ResponseEntity<ApiResponse> NotFoundMbtiInfoException(GlobalException e) {
+    public ResponseEntity<ApiResponse> NotFoundMbtiInfoException(NotFoundMbtiInfoException e) {
         return ResponseEntity
                 .status(e.getErrorExceptionCode().getHttpStatus())
                 .body(new ApiResponse(
