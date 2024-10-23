@@ -19,11 +19,15 @@ public class MbtiInfoServiceImpl implements MbtiInfoService {
 
     private final MbtiInfoRepository mbtiInfoRepository;
 
+
+    /*
+    자녀 성향 조회 (Mbti 정보 조회)
+    */
     @Override
     @Transactional
     public GetMbtiInfoResponse getMbtiInfo(Long mbtiInfoId) {
         MbtiInfo mbtiInfo = mbtiInfoRepository.findById(mbtiInfoId)
-                .orElseThrow(() -> new NotFoundMbtiInfoException("MBTI 정보가 존재하지 않습니다: " + mbtiInfoId));
+                .orElseThrow(NotFoundMbtiInfoException::new);
 
         return GetMbtiInfoResponse.from(mbtiInfo);
     }

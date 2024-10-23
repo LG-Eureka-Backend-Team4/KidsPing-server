@@ -5,7 +5,7 @@ import com.kidsworld.kidsping.global.exception.GlobalException;
 
 public class NotFoundMbtiInfoException extends GlobalException {
 
-    public NotFoundMbtiInfoException(String message) {
-        super(ExceptionCode.NOT_FOUND_MBTI_INFO, message);
+    public NotFoundMbtiInfoException() {
+        super(ExceptionCode.NOT_FOUND_MBTI_INFO);
     }
 }
