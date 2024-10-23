@@ -20,7 +20,7 @@ public class GenreFile {
     @Column(name = "random_value")
     private String randomValue;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     private Genre genre;
 }

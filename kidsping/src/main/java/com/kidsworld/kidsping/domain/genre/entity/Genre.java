@@ -26,12 +26,12 @@ public class Genre extends BaseTimeEntity {
     @Column(name= "is_deleted")
     private Boolean isDeleted;
 
-    @OneToOne(mappedBy = "genre", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private GenreFile genreFile;
 
-    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<GenreScore> genreScores = new ArrayList<>();
 
-    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<>();
 }

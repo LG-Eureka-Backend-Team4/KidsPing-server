@@ -19,11 +19,11 @@ public class BookView extends BaseTimeEntity {
     @Column(name = "book_view_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kid_id")
     private Kid kid;
 

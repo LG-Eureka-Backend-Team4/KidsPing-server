@@ -17,11 +17,11 @@ public class Book extends BaseTimeEntity{
     @Column(name = "book_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mbti_id", nullable = false)
     private BookMbti bookMbti;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
 
