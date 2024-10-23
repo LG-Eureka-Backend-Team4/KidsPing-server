@@ -64,6 +64,11 @@ public class BookServiceImpl implements BookService {
     public BookResponse getBook(Long id) {
         Book book = bookRepository.findBookWithMbtiByBookId(id)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
+
+        if (book.getIsDeleted()) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_BOOK);
+        }
+
         return BookResponse.from(book);
     }
 

@@ -17,6 +17,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findBookWithMbtiByBookId(@Param("bookId") Long bookId);
 
     @Query("SELECT b FROM Book b " +
+            "WHERE b.isDeleted = false")
+    Page<Book> findAll(Pageable pageable);
+
+    @Query("SELECT b FROM Book b " +
             "JOIN FETCH b.bookMbti bm " +
             "JOIN FETCH b.genre g " +
             "WHERE g.id = :genreId " +
