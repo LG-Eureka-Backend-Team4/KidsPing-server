@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("select b from Book b join fetch b.bookMbti where b.id = :bookId")
-    Optional<Book> findBookWithMbti(@Param("bookId") Long bookId);
+    Optional<Book> findBookWithMbtiByBookId(@Param("bookId") Long bookId);
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DisLikeMbtiRequest {
+public class DislikeCancelMbtiRequest {
 
     private Long kidId;
 

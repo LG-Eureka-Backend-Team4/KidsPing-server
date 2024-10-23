@@ -7,7 +7,8 @@ import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
-import com.kidsworld.kidsping.domain.like.dto.request.DisLikeMbtiRequest;
+import com.kidsworld.kidsping.domain.like.dto.request.DislikeCancelMbtiRequest;
+import com.kidsworld.kidsping.domain.like.dto.request.DislikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeCancelMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
@@ -63,18 +64,20 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
         MbtiStatus currentKidMbtiStatus = kidMbti.getMbtiStatus();
 
         MbtiScore mbtiScore = MbtiScore.from(kidMbti);
-        mbtiScore.updateMbtiScore(book.getBookMbti(), like.getLikeStatus(), LikeStatus.CANCEL);
-        MbtiStatus updatedKidMbtiStatus = MbtiCalculator.determineMbtiType(mbtiScore);
+        if (like.getLikeStatus() == LikeStatus.LIKE) {
+            mbtiScore.updateMbtiScore(book.getBookMbti(), like.getLikeStatus(), LikeStatus.CANCEL);
+            MbtiStatus updatedKidMbtiStatus = MbtiCalculator.determineMbtiType(mbtiScore);
 
-        kidMbti.updateMbti(mbtiScore, updatedKidMbtiStatus);
-        if (currentKidMbtiStatus != updatedKidMbtiStatus) {
-            createKidMbtiHistory(kid, updatedKidMbtiStatus);
+            kidMbti.updateMbti(mbtiScore, updatedKidMbtiStatus);
+            if (currentKidMbtiStatus != updatedKidMbtiStatus) {
+                createKidMbtiHistory(kid, updatedKidMbtiStatus);
+            }
+            likeMbtiRepository.delete(like);
         }
-        likeMbtiRepository.delete(like);
     }
 
     @Override
-    public void dislike(DisLikeMbtiRequest disLikeMbtiRequest) {
+    public void dislike(DislikeMbtiRequest disLikeMbtiRequest) {
         Kid kid = findKidByKidId(disLikeMbtiRequest.getKidId());
         Book book = findBookByBookId(disLikeMbtiRequest.getBookId());
         LikeMbti disLike = handleLikeOrDislike(kid, book, LikeStatus.DISLIKE);
@@ -92,18 +95,41 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
         }
     }
 
+    @Override
+    public void dislikeCancel(DislikeCancelMbtiRequest dislikeCancelMbtiRequest) {
+        Kid kid = findKidByKidId(dislikeCancelMbtiRequest.getKidId());
+        Book book = findBookByBookId(dislikeCancelMbtiRequest.getBookId());
+        LikeMbti like = findLikeMbtiByKidAndBook(kid, book);
+
+        KidMbti kidMbti = kid.getKidMbti();
+        MbtiStatus currentKidMbtiStatus = kidMbti.getMbtiStatus();
+
+        MbtiScore mbtiScore = MbtiScore.from(kidMbti);
+        if (like.getLikeStatus() == LikeStatus.DISLIKE) {
+            mbtiScore.updateMbtiScore(book.getBookMbti(), like.getLikeStatus(), LikeStatus.CANCEL);
+            MbtiStatus updatedKidMbtiStatus = MbtiCalculator.determineMbtiType(mbtiScore);
+
+            kidMbti.updateMbti(mbtiScore, updatedKidMbtiStatus);
+            if (currentKidMbtiStatus != updatedKidMbtiStatus) {
+                createKidMbtiHistory(kid, updatedKidMbtiStatus);
+            }
+            likeMbtiRepository.delete(like);
+        }
+    }
+
+
     private LikeMbti findLikeMbtiByKidAndBook(Kid kid, Book book) {
         return likeMbtiRepository.findLikeMbtiByKidAndBook(kid, book)
-                .orElseThrow(() -> new RuntimeException("취소할 좋아요가 없습니다."));
+                .orElseThrow(() -> new RuntimeException("취소할 좋아요 또는 싫어요가 없습니다."));
     }
 
     private Kid findKidByKidId(Long kidId) {
-        return kidRepository.findKidWithMbti(kidId)
+        return kidRepository.findKidWithMbtiByKidId(kidId)
                 .orElseThrow(() -> new RuntimeException("no kid"));
     }
 
     private Book findBookByBookId(Long bookId) {
-        return bookRepository.findBookWithMbti(bookId)
+        return bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new RuntimeException("no book"));
     }
 
