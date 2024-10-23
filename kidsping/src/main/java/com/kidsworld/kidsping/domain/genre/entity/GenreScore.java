@@ -4,6 +4,7 @@ import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,16 @@ public class GenreScore extends BaseTimeEntity {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @Builder
+    public GenreScore(Kid kid, Genre genre, Integer score, Boolean isDeleted) {
+        this.kid = kid;
+        this.genre = genre;
+        this.score = score;
+        this.isDeleted = isDeleted;
+    }
+
+    public void updateScore(int additionalScore) {
+        this.score += additionalScore;
+    }
 }

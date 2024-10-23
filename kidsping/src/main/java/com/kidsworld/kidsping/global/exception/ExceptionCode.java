@@ -16,9 +16,12 @@ public enum ExceptionCode {
     // 예외 코드 예시
     NOT_FOUND_BOOK(10101, HttpStatus.NOT_FOUND, "존재하지 않는 책입니다."),
 
+    NOT_FOUND_KID(10103, HttpStatus.NOT_FOUND, "존재하지 않는 아이입니다."),
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
-    DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error");
+    DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
+
+    NOT_FOUND_GENRE(30201, HttpStatus.NOT_FOUND, "존재하지 않는 장르입니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;
