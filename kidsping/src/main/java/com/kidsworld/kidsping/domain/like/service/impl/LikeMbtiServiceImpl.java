@@ -103,7 +103,7 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     }
 
     private Book findBookByBookId(Long bookId) {
-        return bookRepository.findBookWithMbti(bookId)
+        return bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new RuntimeException("no book"));
     }
 
