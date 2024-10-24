@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.global.util;
 
-import com.kidsworld.kidsping.global.common.dto.MbtiScore;
+import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.common.enums.PersonalityTrait;
 

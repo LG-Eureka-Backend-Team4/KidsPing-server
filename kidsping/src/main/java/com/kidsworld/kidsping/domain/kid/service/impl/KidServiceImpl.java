@@ -23,7 +23,7 @@ import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
-import com.kidsworld.kidsping.global.common.dto.MbtiScore;
+import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.time.LocalDate;
@@ -146,7 +146,8 @@ public class KidServiceImpl implements KidService {
         if (kidMbti == null) {
             kidMbti = createKidMbti(diagnosisRequest, mbtiStatus);
         } else {
-            updateKidMbti(kidMbti, diagnosisRequest, mbtiStatus);
+            MbtiScore mbtiScore = MbtiScore.from(diagnosisRequest);
+            kidMbti.updateMbti(mbtiScore, mbtiStatus);
         }
         kid.updateKidMbti(kidMbti);
     }
@@ -164,20 +165,6 @@ public class KidServiceImpl implements KidService {
                 .mbtiStatus(mbtiStatus)
                 .build();
         return kidMBTIRepository.save(kidMbti);
-    }
-
-    private void updateKidMbti(KidMbti kidMbti, KidMbtiDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
-        kidMbti.updateMbtiScore(
-                diagnosisRequest.getExtraversionScore(),
-                diagnosisRequest.getIntroversionScore(),
-                diagnosisRequest.getSensingScore(),
-                diagnosisRequest.getIntuitionScore(),
-                diagnosisRequest.getThinkingScore(),
-                diagnosisRequest.getFeelingScore(),
-                diagnosisRequest.getJudgingScore(),
-                diagnosisRequest.getPerceivingScore(),
-                mbtiStatus
-        );
     }
 
     private void saveKidMbtiHistory(Kid kid, MbtiStatus mbtiStatus) {

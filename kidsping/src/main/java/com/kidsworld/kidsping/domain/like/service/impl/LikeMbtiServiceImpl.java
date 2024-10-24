@@ -16,7 +16,7 @@ import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeMbtiService;
-import com.kidsworld.kidsping.global.common.dto.MbtiScore;
+import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.custom.NotFoundException;
