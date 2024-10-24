@@ -18,6 +18,8 @@ import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeMbtiService;
 import com.kidsworld.kidsping.global.common.dto.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
+import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import com.kidsworld.kidsping.global.exception.custom.NotFoundException;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -118,17 +120,17 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
 
     private Kid findKidByKidId(Long kidId) {
         return kidRepository.findKidWithMbtiByKidId(kidId)
-                .orElseThrow(() -> new RuntimeException("no kid"));
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_KID));
     }
 
     private Book findBookByBookId(Long bookId) {
         return bookRepository.findBookWithMbtiByBookId(bookId)
-                .orElseThrow(() -> new RuntimeException("no book"));
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_BOOK));
     }
 
     private LikeMbti findLikeMbtiByKidAndBook(Kid kid, Book book) {
         return likeMbtiRepository.findLikeMbtiByKidAndBook(kid, book)
-                .orElseThrow(() -> new RuntimeException("취소할 좋아요 또는 싫어요가 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.ALREADY_LIKED_OR_DISLIKED));
     }
 
     private LikeMbti createLike(Kid kid, Book book) {
@@ -167,7 +169,7 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
             currentLike.savePreviousLikeStatus(currentLike.getLikeStatus());
             // 현재 상태와 요청 상태가 동일한 경우 예외 발생
             if (currentLike.getLikeStatus() == requestedStatus) {
-                throw new RuntimeException("이미 좋아요 또는 싫어요를 했어요");
+                throw new NotFoundException(ExceptionCode.ALREADY_LIKED_OR_DISLIKED);
             }
             // 현재 상태를 요청 상태로 수정
             currentLike.changeLikeStatus(requestedStatus);

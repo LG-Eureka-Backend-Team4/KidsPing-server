@@ -1,12 +1,13 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
-import com.kidsworld.kidsping.domain.kid.dto.response.*;
-import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
-import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
-import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -28,7 +29,6 @@ import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,7 +133,7 @@ public class KidServiceImpl implements KidService {
 
     private Kid findKidById(Long kidId) {
         return kidRepository.findById(kidId)
-                .orElseThrow(() -> new RuntimeException("no kid"));
+                .orElseThrow(NotFoundKidException::new);
     }
 
     private void saveMbtiResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
@@ -188,7 +188,6 @@ public class KidServiceImpl implements KidService {
                 .build();
         kidMBTIHistoryRepository.save(kidMbtiHistory);
     }
-
 
 
     /*
