@@ -3,10 +3,7 @@ package com.kidsworld.kidsping.domain.kid.controller;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.*;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
@@ -20,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -61,7 +60,7 @@ public class KidController {
 
     /*
     자녀 프로필 삭제
-     */
+    */
     @DeleteMapping("/{kidId}")
     public ResponseEntity<ApiResponse<DeleteKidResponse>> deleteKid(@PathVariable Long kidId) {
         DeleteKidResponse response = kidService.deleteKid(kidId);
@@ -69,10 +68,21 @@ public class KidController {
     }
 
     /*
-     * 자녀 성향 진단
-     * */
+    자녀 성향 진단
+    */
     @PostMapping("/mbti/diagonosis")
     public void diagnoseKidMbti(@RequestBody KidMbtiDiagnosisRequest diagnosisRequest) {
         kidService.diagnoseKidMbti(diagnosisRequest);
     }
+
+    /*
+    자녀 성향 히스토리 조회
+    */
+    @GetMapping("/{kidId}/mbtihistory")
+    public ResponseEntity<ApiResponse<List<GetKidMbtiHistoryResponse>>> getKidMbtiHistory(@PathVariable Long kidId) {
+        List<GetKidMbtiHistoryResponse> response = kidService.getKidMbtiHistory(kidId);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 히스토리를 성공적으로 조회했습니다.");
+    }
+
+
 }
