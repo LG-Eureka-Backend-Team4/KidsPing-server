@@ -21,6 +21,9 @@ public enum ExceptionCode {
     NOT_FOUND_KID(40401, HttpStatus.NOT_FOUND, "존재하지 않는 아이입니다."),
     MAX_KID_LIMIT_REACHED(40202, HttpStatus.BAD_REQUEST,"최대 5명의 자녀만 등록할 수 있습니다."),
 
+    //Like
+    NOT_FOUND_LIKE_GENRE(50201, HttpStatus.NOT_FOUND, "해당 좋아요/싫어요가 없습니다."),
+    ALREADY_LIKED_OR_DISLIKED(50202, HttpStatus.BAD_REQUEST, "이미 좋아요 또는 싫어요를 했습니다."),
 
     // 회원
     UNAUTHORIZED_USER(80201, HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),

@@ -9,6 +9,8 @@ import com.kidsworld.kidsping.domain.like.entity.LikeGenre;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.domain.like.repository.LikeGenreRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
+import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import com.kidsworld.kidsping.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,7 +103,7 @@ public class LikeGenreServiceImpl implements LikeGenreService {
             currentLike.savePreviousLikeStatus(currentLike.getLikeStatus());
             // 요청한 상태가 현재 상태와 같다면 예외를 발생시킴
             if (currentLike.getLikeStatus() == requestedStatus) {
-                throw new RuntimeException("이미 이 상태입니다.");
+                throw new GlobalException(ExceptionCode.ALREADY_LIKED_OR_DISLIKED);
             }
             // 현재 상태를 요청 상태로 변경
             currentLike.changeLikeStatus(requestedStatus);
@@ -114,16 +116,16 @@ public class LikeGenreServiceImpl implements LikeGenreService {
 
     private LikeGenre findLikeGenreByKidAndBook(Kid kid, Book book) {
         return likeGenreRepository.findByKidIdAndBookId(kid.getId(), book.getId())
-                .orElseThrow(() -> new RuntimeException("해당 좋아요/싫어요가 없습니다."));
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_LIKE_GENRE));
     }
 
     private Kid findKidByKidId(Long kidId) {
         return kidRepository.findById(kidId)
-                .orElseThrow(() -> new RuntimeException("해당 사용자가 없습니다."));
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_KID));
     }
 
     private Book findBookById(Long bookId) {
         return bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("해당 도서가 없습니다."));
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
     }
 }
