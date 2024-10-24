@@ -11,7 +11,7 @@ import org.apache.tomcat.jni.FileInfo;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "mbti_info")
 public class MbtiInfo extends BaseTimeEntity {
 
@@ -27,6 +27,7 @@ public class MbtiInfo extends BaseTimeEntity {
 
     private String description;
 
+    private boolean isDeleted = Boolean.FALSE;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_model", length = 50)
