@@ -26,7 +26,7 @@ public class MbtiInfoServiceImpl implements MbtiInfoService {
     @Override
     @Transactional
     public GetMbtiInfoResponse getMbtiInfo(Long mbtiInfoId) {
-        MbtiInfo mbtiInfo = mbtiInfoRepository.findById(mbtiInfoId)
+        MbtiInfo mbtiInfo = mbtiInfoRepository.findActiveMbtiInfo(mbtiInfoId)
                 .orElseThrow(NotFoundMbtiInfoException::new);
 
         return GetMbtiInfoResponse.from(mbtiInfo);
