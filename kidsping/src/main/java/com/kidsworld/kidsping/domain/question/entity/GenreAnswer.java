@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.Column;
@@ -27,9 +28,12 @@ public class GenreAnswer extends BaseTimeEntity {
     @JoinColumn(name = "kid_id")
     private Kid kid;
 
-    @Column(length = 10)
-    private String content;
-
     @Column(name= "is_deleted")
     private Boolean isDeleted;
+
+    @Builder
+    public GenreAnswer(Kid kid, Boolean isDeleted) {
+        this.kid = kid;
+        this.isDeleted = isDeleted;
+    }
 }

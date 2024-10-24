@@ -8,6 +8,7 @@ import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
 import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,38 @@ public class GenreScoreServiceImpl implements GenreScoreService {
     }
 
     @Override
+    public void updateScore(Kid kid, Genre genre, LikeStatus previousStatus, LikeStatus newStatus) {
+        GenreScore genreScore = genreScoreRepository.findByKidAndGenre(kid, genre)
+                .orElseGet(() -> GenreScore.builder()
+                        .kid(kid)
+                        .genre(genre)
+                        .score(0)
+                        .isDeleted(false)
+                        .build());
+
+        int scoreChange = calculateScoreChange(previousStatus, newStatus);
+        genreScore.updateScore(scoreChange);
+
+        genreScoreRepository.save(genreScore);
+    }
+
+    private int calculateScoreChange(LikeStatus previousStatus, LikeStatus newStatus) {
+        if (previousStatus == LikeStatus.LIKE && newStatus == LikeStatus.DISLIKE) {
+            return -4;  // 좋아요에서 싫어요로: -4점
+        } else if (previousStatus == LikeStatus.DISLIKE && newStatus == LikeStatus.LIKE) {
+            return +4;  // 싫어요에서 좋아요로: +4점
+        } else if (newStatus == LikeStatus.LIKE) {
+            return +2;  // 처음 좋아요: +2점
+        }else if (newStatus == LikeStatus.DISLIKE) {
+            return -2;  // 처음 싫어요: -2점
+        } else if (newStatus == LikeStatus.CANCEL && previousStatus == LikeStatus.LIKE) {
+            return -2;  // 좋아요 취소: -2점
+        } else if (newStatus == LikeStatus.CANCEL && previousStatus == LikeStatus.DISLIKE) {
+            return +2;  // 싫어요 취소: +2점
+        }
+        return 0;
+    }
+  
     @Transactional(readOnly = true)
     public TopGenreResponse getTopGenre(Long kidId) {
         Kid kid = kidRepository.findById(kidId)

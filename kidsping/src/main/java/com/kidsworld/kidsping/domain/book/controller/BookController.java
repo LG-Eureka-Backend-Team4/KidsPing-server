@@ -23,7 +23,7 @@ public class BookController {
     public ResponseEntity<ApiResponse<BookResponse>> createBook(@RequestBody BookRequest request) {
         BookResponse response = bookService.createBook(request);
         return ApiResponse.created("/api/books/" + response.getId(),
-                ExceptionCode.OK.getCode(),
+                ExceptionCode.CREATED.getCode(),
                 response,
                 "도서가 성공적으로 등록되었습니다.");
     }
@@ -69,7 +69,7 @@ public class BookController {
             @PathVariable Long genreId,
             Pageable pageable) {
         Page<BookResponse> response = bookService.getBooksByGenre(genreId, pageable);
-        return ApiResponse.ok(200, response, "장르별 도서 목록을 성공적으로 조회했습니다.");
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "장르별 도서 목록을 성공적으로 조회했습니다.");
     }
 
     @GetMapping("/top-genre")
