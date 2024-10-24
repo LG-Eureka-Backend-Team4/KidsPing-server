@@ -1,13 +1,12 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
-
+import com.kidsworld.kidsping.domain.kid.dto.response.*;
+import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
+import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
+import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -27,6 +26,9 @@ import com.kidsworld.kidsping.global.common.dto.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,7 @@ public class KidServiceImpl implements KidService {
     private final UserRepository userRepository;
     private final KidMbtiRepository kidMBTIRepository;
     private final KidMbtiHistoryRepository kidMBTIHistoryRepository;
+
 
     /*
     자녀 프로필 생성
@@ -185,4 +188,23 @@ public class KidServiceImpl implements KidService {
                 .build();
         kidMBTIHistoryRepository.save(kidMbtiHistory);
     }
+
+
+
+    /*
+    자녀 성향 히스토리 조회
+    */
+    @Override
+    public List<GetKidMbtiHistoryResponse> getKidMbtiHistory(Long kidId) {
+        Kid kid = kidRepository.findById(kidId)
+                .orElseThrow(NotFoundKidException::new);
+
+        List<KidMbtiHistory> histories = kidMBTIHistoryRepository.findActiveHistories(kid);
+
+        return histories.stream()
+                .map(GetKidMbtiHistoryResponse::new)
+                .collect(Collectors.toList());
+    }
+
+
 }

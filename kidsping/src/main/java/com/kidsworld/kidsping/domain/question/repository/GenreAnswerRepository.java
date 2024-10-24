@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GenreAnswerRepository extends JpaRepository<GenreAnswer, Long> {
+  
     List<GenreAnswer> findByKidIdAndIsDeletedFalse(Long kidId);
 
     Optional<GenreAnswer> findByIdAndIsDeletedFalse(Long id);
@@ -22,4 +23,10 @@ public interface GenreAnswerRepository extends JpaRepository<GenreAnswer, Long> 
     @Modifying
     @Query("delete from GenreAnswer ga where ga.id in :expiredGenreAnswerIds")
     void deleteExpiredGenreAnswer(@Param("expiredGenreAnswerIds") List<Long> expiredGenreAnswerIds);
+  
+    @Query("SELECT ga FROM GenreAnswer ga " +
+            "WHERE ga.kid.id = :kidId " +
+            "AND ga.isDeleted = false " +
+            "ORDER BY ga.createdAt DESC")
+    List<GenreAnswer> findByKidIdAndIsDeletedFalse(@Param("kidId") Long kidId);
 }

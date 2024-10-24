@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
 @Entity
 @Getter
@@ -26,6 +27,7 @@ public class GenreScore extends BaseTimeEntity {
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
 
+    @Range(min = 0, max = 100)
     @Column(name = "score", nullable = false)
     private Integer score;
 

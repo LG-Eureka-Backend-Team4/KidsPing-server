@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class GenreFile {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")
     private Long id;
 
@@ -21,6 +22,6 @@ public class GenreFile {
     private String randomValue;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id")
+    @JoinColumn(name = "genre_id")
     private Genre genre;
 }
