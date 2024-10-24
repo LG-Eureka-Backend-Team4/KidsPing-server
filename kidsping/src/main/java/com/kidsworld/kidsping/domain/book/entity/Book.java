@@ -17,7 +17,7 @@ public class Book extends BaseTimeEntity{
     @Column(name = "book_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "mbti_id", nullable = false)
     private BookMbti bookMbti;
 
