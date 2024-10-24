@@ -32,7 +32,7 @@ public class MbtiQuestion extends BaseTimeEntity {
     private PersonalityTrait personalityTrait;
 
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = Boolean.FALSE;
 
     public MbtiQuestion(String content, PersonalityTrait personalityTrait, Boolean isDeleted) {
         this.content = content;

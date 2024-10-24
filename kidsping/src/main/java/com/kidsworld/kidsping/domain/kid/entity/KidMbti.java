@@ -7,9 +7,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,6 +59,14 @@ public class KidMbti extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private MbtiStatus mbtiStatus;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kid_id")
+    private Kid kid;
+
+    public void updateKid(Kid kid) {
+        this.kid = kid;
+    }
 
     @Builder
     public KidMbti(Integer eScore, Integer iScore, Integer sScore, Integer nScore, Integer tScore, Integer fScore,
