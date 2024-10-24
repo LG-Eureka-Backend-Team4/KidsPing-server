@@ -7,7 +7,7 @@ public enum RoleModel {
 
     // ISTP - 논리적이고 실용적인 장인형
     ISTP_LEESUNSHIN("이순신", "철저한 전략과 실용적인 사고로 나라를 지킨 명장"),
-    
+
     // ISFJ - 헌신적이고 성실한 수호자형
     ISFJ_SHINSAIMDANG("신사임당", "가족과 자녀 교육에 헌신하며 뛰어난 예술 감각을 발휘한 어머니"),
 
@@ -38,8 +38,8 @@ public enum RoleModel {
     // ENTP - 영리하고 창의적인 논쟁가형
     ENTP_JANG_YOUNGSIL("장영실", "창의적 발명으로 조선을 빛낸 과학자"),
 
-    // ENTJ - 대담하고 카리스마 넘치는 통솔자형
-    ENTJ_KIMYAKYONG("김약용", "실용적 개혁을 주도한 조선 후기의 정치가"),
+    // ENFJ - 따뜻하고 사교적인 리더형
+    ENFJ_YU_GWANSUN("유관순", "독립운동의 상징이 된 민족의 영웅"),
 
     // ESTP - 모험적이고 적극적인 사업가형
     ESTP_SHINCHAEHO("신채호", "현실적인 문제를 직시하고 행동으로 저항의 메시지를 전달한 독립운동가"),
@@ -48,7 +48,7 @@ public enum RoleModel {
     ESFP_KIM_GWANGSEOK("김광석", "대중음악의 선두주자로 자유로운 영혼을 표현한 가수"),
 
     // ISTJ - 현실적이고 책임감 있는 관리자형
-    ISTJ_YOOSUNGRYONG("유성룡", "임진왜란 당시 체계적인 전략과 계획으로 국가를 지킨 조선의 관리"),
+    ISTJ_YOOSUNGRYONG("류성룡", "임진왜란 당시 체계적인 전략과 계획으로 국가를 지킨 조선의 관리"),
 
     // ISFP - 겸손하고 섬세한 예술가형
     ISFP_HANKANG("한강", "감성적이고 예술적인 문학 세계를 펼친 대한민국의 노벨 문학상 수상 작가");
