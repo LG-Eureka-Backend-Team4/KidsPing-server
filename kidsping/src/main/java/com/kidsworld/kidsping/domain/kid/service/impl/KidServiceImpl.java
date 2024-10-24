@@ -1,12 +1,13 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
-import com.kidsworld.kidsping.domain.kid.dto.response.*;
-import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
-import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
-import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -22,13 +23,12 @@ import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
-import com.kidsworld.kidsping.global.common.dto.MbtiScore;
+import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,7 +133,7 @@ public class KidServiceImpl implements KidService {
 
     private Kid findKidById(Long kidId) {
         return kidRepository.findById(kidId)
-                .orElseThrow(() -> new RuntimeException("no kid"));
+                .orElseThrow(NotFoundKidException::new);
     }
 
     private void saveMbtiResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
@@ -146,7 +146,8 @@ public class KidServiceImpl implements KidService {
         if (kidMbti == null) {
             kidMbti = createKidMbti(diagnosisRequest, mbtiStatus);
         } else {
-            updateKidMbti(kidMbti, diagnosisRequest, mbtiStatus);
+            MbtiScore mbtiScore = MbtiScore.from(diagnosisRequest);
+            kidMbti.updateMbti(mbtiScore, mbtiStatus);
         }
         kid.updateKidMbti(kidMbti);
     }
@@ -166,20 +167,6 @@ public class KidServiceImpl implements KidService {
         return kidMBTIRepository.save(kidMbti);
     }
 
-    private void updateKidMbti(KidMbti kidMbti, KidMbtiDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
-        kidMbti.updateMbtiScore(
-                diagnosisRequest.getExtraversionScore(),
-                diagnosisRequest.getIntroversionScore(),
-                diagnosisRequest.getSensingScore(),
-                diagnosisRequest.getIntuitionScore(),
-                diagnosisRequest.getThinkingScore(),
-                diagnosisRequest.getFeelingScore(),
-                diagnosisRequest.getJudgingScore(),
-                diagnosisRequest.getPerceivingScore(),
-                mbtiStatus
-        );
-    }
-
     private void saveKidMbtiHistory(Kid kid, MbtiStatus mbtiStatus) {
         KidMbtiHistory kidMbtiHistory = KidMbtiHistory.builder()
                 .kid(kid)
@@ -188,7 +175,6 @@ public class KidServiceImpl implements KidService {
                 .build();
         kidMBTIHistoryRepository.save(kidMbtiHistory);
     }
-
 
 
     /*

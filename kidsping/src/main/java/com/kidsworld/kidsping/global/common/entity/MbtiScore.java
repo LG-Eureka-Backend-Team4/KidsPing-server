@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.global.common.dto;
+package com.kidsworld.kidsping.global.common.entity;
 
 import com.kidsworld.kidsping.domain.book.entity.BookMbti;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;

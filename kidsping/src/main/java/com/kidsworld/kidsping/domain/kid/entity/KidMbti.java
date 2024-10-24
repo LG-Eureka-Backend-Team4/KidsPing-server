@@ -1,7 +1,7 @@
 package com.kidsworld.kidsping.domain.kid.entity;
 
-import com.kidsworld.kidsping.global.common.dto.MbtiScore;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
+import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -71,20 +71,6 @@ public class KidMbti extends BaseTimeEntity {
     @Builder
     public KidMbti(Integer eScore, Integer iScore, Integer sScore, Integer nScore, Integer tScore, Integer fScore,
                    Integer jScore, Integer pScore, MbtiStatus mbtiStatus) {
-        this.eScore = eScore;
-        this.iScore = iScore;
-        this.sScore = sScore;
-        this.nScore = nScore;
-        this.tScore = tScore;
-        this.fScore = fScore;
-        this.jScore = jScore;
-        this.pScore = pScore;
-        this.mbtiStatus = mbtiStatus;
-    }
-
-    public void updateMbtiScore(Integer eScore, Integer iScore, Integer sScore, Integer nScore,
-                                Integer tScore, Integer fScore, Integer jScore, Integer pScore,
-                                MbtiStatus mbtiStatus) {
         this.eScore = eScore;
         this.iScore = iScore;
         this.sScore = sScore;
