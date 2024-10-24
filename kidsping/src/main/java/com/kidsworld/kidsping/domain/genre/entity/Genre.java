@@ -6,9 +6,12 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -30,8 +33,10 @@ public class Genre extends BaseTimeEntity {
     private GenreFile genreFile;
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<GenreScore> genreScores = new ArrayList<>();
+    @BatchSize(size = 100)
+    private Set<GenreScore> genreScores = new HashSet<>();
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Book> books = new ArrayList<>();
+    @BatchSize(size = 100)
+    private Set<Book> books = new HashSet<>();
 }
