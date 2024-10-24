@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class KidMbtiDiagnosisRequest {
 
-    private Long userId;
+    private Long kidId;
     private int extraversionScore;
     private int introversionScore;
     private int sensingScore;

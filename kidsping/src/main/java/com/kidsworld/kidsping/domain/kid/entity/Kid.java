@@ -48,8 +48,7 @@ public class Kid extends BaseTimeEntity {
     @JoinColumn(name = "file_id")
     private KidFile kidfile;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kid_mbti_id")
+    @OneToOne(mappedBy = "kid", fetch = FetchType.LAZY)
     private KidMbti kidMbti;
 
     public void update(Gender gender, String name, LocalDate birth) {
@@ -60,6 +59,7 @@ public class Kid extends BaseTimeEntity {
 
     public void updateKidMbti(KidMbti kidMbti) {
         this.kidMbti = kidMbti;
+        kidMbti.updateKid(this);
     }
 
     @Builder
