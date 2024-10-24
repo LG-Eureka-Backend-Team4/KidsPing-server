@@ -12,6 +12,7 @@ public enum ExceptionCode {
 
     // 정상 응답 코드
     OK(200, HttpStatus.OK, "success"),
+    CREATED(201, HttpStatus.CREATED, "successfully created"),
 
     // 예외 코드 예시
     NOT_FOUND_BOOK(10101, HttpStatus.NOT_FOUND, "존재하지 않는 책입니다."),
