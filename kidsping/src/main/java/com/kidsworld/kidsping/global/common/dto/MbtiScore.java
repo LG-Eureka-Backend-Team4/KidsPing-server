@@ -1,6 +1,7 @@
 package com.kidsworld.kidsping.global.common.dto;
 
 import com.kidsworld.kidsping.domain.book.entity.BookMbti;
+import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import lombok.Builder;
@@ -42,6 +43,19 @@ public class MbtiScore {
                 .fScore(kidMBTI.getFScore())
                 .jScore(kidMBTI.getJScore())
                 .pScore(kidMBTI.getPScore())
+                .build();
+    }
+
+    public static MbtiScore from(KidMbtiDiagnosisRequest KidMbtiDiagnosisRequest) {
+        return MbtiScore.builder()
+                .eScore(KidMbtiDiagnosisRequest.getExtraversionScore())
+                .iScore(KidMbtiDiagnosisRequest.getIntroversionScore())
+                .sScore(KidMbtiDiagnosisRequest.getSensingScore())
+                .nScore(KidMbtiDiagnosisRequest.getIntuitionScore())
+                .tScore(KidMbtiDiagnosisRequest.getThinkingScore())
+                .fScore(KidMbtiDiagnosisRequest.getFeelingScore())
+                .jScore(KidMbtiDiagnosisRequest.getJudgingScore())
+                .pScore(KidMbtiDiagnosisRequest.getPerceivingScore())
                 .build();
     }
 

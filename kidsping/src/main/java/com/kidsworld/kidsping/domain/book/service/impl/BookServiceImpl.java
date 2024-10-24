@@ -7,7 +7,9 @@ import com.kidsworld.kidsping.domain.book.entity.BookMbti;
 import com.kidsworld.kidsping.domain.book.repository.BookMbtiRepository;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.book.service.BookService;
+import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
+import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final BookMbtiRepository bookMbtiRepository;
+    private final GenreScoreRepository genreScoreRepository;
 
     @Override
     @Transactional
@@ -64,6 +67,11 @@ public class BookServiceImpl implements BookService {
     public BookResponse getBook(Long id) {
         Book book = bookRepository.findBookWithMbtiByBookId(id)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
+
+        if (book.getIsDeleted()) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_BOOK);
+        }
+
         return BookResponse.from(book);
     }
 
@@ -122,5 +130,27 @@ public class BookServiceImpl implements BookService {
         book.setIsDeleted(true);
         book.getBookMbti().setIsDeleted(true);
         bookRepository.save(book);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookResponse> getBooksByGenre(Long genreId, Pageable pageable) {
+        if (!genreRepository.existsById(genreId)) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_GENRE);
+        }
+
+        Page<Book> books = bookRepository.findBookByGenreId(genreId, pageable);
+        return books.map(BookResponse::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookResponse> getTopGenreBooks(Pageable pageable) {
+        Genre topGenre = genreScoreRepository.findTopGenre()
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_GENRE));
+
+        Page<Book> books = bookRepository.findBookByGenreId(topGenre.getId(), pageable);
+
+        return books.map(BookResponse::from);
     }
 }

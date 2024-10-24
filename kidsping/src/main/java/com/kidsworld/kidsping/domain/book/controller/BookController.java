@@ -63,4 +63,18 @@ public class BookController {
                 null,
                 "도서가 성공적으로 삭제되었습니다.");
     }
+
+    @GetMapping("/genre/{genreId}")
+    public ResponseEntity<ApiResponse<Page<BookResponse>>> getBooksByGenre(
+            @PathVariable Long genreId,
+            Pageable pageable) {
+        Page<BookResponse> response = bookService.getBooksByGenre(genreId, pageable);
+        return ApiResponse.ok(200, response, "장르별 도서 목록을 성공적으로 조회했습니다.");
+    }
+
+    @GetMapping("/top-genre")
+    public ResponseEntity<ApiResponse<Page<BookResponse>>> getTopGenreBooks(Pageable pageable) {
+        Page<BookResponse> response = bookService.getTopGenreBooks(pageable);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "최다 조회 장르의 도서 목록을 성공적으로 조회했습니다.");
+    }
 }

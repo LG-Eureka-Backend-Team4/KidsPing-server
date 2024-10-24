@@ -1,5 +1,9 @@
 package com.kidsworld.kidsping.global.exception.handler;
 
+import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
+import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
+import com.kidsworld.kidsping.domain.mbti.exception.NotFoundMbtiInfoException;
+import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.GlobalException;
@@ -31,4 +35,47 @@ public class GlobalExceptionHandler {
                         e.getErrorExceptionCode().getCode())
                 );
     }
+
+    @ExceptionHandler(NotFoundMbtiInfoException.class)
+    public ResponseEntity<ApiResponse> NotFoundMbtiInfoException(NotFoundMbtiInfoException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
+
+
+    @ExceptionHandler(NotFoundKidException.class)
+    public ResponseEntity<ApiResponse> notFoundKidExceptionHandler(NotFoundKidException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
+
+    @ExceptionHandler(MaxKidLimitReachedException.class)
+    public ResponseEntity<ApiResponse> maxKidLimitReachedExceptionHandler(MaxKidLimitReachedException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
+
+    @ExceptionHandler(UnauthorizedUserException.class)
+    public ResponseEntity<ApiResponse> unauthorizedUserExceptionHandler(UnauthorizedUserException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
+
+
 }
