@@ -17,18 +17,11 @@ public class GenreAnswerController {
 
     private final GenreAnswerService genreAnswerService;
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<GenreAnswerResponse>> getGenreAnswer(@PathVariable Long id) {
-        GenreAnswerResponse response = genreAnswerService.getGenreAnswer(id);
-        return ApiResponse.ok(200, response, "장르 응답을 성공적으로 조회했습니다.");
-    }
-
     @GetMapping("/kid/{kidId}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<GenreAnswerResponse>>> getGenreAnswersByKidId(
+    public ResponseEntity<ApiResponse<List<GenreAnswerResponse>>> getGenreAnswerHistory(
             @PathVariable Long kidId) {
-        List<GenreAnswerResponse> responses = genreAnswerService.getGenreAnswersByKidId(kidId);
-        return ApiResponse.ok(200, responses, "아이의 장르 응답 목록을 성공적으로 조회했습니다.");
+        List<GenreAnswerResponse> responses = genreAnswerService.getGenreAnswerHistory(kidId);
+        return ApiResponse.ok(200, responses, "아이의 장르 응답 이력을 성공적으로 조회했습니다.");
     }
 }
