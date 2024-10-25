@@ -73,4 +73,15 @@ public class EventServiceImpl implements EventService {
 
         return UpdateEventResponse.of(updated);
     }
+
+    @Override
+    public DeleteEventResponse deleteEvent(Long id) {
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException());
+
+        eventRepository.delete(event);
+
+        return DeleteEventResponse.builder().id(id).build();
+    }
 }

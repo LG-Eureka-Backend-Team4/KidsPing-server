@@ -53,4 +53,11 @@ public class EventController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<DeleteEventResponse>> deleteEvent(@PathVariable Long id)
+    {
+        DeleteEventResponse response = eventService.deleteEvent(id);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
+    }
+
 }
