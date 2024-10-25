@@ -37,4 +37,19 @@ public class EventServiceImpl implements EventService {
         return CreateEventResponse.of(saved);
     }
 
+    @Override
+    public GetEventResponse getEvent(Long id) {
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException());
+
+        return GetEventResponse.of(event);
+    }
+
+    @Override
+    public Page<GetEventResponse> getAllEvents(Pageable pageable) {
+
+        return eventRepository.findAll(pageable)
+                .map(GetEventResponse::of);
+    }
 }

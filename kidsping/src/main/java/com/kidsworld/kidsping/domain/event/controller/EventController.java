@@ -30,4 +30,18 @@ public class EventController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<GetEventResponse>> getEvent(@PathVariable Long id)
+    {
+        GetEventResponse response = eventService.getEvent(id);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<GetEventResponse>>> getAllEvents(Pageable pageable)
+    {
+        Page<GetEventResponse> response = eventService.getAllEvents(pageable);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
+    }
+
 }
