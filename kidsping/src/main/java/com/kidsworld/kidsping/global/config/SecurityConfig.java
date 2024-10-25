@@ -52,7 +52,7 @@ public class SecurityConfig {
                         })
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(200);
-                            response.getWriter().write("Logged out successfully");
+                            response.getWriter().write("Logged out successfully !");
                         }));
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
