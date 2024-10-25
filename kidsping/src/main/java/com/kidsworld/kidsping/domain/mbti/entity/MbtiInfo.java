@@ -2,15 +2,17 @@ package com.kidsworld.kidsping.domain.mbti.entity;
 
 import com.kidsworld.kidsping.domain.mbti.entity.enums.RoleModel;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
-import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.tomcat.jni.FileInfo;
+
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "mbti_info")
 public class MbtiInfo extends BaseTimeEntity {
