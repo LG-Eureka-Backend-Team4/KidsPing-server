@@ -16,5 +16,6 @@ public interface EventService {
     CreateEventResponse createEvent(CreateEventRequest createEventRequest);
     GetEventResponse getEvent(Long id);
     Page<GetEventResponse> getAllEvents(Pageable pageable);
+    UpdateEventResponse updateEvent(Long id, UpdateEventRequest updateEventRequest);
 
 }

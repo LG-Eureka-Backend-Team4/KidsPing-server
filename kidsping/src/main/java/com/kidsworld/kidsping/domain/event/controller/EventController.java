@@ -44,4 +44,13 @@ public class EventController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<UpdateEventResponse>> updateEvent(
+            @PathVariable Long id,
+            @RequestBody UpdateEventRequest request) {
+
+        UpdateEventResponse response = eventService.updateEvent(id, request);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
+    }
+
 }

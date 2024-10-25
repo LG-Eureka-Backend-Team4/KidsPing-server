@@ -52,4 +52,25 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAll(pageable)
                 .map(GetEventResponse::of);
     }
+
+    @Override
+    public UpdateEventResponse updateEvent(Long id, UpdateEventRequest updateEventRequest) {
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException());
+
+        Event build = Event.builder()
+                .id(event.getId())
+                .eventName(updateEventRequest.getEventName())
+                .eventContent(updateEventRequest.getEventContent())
+                .maxParticipants(updateEventRequest.getMaxParticipants())
+                .announceTime(updateEventRequest.getAnnounceTime())
+                .startTime(updateEventRequest.getStartTime())
+                .endTime(updateEventRequest.getEndTime())
+                .build();
+
+        Event updated = eventRepository.save(build);
+
+        return UpdateEventResponse.of(updated);
+    }
 }
