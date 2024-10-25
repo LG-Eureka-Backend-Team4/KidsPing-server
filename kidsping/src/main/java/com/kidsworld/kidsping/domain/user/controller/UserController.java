@@ -52,6 +52,17 @@ public class UserController {
         return ResponseEntity.ok(LoginResponse.builder().email(userDetails.getUsername()).jwt(jwt).build());
     }
 
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal UserDetails userDetails) {
+
+        userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(UserNotFoundException::new);
+
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "로그아웃 되었습니다.");
+    }
+
+
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<GetUserResponse>> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
