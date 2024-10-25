@@ -29,6 +29,9 @@ public enum ExceptionCode {
     UNAUTHORIZED_USER(80201, HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     NOT_FOUND_USER(80202, HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
 
+    // Event
+    NOT_FOUND_EVENT(20201, HttpStatus.NOT_FOUND, "존재하지 않는 이벤트입니다."),
+
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
     DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
