@@ -5,6 +5,6 @@ import com.kidsworld.kidsping.global.exception.GlobalException;
 
 public class UserNotFoundException extends GlobalException {
     public UserNotFoundException() {
-        super(ExceptionCode.UNAUTHORIZED_USER);
+        super(ExceptionCode.NOT_FOUND_USER);
     }
 }
