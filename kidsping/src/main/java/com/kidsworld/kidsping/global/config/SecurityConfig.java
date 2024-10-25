@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
+                                "/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/api/users/**"
@@ -41,7 +41,19 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .addLogoutHandler((request, response, authentication) -> {
+                            String authHeader = request.getHeader("Authorization");
+                            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                                response.setHeader("Authorization", "");
+                            }
+                        })
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(200);
+                            response.getWriter().write("Logged out successfully");
+                        }));
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
