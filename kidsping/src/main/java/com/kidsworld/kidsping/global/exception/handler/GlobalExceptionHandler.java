@@ -7,6 +7,7 @@ import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.GlobalException;
+import com.kidsworld.kidsping.global.exception.custom.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -77,5 +78,13 @@ public class GlobalExceptionHandler {
                 );
     }
 
-
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiResponse> notFoundExceptionHandler(NotFoundException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
 }
