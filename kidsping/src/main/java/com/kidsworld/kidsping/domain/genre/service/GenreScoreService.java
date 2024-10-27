@@ -1,11 +1,9 @@
 package com.kidsworld.kidsping.domain.genre.service;
 
+import com.kidsworld.kidsping.domain.genre.dto.response.TopGenreResponse;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
-
-import com.kidsworld.kidsping.domain.genre.dto.response.TopGenreResponse;
-
 
 import java.util.List;
 
@@ -16,4 +14,5 @@ public interface GenreScoreService {
 
     TopGenreResponse getTopGenre(Long kidId);
 
+    void resetGenreScoreForKid(Long kidId);
 }

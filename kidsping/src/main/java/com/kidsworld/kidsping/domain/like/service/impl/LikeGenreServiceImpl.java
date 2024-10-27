@@ -113,6 +113,13 @@ public class LikeGenreServiceImpl implements LikeGenreService {
         return requestedStatus == LikeStatus.LIKE ? createLike(kid, book) : createDisLike(kid, book);
     }
 
+    // 재진단 좋아요 초기화
+    @Override
+    @Transactional
+    public void resetGenreLikesForKid(Long kidId) {
+        likeGenreRepository.deleteByKidId(kidId);
+    }
+
 
     private LikeGenre findLikeGenreByKidAndBook(Kid kid, Book book) {
         return likeGenreRepository.findByKidIdAndBookId(kid.getId(), book.getId())
