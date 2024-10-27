@@ -8,5 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface LikeGenreRepository extends JpaRepository<LikeGenre, Long> {
+
     Optional<LikeGenre> findByKidIdAndBookId(Long kidId, Long bookId);
+
+    void deleteByKidId(Long kidId);
 }

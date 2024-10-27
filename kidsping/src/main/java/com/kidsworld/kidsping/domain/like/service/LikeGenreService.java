@@ -6,4 +6,5 @@ public interface LikeGenreService {
     void likeCancel(Long kidId, Long bookId);
     void dislike(Long kidId, Long bookId);
     void dislikeCancel(Long kidId, Long bookId);
+    void resetGenreLikesForKid(Long kidId);
 }

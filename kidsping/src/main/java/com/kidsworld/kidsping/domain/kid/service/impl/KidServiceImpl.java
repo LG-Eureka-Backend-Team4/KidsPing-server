@@ -1,13 +1,10 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
+import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.*;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -18,6 +15,7 @@ import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
@@ -26,12 +24,13 @@ import com.kidsworld.kidsping.domain.user.repository.UserRepository;
 import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,6 +42,8 @@ public class KidServiceImpl implements KidService {
     private final UserRepository userRepository;
     private final KidMbtiRepository kidMBTIRepository;
     private final KidMbtiHistoryRepository kidMBTIHistoryRepository;
+    private final LikeGenreService likeGenreService;
+    private final GenreScoreService genreScoreService;
 
 
     /*
@@ -171,6 +172,8 @@ public class KidServiceImpl implements KidService {
             MbtiScore mbtiScore = MbtiScore.from(diagnosisRequest);
             currentKidMbti.updateMbti(mbtiScore, updatedMbtiStatus);
             // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
+            genreScoreService.resetGenreScoreForKid(kid.getId());
+            likeGenreService.resetGenreLikesForKid(kid.getId());
         }
         kid.updateKidMbti(currentKidMbti);
     }

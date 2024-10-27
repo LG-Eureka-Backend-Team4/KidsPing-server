@@ -25,4 +25,6 @@ public interface GenreScoreRepository extends JpaRepository<GenreScore, Long> {
             "ORDER BY SUM(gs.score) DESC " +
             "LIMIT 1")
     Optional<Genre> findTopGenre();
+
+    void deleteByKidId(Long kidId);
 }
