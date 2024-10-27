@@ -58,4 +58,8 @@ public class MbtiAnswer extends BaseTimeEntity {
         this.pScore = pScore;
         this.isDeleted = isDeleted;
     }
+
+    public void delete() {
+        isDeleted = true;
+    }
 }
