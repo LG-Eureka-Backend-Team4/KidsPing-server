@@ -68,6 +68,7 @@ class MbtiInfoServiceTest {
         verify(mbtiInfoRepository).findActiveMbtiInfo(mbtiInfoId);
     }
 
+
     @Test
     @DisplayName("존재하지 않는 MBTI 정보를 조회하면 예외가 발생한다")
     void MBTI_정보_없음_오류() {

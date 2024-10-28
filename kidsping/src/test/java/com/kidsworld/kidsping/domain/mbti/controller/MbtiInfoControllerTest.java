@@ -63,6 +63,7 @@ class MbtiInfoControllerTest {
                 .andExpect(jsonPath("$.data.description").value("상상력이 풍부하고 창의적인 성향"));
     }
 
+
     @Test
     @DisplayName("존재하지 않는 MBTI 정보를 조회하면 404 응답을 반환한다")
     void MBTI_정보_없음_오류() throws Exception {
