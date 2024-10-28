@@ -16,6 +16,9 @@ public enum ExceptionCode {
 
     // 예외 코드 예시
     NOT_FOUND_BOOK(10101, HttpStatus.NOT_FOUND, "존재하지 않는 책입니다."),
+    NOT_FOUND_KID_MBTI(10201, HttpStatus.NOT_FOUND, "아이의 MBTI 정보가 없습니다."),
+    NOT_FOUND_COMPATIBILITY(10202, HttpStatus.NOT_FOUND, "MBTI 궁합 정보를 찾을 수 없습니다."),
+
 
     // KID
     NOT_FOUND_KID(40401, HttpStatus.NOT_FOUND, "존재하지 않는 아이입니다."),
