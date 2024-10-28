@@ -36,10 +36,8 @@ public class Genre extends BaseTimeEntity {
     private String imageUrl;
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    @BatchSize(size = 100)
     private Set<GenreScore> genreScores = new HashSet<>();
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    @BatchSize(size = 100)
     private Set<Book> books = new HashSet<>();
 }
