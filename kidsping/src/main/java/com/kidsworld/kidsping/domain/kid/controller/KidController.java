@@ -34,8 +34,8 @@ public class KidController {
     @PostMapping
     public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(@RequestBody CreateKidRequest request) {
         CreateKidResponse response = kidService.createKid(request);
-        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.OK.getCode(), response,
-                "자녀 프로필이 성공적으로 추가되었습니다.");
+        return ApiResponse.created("/api/kids/" + response.getKidId(),
+                ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
     }
 
 
