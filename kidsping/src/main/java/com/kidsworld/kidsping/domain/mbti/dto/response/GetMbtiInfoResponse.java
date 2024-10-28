@@ -16,7 +16,7 @@ public class GetMbtiInfoResponse {
     private String title;
     private RoleModel roleModel;
     private String description;
-    private String fileId;
+    private String imageUrl;
 
     public static GetMbtiInfoResponse from(MbtiInfo mbtiInfo) {
         return GetMbtiInfoResponse.builder()
@@ -25,7 +25,7 @@ public class GetMbtiInfoResponse {
                 .title(mbtiInfo.getTitle())
                 .roleModel(mbtiInfo.getRoleModel())
                 .description(mbtiInfo.getDescription())
-                .fileId(mbtiInfo.getMbtifile() != null ? mbtiInfo.getMbtifile().getId().toString() : null)
+                .imageUrl(mbtiInfo.getUploadedFile().getFileUrl())
                 .build();
     }
 }

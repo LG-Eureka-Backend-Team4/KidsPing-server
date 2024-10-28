@@ -2,16 +2,20 @@ package com.kidsworld.kidsping.domain.genre.entity;
 
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -26,11 +30,10 @@ public class Genre extends BaseTimeEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name= "is_deleted")
+    @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @OneToOne(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private GenreFile genreFile;
+    private String imageUrl;
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 100)
