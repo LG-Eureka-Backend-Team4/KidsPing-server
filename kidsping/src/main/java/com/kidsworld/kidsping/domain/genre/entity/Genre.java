@@ -29,9 +29,6 @@ public class Genre extends BaseTimeEntity {
     @Column(name= "is_deleted")
     private Boolean isDeleted;
 
-    @OneToOne(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private GenreFile genreFile;
-
     @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @BatchSize(size = 100)
     private Set<GenreScore> genreScores = new HashSet<>();
