@@ -46,7 +46,6 @@ class MbtiInfoControllerTest {
                 .title("창의적인 몽상가")
                 .roleModel(RoleModel.INFP_YOON_DONGJU)
                 .description("상상력이 풍부하고 창의적인 성향")
-                .fileId("123")
                 .build();
 
         given(mbtiInfoService.getMbtiInfo(mbtiInfoId))
@@ -61,9 +60,9 @@ class MbtiInfoControllerTest {
                 .andExpect(jsonPath("$.data.mbtiStatus").value("INFP"))
                 .andExpect(jsonPath("$.data.title").value("창의적인 몽상가"))
                 .andExpect(jsonPath("$.data.roleModel").value("INFP_YOON_DONGJU"))
-                .andExpect(jsonPath("$.data.description").value("상상력이 풍부하고 창의적인 성향"))
-                .andExpect(jsonPath("$.data.fileId").value("123"));
+                .andExpect(jsonPath("$.data.description").value("상상력이 풍부하고 창의적인 성향"));
     }
+
 
     @Test
     @DisplayName("존재하지 않는 MBTI 정보를 조회하면 404 응답을 반환한다")
