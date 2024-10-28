@@ -3,6 +3,8 @@ package com.kidsworld.kidsping.domain.question.repository;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +18,7 @@ public interface MbtiAnswerRepository extends JpaRepository<MbtiAnswer, Long> {
     @Modifying
     @Query("delete from MbtiAnswer ma where ma.id IN :expiredMbtiAnswerIds")
     void deleteExpiredMbtiAnswer(@Param("expiredMbtiAnswerIds") List<Long> expiredMbtiAnswerIds);
+
+    @Query("select ma from MbtiAnswer ma where ma.kid.id = :kidId and ma.isDeleted = false")
+    Page<MbtiAnswer> findMbtiAnswersBy(@Param("kidId") Long kidId, Pageable pageable);
 }

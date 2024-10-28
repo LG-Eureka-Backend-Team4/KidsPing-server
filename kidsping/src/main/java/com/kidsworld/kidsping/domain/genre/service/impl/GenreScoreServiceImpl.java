@@ -98,4 +98,11 @@ public class GenreScoreServiceImpl implements GenreScoreService {
 
         return TopGenreResponse.from(topGenreScore.getGenre(), topGenreScore);
     }
+
+    // 재진단 장르점수 초기화
+    @Override
+    @Transactional
+    public void resetGenreScoreForKid(Long kidId){
+        genreScoreRepository.deleteByKidId(kidId);
+    }
 }

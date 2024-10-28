@@ -1,13 +1,10 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
+import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.*;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -18,6 +15,7 @@ import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
@@ -26,12 +24,13 @@ import com.kidsworld.kidsping.domain.user.repository.UserRepository;
 import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,6 +42,8 @@ public class KidServiceImpl implements KidService {
     private final UserRepository userRepository;
     private final KidMbtiRepository kidMBTIRepository;
     private final KidMbtiHistoryRepository kidMBTIHistoryRepository;
+    private final LikeGenreService likeGenreService;
+    private final GenreScoreService genreScoreService;
 
 
     /*
@@ -115,44 +116,75 @@ public class KidServiceImpl implements KidService {
     }
 
 
-    /*
-    자녀 성향 진단
-    */
+    /**
+     * 자녀의 MBTI를 진단하는 메서드
+     *
+     * @param diagnosisRequest 자녀의 MBTI 점수 데이터를 담은 KidMbtiDiagnosisRequest 객체
+     */
     @Transactional
     @Override
     public void diagnoseKidMbti(KidMbtiDiagnosisRequest diagnosisRequest) {
         Kid kid = findKidById(diagnosisRequest.getKidId());
         saveMbtiResponse(diagnosisRequest, kid);
 
-        MbtiScore mbtiScore = MbtiScore.from(diagnosisRequest);
-        MbtiStatus mbtiStatus = MbtiCalculator.determineMbtiType(mbtiScore);
-        updateOrCreateKidMbti(kid, diagnosisRequest, mbtiStatus);
+        MbtiScore diagnosedKidMbtiScore = MbtiScore.from(diagnosisRequest);
+        MbtiStatus updatedMbtiStatus = MbtiCalculator.determineMbtiType(diagnosedKidMbtiScore);
+        updateOrCreateKidMbti(kid, diagnosisRequest, updatedMbtiStatus);
 
-        saveKidMbtiHistory(kid, mbtiStatus);
+        saveKidMbtiHistory(kid, updatedMbtiStatus);
     }
 
+    /**
+     * 자녀 엔티티를 조회하는 메서드.
+     *
+     * @param kidId 자녀 엔티티의 id 값
+     */
     private Kid findKidById(Long kidId) {
         return kidRepository.findById(kidId)
                 .orElseThrow(NotFoundKidException::new);
     }
 
+    /**
+     * 자녀가 응답한 MBTI 설문 결과를 저장하는 메서드
+     *
+     * @param diagnosisRequest 자녀의 MBTI 점수 데이터를 담은 KidMbtiDiagnosisRequest 객체
+     * @param kid              자녀 엔티티
+     */
     private void saveMbtiResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
         MbtiAnswer mbtiAnswer = KidMbtiDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
         mbtiAnswerRepository.save(mbtiAnswer);
     }
 
-    private void updateOrCreateKidMbti(Kid kid, KidMbtiDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
-        KidMbti kidMbti = kid.getKidMbti();
-        if (kidMbti == null) {
-            kidMbti = createKidMbti(diagnosisRequest, mbtiStatus);
+    /**
+     * 자녀의 현재 MBTI를 조회하여 null 인경우 새로 생성하고 null 이 아니면 기존 자녀의 MBTI를 변경하는 메서드 자녀의 현재 MBTI(currentKidMbti)가 null 이면 처음 진단
+     * 자녀의 현재 MBTI(currentKidMbti)가 null 이 아니면 재진단
+     *
+     * @param kid               자녀 엔티티
+     * @param diagnosisRequest  자녀의 MBTI 점수 데이터를 담은 KidMbtiDiagnosisRequest 객체
+     * @param updatedMbtiStatus 설문 결과를 바탕으로 업데이트 된 자녀 MBTI 상태 객체
+     */
+    private void updateOrCreateKidMbti(Kid kid, KidMbtiDiagnosisRequest diagnosisRequest,
+                                       MbtiStatus updatedMbtiStatus) {
+        KidMbti currentKidMbti = kid.getKidMbti();
+        if (currentKidMbti == null) {
+            currentKidMbti = createKidMbti(diagnosisRequest, updatedMbtiStatus);
         } else {
             MbtiScore mbtiScore = MbtiScore.from(diagnosisRequest);
-            kidMbti.updateMbti(mbtiScore, mbtiStatus);
+            currentKidMbti.updateMbti(mbtiScore, updatedMbtiStatus);
+            // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
+            genreScoreService.resetGenreScoreForKid(kid.getId());
+            likeGenreService.resetGenreLikesForKid(kid.getId());
         }
-        kid.updateKidMbti(kidMbti);
+        kid.updateKidMbti(currentKidMbti);
     }
 
-    private KidMbti createKidMbti(KidMbtiDiagnosisRequest diagnosisRequest, MbtiStatus mbtiStatus) {
+    /**
+     * 자녀의 MBTI를 생성하는 메서드
+     *
+     * @param diagnosisRequest  자녀의 MBTI 점수 데이터를 담은 KidMbtiDiagnosisRequest 객체
+     * @param updatedMbtiStatus 설문 결과를 바탕으로 업데이트 된 자녀 MBTI 상태 객체
+     */
+    private KidMbti createKidMbti(KidMbtiDiagnosisRequest diagnosisRequest, MbtiStatus updatedMbtiStatus) {
         KidMbti kidMbti = KidMbti.builder()
                 .eScore(diagnosisRequest.getExtraversionScore())
                 .iScore(diagnosisRequest.getIntroversionScore())
@@ -162,15 +194,21 @@ public class KidServiceImpl implements KidService {
                 .tScore(diagnosisRequest.getThinkingScore())
                 .jScore(diagnosisRequest.getJudgingScore())
                 .pScore(diagnosisRequest.getPerceivingScore())
-                .mbtiStatus(mbtiStatus)
+                .mbtiStatus(updatedMbtiStatus)
                 .build();
         return kidMBTIRepository.save(kidMbti);
     }
 
-    private void saveKidMbtiHistory(Kid kid, MbtiStatus mbtiStatus) {
+    /**
+     * 자녀의 MBTI 히스토리를 생성하는 메서드
+     *
+     * @param kid               자녀 엔티티
+     * @param updatedMbtiStatus 설문 결과를 바탕으로 업데이트 된 자녀 MBTI 상태 객체
+     */
+    private void saveKidMbtiHistory(Kid kid, MbtiStatus updatedMbtiStatus) {
         KidMbtiHistory kidMbtiHistory = KidMbtiHistory.builder()
                 .kid(kid)
-                .mbtiStatus(mbtiStatus)
+                .mbtiStatus(updatedMbtiStatus)
                 .isDeleted(false)
                 .build();
         kidMBTIHistoryRepository.save(kidMbtiHistory);

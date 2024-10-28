@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.global.exception.handler;
 
+import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
 import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
 import com.kidsworld.kidsping.domain.mbti.exception.NotFoundMbtiInfoException;
@@ -29,6 +30,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse> userNotFoundExceptionHandler(GlobalException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
+
+    @ExceptionHandler(EventNotFoundException.class)
+    public ResponseEntity<ApiResponse> eventNotFoundExceptionHandler(GlobalException e) {
         return ResponseEntity
                 .status(e.getErrorExceptionCode().getHttpStatus())
                 .body(new ApiResponse(
