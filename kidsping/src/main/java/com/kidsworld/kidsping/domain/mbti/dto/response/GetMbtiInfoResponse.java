@@ -25,7 +25,7 @@ public class GetMbtiInfoResponse {
                 .title(mbtiInfo.getTitle())
                 .roleModel(mbtiInfo.getRoleModel())
                 .description(mbtiInfo.getDescription())
-                .imageUrl(mbtiInfo.getUploadedFile().getFileUrl())
+                .imageUrl(mbtiInfo.getImageUrl())
                 .build();
     }
 }

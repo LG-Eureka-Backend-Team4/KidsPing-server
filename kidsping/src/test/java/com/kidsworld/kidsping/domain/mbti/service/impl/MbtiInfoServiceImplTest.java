@@ -2,7 +2,6 @@ package com.kidsworld.kidsping.domain.mbti.service.impl;
 
 
 import com.kidsworld.kidsping.domain.mbti.dto.response.GetMbtiInfoResponse;
-import com.kidsworld.kidsping.domain.mbti.entity.MbtiFile;
 import com.kidsworld.kidsping.domain.mbti.entity.MbtiInfo;
 import com.kidsworld.kidsping.domain.mbti.entity.enums.RoleModel;
 import com.kidsworld.kidsping.domain.mbti.exception.NotFoundMbtiInfoException;
@@ -37,10 +36,6 @@ class MbtiInfoServiceTest {
         // given
         Long mbtiInfoId = 1L;
 
-
-        MbtiFile mbtiFile = MbtiFile.builder()
-                .id(Long.valueOf("1"))
-                .build();
 
 
         MbtiInfo mbtiInfo = MbtiInfo.builder()
