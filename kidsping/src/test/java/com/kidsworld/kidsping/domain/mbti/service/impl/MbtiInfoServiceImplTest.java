@@ -49,7 +49,6 @@ class MbtiInfoServiceTest {
                 .title("창의적인 몽상가")
                 .roleModel(RoleModel.INFP_YOON_DONGJU)
                 .description("상상력이 풍부하고 창의적인 성향")
-                .mbtifile(mbtiFile)
                 .build();
 
         given(mbtiInfoRepository.findActiveMbtiInfo(mbtiInfoId))
@@ -65,7 +64,6 @@ class MbtiInfoServiceTest {
         assertThat(response.getTitle()).isEqualTo("창의적인 몽상가");
         assertThat(response.getRoleModel()).isEqualTo(RoleModel.INFP_YOON_DONGJU);
         assertThat(response.getDescription()).isEqualTo("상상력이 풍부하고 창의적인 성향");
-        assertThat(response.getFileId()).isEqualTo("1");
 
         verify(mbtiInfoRepository).findActiveMbtiInfo(mbtiInfoId);
     }
