@@ -2,7 +2,18 @@ package com.kidsworld.kidsping.domain.mbti.entity;
 
 import com.kidsworld.kidsping.domain.mbti.entity.enums.RoleModel;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
-import jakarta.persistence.*;
+import com.kidsworld.kidsping.global.common.entity.UploadedFile;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,8 +46,11 @@ public class MbtiInfo extends BaseTimeEntity {
     @Column(name = "role_model", length = 50)
     private RoleModel roleModel;
 
-
-    @OneToOne
-    @JoinColumn(name="file_id")
-    private MbtiFile mbtifile;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileUrl", column = @Column(name = "file_url")),
+            @AttributeOverride(name = "uploadedFileName", column = @Column(name = "uploaded_file_name")),
+            @AttributeOverride(name = "serverFileName", column = @Column(name = "server_file_name"))
+    })
+    private UploadedFile uploadedFile;
 }

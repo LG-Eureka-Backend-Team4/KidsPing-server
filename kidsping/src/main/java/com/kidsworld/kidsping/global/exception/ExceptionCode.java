@@ -41,9 +41,13 @@ public enum ExceptionCode {
     NOT_FOUND_GENRE_ANSWER(70201, HttpStatus.NOT_FOUND, "존재하지 않는 장르 응답입니다."),
     NOT_FOUND_MBTI_ANSWER(70202, HttpStatus.NOT_FOUND, "존재하지 않는 성향 응답입니다."),
 
-
     //  MBTI (자녀 성향 조회)
-    NOT_FOUND_MBTI_INFO(60201, HttpStatus.NOT_FOUND, "MBTI 정보를 찾을 수 없습니다.");
+    NOT_FOUND_MBTI_INFO(60201, HttpStatus.NOT_FOUND, "MBTI 정보를 찾을 수 없습니다."),
+
+    FILE_COUNT_EXCEEDED(100001, HttpStatus.BAD_REQUEST, "파일 업로드 가능 개수는 10개 이하 입니다."),
+    FILE_SIZE_EXCEEDED(100002, HttpStatus.BAD_REQUEST, "업로드 할 수 있는 파일의 최대 크기는 5MB 입니다."),
+    FILE_UPLOAD_FAILED(100003, HttpStatus.BAD_REQUEST, "파일 업로드에 실패했습니다."),
+    FILE_NOT_FOUND(100004, HttpStatus.NOT_FOUND, "존재하지 않는 파일입니다.");
 
     private final Integer code;
     private final HttpStatus httpStatus;
