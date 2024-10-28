@@ -42,7 +42,7 @@ public class MbtiAnswerServiceImple implements MbtiAnswerService {
     }
 
     private MbtiAnswer findMbtiAnswerBy(Long mbtiAnswerId) {
-        return mbtiAnswerRepository.findById(mbtiAnswerId)
+        return mbtiAnswerRepository.findMbtiAnswerBy(mbtiAnswerId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MBTI_ANSWER));
     }
 
