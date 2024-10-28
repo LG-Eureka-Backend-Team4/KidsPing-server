@@ -4,12 +4,17 @@ import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponse;
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.book.entity.BookMbti;
+import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
 import com.kidsworld.kidsping.domain.book.repository.BookMbtiRepository;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.book.service.BookService;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
 import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
+import com.kidsworld.kidsping.domain.kid.entity.Kid;
+import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+import com.kidsworld.kidsping.global.common.entity.CommonCode;
+import com.kidsworld.kidsping.global.common.repository.CommonCodeRepository;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +31,8 @@ public class BookServiceImpl implements BookService {
     private final GenreRepository genreRepository;
     private final BookMbtiRepository bookMbtiRepository;
     private final GenreScoreRepository genreScoreRepository;
+    private final KidRepository kidRepository;
+    private final CommonCodeRepository commonCodeRepository;
 
     @Override
     @Transactional
@@ -152,5 +159,25 @@ public class BookServiceImpl implements BookService {
         Page<Book> books = bookRepository.findBookByGenreId(topGenre.getId(), pageable);
 
         return books.map(BookResponse::from);
+    }
+
+    @Override
+    public Page<BookResponse> getCompatibleBooks(Long kidId, Pageable pageable) {
+        Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        if (kid.getKidMbti() == null) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_KID_MBTI);
+        }
+
+        String kidMbtiType = kid.getKidMbti().getMbtiStatus().name();
+        CommonCode compatibilityCode = commonCodeRepository.findByGroupCodeAndCommonCode("MCP", kidMbtiType)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_COMPATIBILITY));
+
+        String compatibleMbtiStr = compatibilityCode.getCodeName();
+        MbtiType compatibleType = MbtiType.valueOf(compatibleMbtiStr);
+
+        return bookRepository.findCompatibleBooks(compatibleType, pageable)
+                .map(BookResponse::from);
     }
 }

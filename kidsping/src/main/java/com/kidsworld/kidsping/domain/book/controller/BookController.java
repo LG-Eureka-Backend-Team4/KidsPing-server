@@ -77,4 +77,11 @@ public class BookController {
         Page<BookResponse> response = bookService.getTopGenreBooks(pageable);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "최다 조회 장르의 도서 목록을 성공적으로 조회했습니다.");
     }
+
+    @GetMapping("/kid/{kidId}/compatibility")
+    public ResponseEntity<ApiResponse<Page<BookResponse>>> getCompatibleBooks (
+            @PathVariable Long kidId, Pageable pageable) {
+        Page<BookResponse> response = bookService.getCompatibleBooks(kidId, pageable);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "MBTI 궁합 도서를 성공적으로 조회했습니다.");
+    }
 }
