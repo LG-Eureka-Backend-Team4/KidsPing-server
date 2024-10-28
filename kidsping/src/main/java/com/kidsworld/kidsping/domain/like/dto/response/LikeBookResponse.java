@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class LikeBookResponse {
     private Long id;
     private Long genreId;
@@ -17,8 +16,20 @@ public class LikeBookResponse {
     private String author;
     private String publisher;
     private Integer age;
-    private String imageUrl;
     private MbtiType mbtiType;
+
+    @Builder
+    public LikeBookResponse(Long id, Long genreId, String title, String summary, String author, String publisher,
+                            Integer age, MbtiType mbtiType) {
+        this.id = id;
+        this.genreId = genreId;
+        this.title = title;
+        this.summary = summary;
+        this.author = author;
+        this.publisher = publisher;
+        this.age = age;
+        this.mbtiType = mbtiType;
+    }
 
     public static LikeBookResponse from(Book book) {
         return LikeBookResponse.builder()
@@ -29,7 +40,6 @@ public class LikeBookResponse {
                 .author(book.getAuthor())
                 .publisher(book.getPublisher())
                 .age(book.getAge())
-                .imageUrl(book.getImageUrl())
                 .mbtiType(book.getBookMbti().getBookMbtiType())
                 .build();
     }
