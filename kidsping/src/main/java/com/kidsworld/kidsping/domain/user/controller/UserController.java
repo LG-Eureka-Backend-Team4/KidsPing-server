@@ -52,7 +52,7 @@ public class UserController {
     로그인
     */
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<LoginResponse> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
@@ -60,7 +60,12 @@ public class UserController {
         final UserDetails userDetails = userService.loadUserByUsername(loginRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(LoginResponse.builder().email(userDetails.getUsername()).jwt(jwt).build());
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(UserNotFoundException::new);
+
+        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
+
+        return ResponseEntity.ok(new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList));
     }
 
 
@@ -116,6 +121,11 @@ public class UserController {
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
+        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
+
+        if (kidsList.isEmpty()) {
+            return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "등록된 자녀가 없습니다. 자녀를 등록해주세요.");
+        }
 
         List<GetKidListResponse> response = userService.getKidsList(user.getId());
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 목록을 성공적으로 조회했습니다.");
