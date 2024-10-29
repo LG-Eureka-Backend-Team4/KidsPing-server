@@ -229,14 +229,4 @@ public class KidServiceImpl implements KidService {
     }
 
 
-    /*
-    회원별 자녀 리스트 조회
-    */
-    @Override
-    @Transactional(readOnly = true)
-    public List<GetKidListResponse> getKidsList(Long userId) {
-        return kidRepository.findByUserIdAndIsDeletedFalse(userId).stream()
-                .map(GetKidListResponse::from)
-                .collect(Collectors.toList());
-    }
 }

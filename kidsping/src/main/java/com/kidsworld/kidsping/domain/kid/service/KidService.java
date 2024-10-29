@@ -19,7 +19,6 @@ public interface KidService {
 
     List<GetKidMbtiHistoryResponse> getKidMbtiHistory(Long kidId);
 
-    List<GetKidListResponse> getKidsList(Long userId);
 
     void diagnoseKidMbti(KidMbtiDiagnosisRequest diagnosisRequest);
 }
