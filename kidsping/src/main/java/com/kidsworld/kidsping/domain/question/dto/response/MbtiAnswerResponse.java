@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MbtiAnswerResponse {
 
-    private Long id;
+    private Long answerId;
     private Long kidId;
     private int eScore;
     private int iScore;
@@ -23,10 +23,10 @@ public class MbtiAnswerResponse {
     private int pScore;
 
     @Builder
-    private MbtiAnswerResponse(Long id, Long kidId, int eScore, int iScore, int sScore, int nScore, int tScore,
+    private MbtiAnswerResponse(Long answerId, Long kidId, int eScore, int iScore, int sScore, int nScore, int tScore,
                                int fScore,
                                int jScore, int pScore) {
-        this.id = id;
+        this.answerId = answerId;
         this.kidId = kidId;
         this.eScore = eScore;
         this.iScore = iScore;
@@ -40,7 +40,7 @@ public class MbtiAnswerResponse {
 
     public static MbtiAnswerResponse from(MbtiAnswer mbtiAnswer) {
         return MbtiAnswerResponse.builder()
-                .id(mbtiAnswer.getId())
+                .answerId(mbtiAnswer.getId())
                 .kidId(mbtiAnswer.getKid().getId())
                 .eScore(mbtiAnswer.getEScore())
                 .iScore(mbtiAnswer.getIScore())
