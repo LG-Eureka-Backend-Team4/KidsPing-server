@@ -3,18 +3,19 @@ package com.kidsworld.kidsping.domain.kid.controller;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.*;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.user.entity.User;
+import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
+import com.kidsworld.kidsping.domain.user.service.UserService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class KidController {
 
     private final KidService kidService;
+    private final UserService userService;
 
     /*
     자녀 프로필 생성
@@ -92,5 +94,20 @@ public class KidController {
     public ResponseEntity<ApiResponse<List<GetKidMbtiHistoryResponse>>> getKidMbtiHistory(@PathVariable Long kidId) {
         List<GetKidMbtiHistoryResponse> response = kidService.getKidMbtiHistory(kidId);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 히스토리를 성공적으로 조회했습니다.");
+    }
+
+
+    /*
+    회원 자녀 리스트 조회
+     */
+    @GetMapping("/list")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<GetKidListResponse>>> getKidList(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UserNotFoundException());
+
+        List<GetKidListResponse> response = kidService.getKidsList(user.getId());
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 목록을 성공적으로 조회했습니다."
+        );
     }
 }

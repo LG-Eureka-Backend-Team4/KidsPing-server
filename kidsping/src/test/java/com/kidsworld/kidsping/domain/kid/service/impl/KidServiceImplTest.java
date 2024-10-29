@@ -50,7 +50,7 @@ class KidServiceImplTest {
                 6, 7, 8);
         kidService.diagnoseKidMbti(kidMbtiDiagonsisRequest);
         Optional<Kid> kidWithMbti = kidRepository.findKidWithMbtiByKidId(kid.getId());
-        List<KidMbtiHistory> kidMbtiHistories = kidMbtiHistoryRepository.findActiveHistories(saveKid);
+        List<KidMbtiHistory> kidMbtiHistories = kidMbtiHistoryRepository.findTop5ActiveHistories(saveKid);
 
         // then
         assertThat(kidWithMbti).isPresent();
@@ -85,7 +85,7 @@ class KidServiceImplTest {
                 6, 71, 8);
         kidService.diagnoseKidMbti(reDiagnosisRequest);
         Optional<Kid> kidWithMbti = kidRepository.findKidWithMbtiByKidId(kid.getId());
-        List<KidMbtiHistory> kidMbtiHistories = kidMbtiHistoryRepository.findActiveHistories(saveKid);
+        List<KidMbtiHistory> kidMbtiHistories = kidMbtiHistoryRepository.findTop5ActiveHistories(saveKid);
 
         // then
         assertThat(kidWithMbti).isPresent();
@@ -121,7 +121,7 @@ class KidServiceImplTest {
                 16, 5, 18);
         kidService.diagnoseKidMbti(reDiagnosisRequest);
         Optional<Kid> kidWithMbti = kidRepository.findKidWithMbtiByKidId(kid.getId());
-        List<KidMbtiHistory> kidMbtiHistories = kidMbtiHistoryRepository.findActiveHistories(saveKid);
+        List<KidMbtiHistory> kidMbtiHistories = kidMbtiHistoryRepository.findTop5ActiveHistories(saveKid);
 
         // then
         assertThat(kidWithMbti).isPresent();
@@ -141,6 +141,7 @@ class KidServiceImplTest {
                 );
     }
 
+    
     @DisplayName("처음 진단 시 KidMbti가 생성되고, 재진단 시 동일한 KidMbti가 업데이트된다.")
     @Test
     void diagnoseKidMbti_createsOrUpdateKidMbtiOnFirstAndReDiagnosis() {
