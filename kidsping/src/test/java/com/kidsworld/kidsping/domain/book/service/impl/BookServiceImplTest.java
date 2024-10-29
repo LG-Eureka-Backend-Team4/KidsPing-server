@@ -10,6 +10,12 @@ import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
 import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
+import com.kidsworld.kidsping.domain.kid.entity.Kid;
+import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
+import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+import com.kidsworld.kidsping.global.common.entity.CommonCode;
+import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
+import com.kidsworld.kidsping.global.common.repository.CommonCodeRepository;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.GlobalException;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +60,21 @@ class BookServiceImplTest {
 
     @Mock
     private Genre genre;
+
+    @Mock
+    private KidRepository kidRepository;
+
+    @Mock
+    private CommonCodeRepository commonCodeRepository;
+
+    @Mock
+    private Kid kid;
+
+    @Mock
+    private KidMbti kidMbti;
+
+    @Mock
+    private CommonCode commonCode;
 
     private BookMbti bookMbti;
     private Book book;
@@ -240,5 +261,48 @@ class BookServiceImplTest {
         assertThat(book.getIsDeleted()).isTrue();
         assertThat(book.getBookMbti().getIsDeleted()).isTrue();
         verify(bookRepository).save(book);
+    }
+
+    @Test
+    @DisplayName("아이의 MBTI와 궁합이 맞는 도서 목록을 조회한다")
+    void getCompatibleBooks_Success() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
+
+        given(kidRepository.findKidWithMbtiByKidId(1L)).willReturn(Optional.of(kid));
+        given(kid.getKidMbti()).willReturn(kidMbti);
+        given(kidMbti.getMbtiStatus()).willReturn(MbtiStatus.ENFP);
+        given(commonCodeRepository.findByGroupCodeAndCommonCode("MCP", "ENFP"))
+                .willReturn(Optional.of(commonCode));
+        given(commonCode.getCodeName()).willReturn("INTJ");
+        given(bookRepository.findCompatibleBooks(MbtiType.INTJ, pageable)).willReturn(bookPage);
+
+        // When
+        Page<BookResponse> response = bookService.getCompatibleBooks(1L, pageable);
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.getContent()).hasSize(1);
+        BookResponse bookResponse = response.getContent().get(0);
+        assertThat(bookResponse.getId()).isEqualTo(1L);
+        assertThat(bookResponse.getTitle()).isEqualTo("테스트 책");
+
+        verify(kidRepository).findKidWithMbtiByKidId(1L);
+        verify(commonCodeRepository).findByGroupCodeAndCommonCode("MCP", "ENFP");
+        verify(bookRepository).findCompatibleBooks(MbtiType.INTJ, pageable);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 아이의 MBTI 궁합 도서 조회 시 예외가 발생한다")
+    void getCompatibleBooks_KidNotFound() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        given(kidRepository.findKidWithMbtiByKidId(999L)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> bookService.getCompatibleBooks(999L, pageable))
+                .isInstanceOf(GlobalException.class)
+                .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.NOT_FOUND_KID);
     }
 }

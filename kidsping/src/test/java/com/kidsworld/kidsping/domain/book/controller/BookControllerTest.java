@@ -252,4 +252,38 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
                 .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()));
     }
+
+    @Test
+    @DisplayName("아이의 MBTI와 궁합이 맞는 MBTI 도서를 성공적으로 조회한다")
+    @WithMockUser
+    void getCompatibleBooks_Success() throws Exception {
+        // Given
+        Page<BookResponse> bookPage = new PageImpl<>(List.of(createBookResponse()),
+                PageRequest.of(0, 10), 1);
+        given(bookService.getCompatibleBooks(eq(1L), any())).willReturn(bookPage);
+
+        // When & Then
+        mockMvc.perform(get("/api/books/kid/1/compatibility")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
+                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()))
+                .andExpect(jsonPath("$.data.content[0].title").value(bookPage.getContent().get(0).getTitle()));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 아이의 MBTI 궁합 도서 조회 시 404 에러 발생한다")
+    @WithMockUser
+    void getCompatibleBooks_KidNotFound() throws Exception {
+        // Given
+        given(bookService.getCompatibleBooks(eq(999L), any())).willThrow(new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        // When & Then
+        mockMvc.perform(get("/api/books/kid/999/compatibility")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(ExceptionCode.NOT_FOUND_KID.getCode()));
+    }
 }
