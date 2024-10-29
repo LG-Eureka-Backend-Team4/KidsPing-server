@@ -1,5 +1,31 @@
 package com.kidsworld.kidsping.domain.kid.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
+import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
+import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
+import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import com.kidsworld.kidsping.global.jwt.JwtUtil;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,29 +34,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
-
-import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.*;
-import com.kidsworld.kidsping.domain.kid.service.KidService;
-import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
-import com.kidsworld.kidsping.global.exception.ExceptionCode;
-import com.kidsworld.kidsping.global.jwt.JwtUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-
-import java.util.List;
-
 
 
 @WebMvcTest(controllers = KidController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
@@ -89,7 +92,6 @@ class KidControllerTest {
                 .andExpect(jsonPath("$.data.gender").value("MALE"))
                 .andExpect(jsonPath("$.data.birth").value("2020-01-01"));
     }
-
 
 
     @Test
@@ -221,4 +223,34 @@ class KidControllerTest {
                 .andExpect(jsonPath("$.data[1].createdAt").value("2023-12-01T10:00:00"));
     }
 
+    @Test
+    @DisplayName("자녀 성향을 성공적으로 진단한다")
+    void diagnoseKidMbti_successfully() throws Exception {
+        // given
+        KidMbtiDiagnosisRequest kidMbtiDiagonsisRequest = createKidMbtiDiagonsisRequest(1L, 1, 2, 3, 4, 5,
+                6, 7, 8);
+
+        // when & then
+        mockMvc.perform(post("/api/kids/mbti/diagonosis")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(kidMbtiDiagonsisRequest))
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    private static KidMbtiDiagnosisRequest createKidMbtiDiagonsisRequest(Long kidId, int e, int i, int s, int n, int t,
+                                                                         int f, int j, int p) {
+        return KidMbtiDiagnosisRequest.builder()
+                .kidId(kidId)
+                .extraversionScore(e)
+                .introversionScore(i)
+                .sensingScore(s)
+                .intuitionScore(n)
+                .thinkingScore(t)
+                .feelingScore(f)
+                .judgingScore(j)
+                .perceivingScore(p)
+                .build();
+    }
 }

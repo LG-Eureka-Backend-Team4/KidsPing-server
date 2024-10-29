@@ -4,7 +4,11 @@ import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.*;
+import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -24,13 +28,12 @@ import com.kidsworld.kidsping.domain.user.repository.UserRepository;
 import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -115,7 +118,6 @@ public class KidServiceImpl implements KidService {
         return new DeleteKidResponse(kidId);
     }
 
-
     /**
      * 자녀의 MBTI를 진단하는 메서드
      *
@@ -140,7 +142,7 @@ public class KidServiceImpl implements KidService {
      * @param kidId 자녀 엔티티의 id 값
      */
     private Kid findKidById(Long kidId) {
-        return kidRepository.findById(kidId)
+        return kidRepository.findKidBy(kidId)
                 .orElseThrow(NotFoundKidException::new);
     }
 
@@ -151,7 +153,7 @@ public class KidServiceImpl implements KidService {
      * @param kid              자녀 엔티티
      */
     private void saveMbtiResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
-        MbtiAnswer mbtiAnswer = KidMbtiDiagnosisRequest.getMBTIResponse(diagnosisRequest, kid);
+        MbtiAnswer mbtiAnswer = KidMbtiDiagnosisRequest.getMbtiAnswer(diagnosisRequest, kid);
         mbtiAnswerRepository.save(mbtiAnswer);
     }
 
