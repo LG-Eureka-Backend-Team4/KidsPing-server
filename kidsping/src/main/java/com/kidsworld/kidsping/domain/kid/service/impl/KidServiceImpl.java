@@ -4,11 +4,7 @@ import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.*;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -225,7 +221,7 @@ public class KidServiceImpl implements KidService {
         Kid kid = kidRepository.findById(kidId)
                 .orElseThrow(NotFoundKidException::new);
 
-        List<KidMbtiHistory> histories = kidMBTIHistoryRepository.findActiveHistories(kid);
+        List<KidMbtiHistory> histories = kidMBTIHistoryRepository.findTop5ActiveHistories(kid);
 
         return histories.stream()
                 .map(GetKidMbtiHistoryResponse::new)
@@ -233,4 +229,14 @@ public class KidServiceImpl implements KidService {
     }
 
 
+    /*
+    회원별 자녀 리스트 조회
+    */
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetKidListResponse> getKidsList(Long userId) {
+        return kidRepository.findByUserIdAndIsDeletedFalse(userId).stream()
+                .map(GetKidListResponse::from)
+                .collect(Collectors.toList());
+    }
 }
