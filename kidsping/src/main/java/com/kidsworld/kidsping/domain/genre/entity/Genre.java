@@ -15,7 +15,6 @@ import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -40,4 +39,8 @@ public class Genre extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<Book> books = new HashSet<>();
+
+    public Genre(String title) {
+        this.title = title;
+    }
 }

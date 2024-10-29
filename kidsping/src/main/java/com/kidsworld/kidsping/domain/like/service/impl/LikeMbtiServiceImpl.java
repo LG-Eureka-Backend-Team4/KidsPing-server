@@ -43,7 +43,7 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     @Transactional(readOnly = true)
     @Override
     public Page<LikeBookResponse> getBooksLiked(Long kidId, Pageable pageable) {
-        Page<LikeMbti> bookPage = likeMbtiRepository.findBooksByLikeMbtiId(kidId, pageable);
+        Page<LikeMbti> bookPage = likeMbtiRepository.findBooksByLikeMbtiId(kidId, pageable, LikeStatus.LIKE);
         return bookPage.map(likeMbti -> LikeBookResponse.from(likeMbti.getBook()));
     }
 
