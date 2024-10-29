@@ -4,10 +4,12 @@ import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -22,4 +24,11 @@ public interface LikeMbtiRepository extends JpaRepository<LikeMbti, Long> {
             + "JOIN FETCH b.bookMbti "
             + "where lb.kid.id = :kidId and b.isDeleted = false and lb.likeStatus = :likeStatus")
     Page<LikeMbti> findBooksByLikeMbtiId(@Param("kidId") Long kidId, Pageable pageable, LikeStatus likeStatus);
+
+    @Query("select lm.id from LikeMbti lm where lm.kid.id = :kidId")
+    List<Long> findLikeMbtiIdsBy(@Param("kidId") Long kidId);
+
+    @Modifying
+    @Query("delete from LikeMbti lm where lm.id in :likeMbtiIds")
+    void deleteLikeMbtis(@Param("likeMbtiIds") List<Long> likeMbtiIds);
 }
