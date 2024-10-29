@@ -141,6 +141,7 @@ class KidServiceImplTest {
                 );
     }
 
+    
     @DisplayName("처음 진단 시 KidMbti가 생성되고, 재진단 시 동일한 KidMbti가 업데이트된다.")
     @Test
     void diagnoseKidMbti_createsOrUpdateKidMbtiOnFirstAndReDiagnosis() {
