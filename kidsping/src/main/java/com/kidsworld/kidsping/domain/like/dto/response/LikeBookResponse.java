@@ -15,18 +15,20 @@ public class LikeBookResponse {
     private String summary;
     private String author;
     private String publisher;
+    private String imageUrl;
     private Integer age;
     private MbtiType mbtiType;
 
     @Builder
     public LikeBookResponse(Long id, Long genreId, String title, String summary, String author, String publisher,
-                            Integer age, MbtiType mbtiType) {
+                            String imageUrl, Integer age, MbtiType mbtiType) {
         this.id = id;
         this.genreId = genreId;
         this.title = title;
         this.summary = summary;
         this.author = author;
         this.publisher = publisher;
+        this.imageUrl = imageUrl;
         this.age = age;
         this.mbtiType = mbtiType;
     }
@@ -39,6 +41,7 @@ public class LikeBookResponse {
                 .summary(book.getSummary())
                 .author(book.getAuthor())
                 .publisher(book.getPublisher())
+                .imageUrl(book.getImageUrl())
                 .age(book.getAge())
                 .mbtiType(book.getBookMbti().getBookMbtiType())
                 .build();

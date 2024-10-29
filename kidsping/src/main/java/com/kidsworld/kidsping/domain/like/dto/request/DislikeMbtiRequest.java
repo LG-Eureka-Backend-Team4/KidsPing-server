@@ -10,4 +10,9 @@ public class DislikeMbtiRequest {
     private Long kidId;
 
     private Long bookId;
+
+    public DislikeMbtiRequest(Long kidId, Long bookId) {
+        this.kidId = kidId;
+        this.bookId = bookId;
+    }
 }

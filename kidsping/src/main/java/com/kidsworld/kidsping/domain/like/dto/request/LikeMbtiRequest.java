@@ -10,4 +10,9 @@ public class LikeMbtiRequest {
     private Long kidId;
 
     private Long bookId;
+
+    public LikeMbtiRequest(Long kidId, Long bookId) {
+        this.kidId = kidId;
+        this.bookId = bookId;
+    }
 }
