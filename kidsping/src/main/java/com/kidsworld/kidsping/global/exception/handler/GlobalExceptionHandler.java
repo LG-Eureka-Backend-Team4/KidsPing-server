@@ -3,6 +3,7 @@ package com.kidsworld.kidsping.global.exception.handler;
 import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
 import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
+import com.kidsworld.kidsping.domain.like.exception.EmpathyStatusConflictException;
 import com.kidsworld.kidsping.domain.mbti.exception.NotFoundMbtiInfoException;
 import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
@@ -91,6 +92,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiResponse> notFoundExceptionHandler(NotFoundException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
+
+    @ExceptionHandler(EmpathyStatusConflictException.class)
+    public ResponseEntity<ApiResponse> empathyStatusConflictExceptionHandler(EmpathyStatusConflictException e) {
         return ResponseEntity
                 .status(e.getErrorExceptionCode().getHttpStatus())
                 .body(new ApiResponse(

@@ -53,7 +53,7 @@ class MbtiAnswerControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.id").value(mbtiAnswerResponse.getId()))
+                .andExpect(jsonPath("$.data.answerId").value(mbtiAnswerResponse.getAnswerId()))
                 .andExpect(jsonPath("$.data.kidId").value(mbtiAnswerResponse.getKidId()))
                 .andExpect(jsonPath("$.data.escore").value(mbtiAnswerResponse.getEScore()))
                 .andExpect(jsonPath("$.message").value("아이의 성향 응답 이력을 성공적으로 조회했습니다."));
@@ -79,8 +79,8 @@ class MbtiAnswerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
                 .andExpect(jsonPath("$.data.content.length()").value(2))
-                .andExpect(jsonPath("$.data.content[0].id").value(response1.getId()))
-                .andExpect(jsonPath("$.data.content[1].id").value(response2.getId()))
+                .andExpect(jsonPath("$.data.content[0].answerId").value(response1.getAnswerId()))
+                .andExpect(jsonPath("$.data.content[1].answerId").value(response2.getAnswerId()))
                 .andExpect(jsonPath("$.message").value("아이의 성향 응답 이력 목록을 성공적으로 조회했습니다."));
     }
 
@@ -103,7 +103,7 @@ class MbtiAnswerControllerTest {
                                                                int t, int p, int j) {
         return MbtiAnswerResponse.builder()
                 .kidId(kidId)
-                .id(id)
+                .answerId(id)
                 .iScore(i)
                 .eScore(e)
                 .sScore(s)
