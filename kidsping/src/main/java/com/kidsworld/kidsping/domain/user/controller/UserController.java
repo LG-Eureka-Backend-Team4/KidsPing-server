@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -52,7 +54,7 @@ public class UserController {
     로그인
     */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<ApiResponse<LoginResponse>> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
@@ -65,7 +67,11 @@ public class UserController {
 
         List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
 
-        return ResponseEntity.ok(new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList));
+        return ApiResponse.ok(
+                ExceptionCode.OK.getCode(),
+                new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList),
+                "로그인에 성공했습니다."
+        );
     }
 
 
@@ -111,12 +117,12 @@ public class UserController {
 
 
     /*
-    회원 자녀 리스트 조회
+     회원 자녀 리스트 조회
      */
     @GetMapping("/{userId}/kidslist")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<GetKidListResponse>>> getKidList(@PathVariable("userId") Long userId,
-            @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId,
+                                                                @AuthenticationPrincipal UserDetails userDetails) {
 
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(UserNotFoundException::new);
@@ -127,11 +133,12 @@ public class UserController {
             return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "등록된 자녀가 없습니다. 자녀를 등록해주세요.");
         }
 
-        List<GetKidListResponse> response = userService.getKidsList(user.getId());
-        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 목록을 성공적으로 조회했습니다.");
+        List<Object> responseData = new ArrayList<>();
+        responseData.add(Collections.singletonMap("userId", user.getId()));
+        responseData.addAll(kidsList);
+
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
     }
-
-
 
 
 }
