@@ -71,8 +71,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookResponse getBook(Long id) {
-        Book book = bookRepository.findBookWithMbtiByBookId(id)
+    public BookResponse getBook(Long bookId) {
+        Book book = bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
 
         if (book.getIsDeleted()) {
@@ -91,8 +91,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponse updateBook(Long id, BookRequest bookRequest) {
-        Book book = bookRepository.findBookWithMbtiByBookId(id)
+    public BookResponse updateBook(Long bookId, BookRequest bookRequest) {
+        Book book = bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
 
         BookMbti updatedBookMbti = BookMbti.builder()
@@ -131,8 +131,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void deleteBook(Long id) {
-        Book book = bookRepository.findBookWithMbtiByBookId(id)
+    public void deleteBook(Long bookId) {
+        Book book = bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
         book.setIsDeleted(true);
         book.getBookMbti().setIsDeleted(true);
