@@ -14,4 +14,5 @@ public interface BookService {
     Page<BookResponse> getBooksByGenre(Long genreId, Pageable pageable);
     Page<BookResponse> getTopGenreBooks(Pageable pageable);
     Page<BookResponse> getCompatibleBooks(Long kidId, Pageable pageable);
+    Page<BookResponse> getTopGenreBooksByKid(Long kidId, Pageable pageable);
 }
