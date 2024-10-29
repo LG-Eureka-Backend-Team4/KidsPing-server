@@ -190,4 +190,19 @@ public class BookServiceImpl implements BookService {
         TopGenreResponse topGenre = genreScoreService.getTopGenre(kidId);
         return getBooksByGenre(topGenre.getGenreId(), pageable);
     }
+
+    @Override
+    public Page<BookResponse> getRecommendedBooks(Long kidId, Pageable pageable) {
+        Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        if (kid.getKidMbti() == null) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_KID_MBTI);
+        }
+
+        MbtiType kidMbtiType = MbtiType.valueOf(kid.getKidMbti().getMbtiStatus().name());
+
+        return bookRepository.findBooksByMbtiType(kidMbtiType, pageable)
+                .map(BookResponse::from);
+    }
 }
