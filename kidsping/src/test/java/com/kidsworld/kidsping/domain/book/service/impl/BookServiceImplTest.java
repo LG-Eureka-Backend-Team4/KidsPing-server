@@ -7,9 +7,11 @@ import com.kidsworld.kidsping.domain.book.entity.BookMbti;
 import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
 import com.kidsworld.kidsping.domain.book.repository.BookMbtiRepository;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
+import com.kidsworld.kidsping.domain.genre.dto.response.TopGenreResponse;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
 import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
+import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
@@ -76,14 +78,15 @@ class BookServiceImplTest {
     @Mock
     private CommonCode commonCode;
 
+    @Mock
+    private GenreScoreService genreScoreService;
+
     private BookMbti bookMbti;
     private Book book;
     private BookRequest bookRequest;
 
     @BeforeEach
     void setUp() {
-
-        ReflectionTestUtils.setField(genre, "id", 1L);
 
         bookMbti = BookMbti.builder()
                 .bookMbtiType(MbtiType.ENFP)
@@ -304,5 +307,119 @@ class BookServiceImplTest {
         assertThatThrownBy(() -> bookService.getCompatibleBooks(999L, pageable))
                 .isInstanceOf(GlobalException.class)
                 .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.NOT_FOUND_KID);
+    }
+
+    @Test
+    @DisplayName("아이의 최고 선호 장르의 도서 목록을 조회한다")
+    void getTopGenreBooksByKid_Success() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
+        TopGenreResponse topGenreResponse = TopGenreResponse.builder()
+                .genreId(1L)
+                .genreTitle("테스트 장르")
+                .score(100)
+                .build();
+
+        given(genre.getId()).willReturn(1L);
+        given(genreScoreService.getTopGenre(1L)).willReturn(topGenreResponse);
+        given(genreRepository.existsById(1L)).willReturn(true);
+        given(bookRepository.findBookByGenreId(1L, pageable)).willReturn(bookPage);
+
+        // When
+        Page<BookResponse> response = bookService.getTopGenreBooksByKid(1L, pageable);
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.getContent()).hasSize(1);
+        BookResponse bookResponse = response.getContent().get(0);
+        assertThat(bookResponse)
+                .satisfies(r -> {
+                    assertThat(r.getId()).isEqualTo(1L);
+                    assertThat(r.getGenreId()).isEqualTo(1L);
+                    assertThat(r.getTitle()).isEqualTo("테스트 책");
+                    assertThat(r.getMbtiType()).isEqualTo(MbtiType.ENFP);
+                });
+
+        verify(genreScoreService).getTopGenre(1L);
+        verify(genreRepository).existsById(1L);
+        verify(bookRepository).findBookByGenreId(1L, pageable);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 아이의 최고 선호 장르 도서 조회 시 예외가 발생한다")
+    void getTopGenreBooksByKid_KidNotFound() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        given(genreScoreService.getTopGenre(999L))
+                .willThrow(new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        // When & Then
+        assertThatThrownBy(() -> bookService.getTopGenreBooksByKid(999L, pageable))
+                .isInstanceOf(GlobalException.class)
+                .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.NOT_FOUND_KID);
+
+        verify(genreScoreService).getTopGenre(999L);
+    }
+
+    @Test
+    @DisplayName("아이의 MBTI에 맞는 도서 목록을 조회한다")
+    void getRecommendedBooks_Success() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
+
+        given(kidRepository.findKidWithMbtiByKidId(1L)).willReturn(Optional.of(kid));
+        given(kid.getKidMbti()).willReturn(kidMbti);
+        given(kidMbti.getMbtiStatus()).willReturn(MbtiStatus.ENFP);
+        given(bookRepository.findBooksByMbtiType(MbtiType.ENFP, pageable)).willReturn(bookPage);
+
+        // When
+        Page<BookResponse> response = bookService.getRecommendedBooks(1L, pageable);
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.getContent()).hasSize(1);
+        BookResponse bookResponse = response.getContent().get(0);
+        assertThat(bookResponse)
+                .satisfies(r -> {
+                    assertThat(r.getId()).isEqualTo(1L);
+                    assertThat(r.getTitle()).isEqualTo("테스트 책");
+                    assertThat(r.getMbtiType()).isEqualTo(MbtiType.ENFP);
+                });
+
+        verify(kidRepository).findKidWithMbtiByKidId(1L);
+        verify(bookRepository).findBooksByMbtiType(MbtiType.ENFP, pageable);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 아이의 MBTI 도서 조회 시 예외가 발생한다")
+    void getRecommendedBooks_KidNotFound() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        given(kidRepository.findKidWithMbtiByKidId(999L)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> bookService.getRecommendedBooks(999L, pageable))
+                .isInstanceOf(GlobalException.class)
+                .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.NOT_FOUND_KID);
+
+        verify(kidRepository).findKidWithMbtiByKidId(999L);
+    }
+
+    @Test
+    @DisplayName("MBTI 정보가 없는 아이의 도서 추천 조회 시 예외가 발생한다")
+    void getRecommendedBooks_MbtiNotFound() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        given(kidRepository.findKidWithMbtiByKidId(1L)).willReturn(Optional.of(kid));
+        given(kid.getKidMbti()).willReturn(null);
+
+        // When & Then
+        assertThatThrownBy(() -> bookService.getRecommendedBooks(1L, pageable))
+                .isInstanceOf(GlobalException.class)
+                .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.NOT_FOUND_KID_MBTI);
+
+        verify(kidRepository).findKidWithMbtiByKidId(1L);
     }
 }
