@@ -263,7 +263,7 @@ class BookControllerTest {
         given(bookService.getCompatibleBooks(eq(1L), any())).willReturn(bookPage);
 
         // When & Then
-        mockMvc.perform(get("/api/books/kid/1/compatibility")
+        mockMvc.perform(get("/api/books/kid/1/combi")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -280,10 +280,84 @@ class BookControllerTest {
         given(bookService.getCompatibleBooks(eq(999L), any())).willThrow(new GlobalException(ExceptionCode.NOT_FOUND_KID));
 
         // When & Then
-        mockMvc.perform(get("/api/books/kid/999/compatibility")
+        mockMvc.perform(get("/api/books/kid/999/combi")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.NOT_FOUND_KID.getCode()));
+    }
+
+    @Test
+    @DisplayName("아이의 최고 선호 장르의 도서 목록을 성공적으로 조회한다")
+    @WithMockUser
+    void getTopGenreBooksByKid_Success() throws Exception {
+        // Given
+        Page<BookResponse> bookPage = new PageImpl<>(
+                List.of(createBookResponse()), PageRequest.of(0, 10), 1
+        );
+        given(bookService.getTopGenreBooksByKid(eq(1L), any())).willReturn(bookPage);
+
+        // When & Then
+        mockMvc.perform(get("/api/books/kid/1/genre")
+                .param("page", "0")
+                .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
+                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()))
+                .andExpect(jsonPath("$.data.content[0].title").value(bookPage.getContent().get(0).getTitle()));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 아이의 최고 선호 장르 도서 조회 시 404 에러가 발생한다")
+    @WithMockUser
+    void getTopGenreBooksByKid_KidNotFound() throws Exception {
+        // Given
+        given(bookService.getTopGenreBooksByKid(eq(999L), any()))
+                .willThrow(new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        // When & Then
+        mockMvc.perform(get("/api/books/kid/999/genre")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(ExceptionCode.NOT_FOUND_KID.getCode()));
+    }
+
+    @Test
+    @DisplayName("아이의 MBTI에 맞는 도서 목록을 성공적으로 조회한다")
+    @WithMockUser
+    void getRecommendedBooks_Success() throws Exception {
+        // Given
+        Page<BookResponse> bookPage = new PageImpl<>(
+                List.of(createBookResponse()),
+                PageRequest.of(0, 10),
+                1
+        );
+        given(bookService.getRecommendedBooks(eq(1L), any())).willReturn(bookPage);
+
+        // When & Then
+        mockMvc.perform(get("/api/books/kid/1/mbti")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
+                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()))
+                .andExpect(jsonPath("$.data.content[0].title").value(bookPage.getContent().get(0).getTitle()));
+    }
+
+    @Test
+    @DisplayName("MBTI 정보가 없는 아이의 도서 추천 조회 시 404 에러가 발생한다")
+    @WithMockUser
+    void getRecommendedBooks_MbtiNotFound() throws Exception {
+        // Given
+        given(bookService.getRecommendedBooks(eq(1L), any()))
+                .willThrow(new GlobalException(ExceptionCode.NOT_FOUND_KID_MBTI));
+
+        // When & Then
+        mockMvc.perform(get("/api/books/kid/1/mbti")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(ExceptionCode.NOT_FOUND_KID_MBTI.getCode()));
     }
 }
