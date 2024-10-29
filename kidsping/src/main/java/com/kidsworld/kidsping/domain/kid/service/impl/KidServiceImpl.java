@@ -4,7 +4,11 @@ import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.*;
+import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
@@ -15,6 +19,7 @@ import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
@@ -43,6 +48,7 @@ public class KidServiceImpl implements KidService {
     private final KidMbtiHistoryRepository kidMBTIHistoryRepository;
     private final LikeGenreService likeGenreService;
     private final GenreScoreService genreScoreService;
+    private final LikeMbtiRepository likeMbtiRepository;
 
 
     /*
@@ -172,6 +178,8 @@ public class KidServiceImpl implements KidService {
             // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
             genreScoreService.resetGenreScoreForKid(kid.getId());
             likeGenreService.resetGenreLikesForKid(kid.getId());
+            List<Long> likeMbtiIds = likeMbtiRepository.findLikeMbtiIdsBy(kid.getId());
+            likeMbtiRepository.deleteLikeMbtis(likeMbtiIds);
         }
         kid.updateKidMbti(currentKidMbti);
     }
