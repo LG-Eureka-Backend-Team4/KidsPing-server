@@ -81,4 +81,8 @@ public class Kid extends BaseTimeEntity {
         this.kidMbti = kidMbti;
         this.user = user;
     }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }

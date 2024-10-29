@@ -2,6 +2,7 @@ package com.kidsworld.kidsping.domain.kid.dto.request;
 
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +20,22 @@ public class KidMbtiDiagnosisRequest {
     private int judgingScore;
     private int perceivingScore;
 
-    public static MbtiAnswer getMBTIResponse(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
+    @Builder
+    private KidMbtiDiagnosisRequest(Long kidId, int extraversionScore, int introversionScore, int sensingScore,
+                                    int intuitionScore, int thinkingScore, int feelingScore, int judgingScore,
+                                    int perceivingScore) {
+        this.kidId = kidId;
+        this.extraversionScore = extraversionScore;
+        this.introversionScore = introversionScore;
+        this.sensingScore = sensingScore;
+        this.intuitionScore = intuitionScore;
+        this.thinkingScore = thinkingScore;
+        this.feelingScore = feelingScore;
+        this.judgingScore = judgingScore;
+        this.perceivingScore = perceivingScore;
+    }
+
+    public static MbtiAnswer getMbtiAnswer(KidMbtiDiagnosisRequest diagnosisRequest, Kid kid) {
         return MbtiAnswer.builder()
                 .kid(kid)
                 .eScore(diagnosisRequest.getExtraversionScore())
