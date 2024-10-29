@@ -8,9 +8,11 @@ import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
 import com.kidsworld.kidsping.domain.book.repository.BookMbtiRepository;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.book.service.BookService;
+import com.kidsworld.kidsping.domain.genre.dto.response.TopGenreResponse;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
 import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
+import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.global.common.entity.CommonCode;
@@ -33,6 +35,7 @@ public class BookServiceImpl implements BookService {
     private final GenreScoreRepository genreScoreRepository;
     private final KidRepository kidRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final GenreScoreService genreScoreService;
 
     @Override
     @Transactional
@@ -179,5 +182,12 @@ public class BookServiceImpl implements BookService {
 
         return bookRepository.findCompatibleBooks(compatibleType, pageable)
                 .map(BookResponse::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookResponse> getTopGenreBooksByKid(Long kidId, Pageable pageable) {
+        TopGenreResponse topGenre = genreScoreService.getTopGenre(kidId);
+        return getBooksByGenre(topGenre.getGenreId(), pageable);
     }
 }
