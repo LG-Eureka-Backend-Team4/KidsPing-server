@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
-    User save(RegisterRequest registerRequest);
+    User registerUser(RegisterRequest registerRequest);
     Optional<User> findByEmail(String email);
 
     //회원의 자녀 리스트 조회

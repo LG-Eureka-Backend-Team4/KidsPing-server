@@ -47,14 +47,14 @@ public class UserController {
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         registerRequest.setPassword(encodedPassword);
 
-        User user = userService.save(registerRequest);
-        RegisterResponse resopnse = RegisterResponse.builder()
+        User user = userService.registerUser(registerRequest);
+        RegisterResponse response = RegisterResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .role(user.getRole())
                 .build();
 
-        return ApiResponse.ok(ExceptionCode.OK.getCode(), resopnse, "회원가입에 성공했습니다.");
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "회원가입에 성공했습니다.");
     }
 
     /*
@@ -89,7 +89,6 @@ public class UserController {
 
         return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "로그아웃 되었습니다.");
     }
-
 
 
     /*

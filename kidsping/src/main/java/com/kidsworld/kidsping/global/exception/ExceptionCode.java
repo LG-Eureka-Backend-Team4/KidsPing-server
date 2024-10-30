@@ -22,7 +22,7 @@ public enum ExceptionCode {
     MBTI_DIAGNOSIS_REQUIRED(10103, HttpStatus.BAD_REQUEST, "성향 진단이 필요합니다."),
 
 
-    // Event,
+    // Event
     NOT_FOUND_EVENT(20201, HttpStatus.NOT_FOUND, "존재하지 않는 이벤트입니다."),
 
 
@@ -43,7 +43,7 @@ public enum ExceptionCode {
     // 회원
     UNAUTHORIZED_USER(80201, HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     NOT_FOUND_USER(80202, HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
-
+    DUPLICATE_EMAIL(80203, HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다."),
 
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
