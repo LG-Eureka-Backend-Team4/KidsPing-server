@@ -18,6 +18,8 @@ public enum ExceptionCode {
     NOT_FOUND_BOOK(10101, HttpStatus.NOT_FOUND, "존재하지 않는 책입니다."),
     NOT_FOUND_KID_MBTI(10201, HttpStatus.NOT_FOUND, "아이의 MBTI 정보가 없습니다."),
     NOT_FOUND_COMPATIBILITY(10202, HttpStatus.NOT_FOUND, "MBTI 궁합 정보를 찾을 수 없습니다."),
+    INVALID_REQUEST(10102, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    MBTI_DIAGNOSIS_REQUIRED(10103, HttpStatus.BAD_REQUEST, "성향 진단이 필요합니다."),
 
 
     // Event,
