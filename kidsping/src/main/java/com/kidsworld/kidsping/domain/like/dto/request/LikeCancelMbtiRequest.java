@@ -10,4 +10,9 @@ public class LikeCancelMbtiRequest {
     private Long kidId;
 
     private Long bookId;
+
+    public LikeCancelMbtiRequest(Long kidId, Long bookId) {
+        this.kidId = kidId;
+        this.bookId = bookId;
+    }
 }
