@@ -23,15 +23,16 @@ public class FileStore {
     private String bucketName;
 
     private static final int FILE_COUNT = 10;
-    private static final String BASE_DIR = "image/";
+    public static final String KID_PROFILE_DIR = "자녀프로필/";
+    public static final String CATEGORY_IMAGE_DIR = "카테고리이미지/";
+
 
     private final AmazonS3Client amazonS3Client;
 
-    private UploadedFile convertFile(MultipartFile multipartFile) {
-
+    private UploadedFile convertFile(MultipartFile multipartFile, String directory) {
         String uploadedFilename = multipartFile.getOriginalFilename();
-        String serverFileName = createStoreFileName(uploadedFilename);
-        return new UploadedFile(serverFileName, uploadedFilename);
+        String serverFileName = createStoreFileName(uploadedFilename, directory);
+        return new UploadedFile(uploadedFilename, serverFileName);
     }
 
     // 파일을 S3에 저장
@@ -49,13 +50,13 @@ public class FileStore {
         return amazonS3Client.getUrl(bucketName, storeFileName).toString();
     }
 
-    public List<UploadedFile> storeFiles(List<MultipartFile> multipartFiles) {
+    public List<UploadedFile> storeFiles(List<MultipartFile> multipartFiles,String directory) {
 
         validateFileUploadCount(multipartFiles);
 
         List<UploadedFile> uploadFiles = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
-            UploadedFile uploadFile = convertFile(multipartFile);
+            UploadedFile uploadFile = convertFile(multipartFile,directory);
             String storeFileName = uploadFile.getServerFileName();
             String fileUrl = storeFile(multipartFile, storeFileName);
             uploadFile.setFileUrl(fileUrl);
@@ -65,10 +66,10 @@ public class FileStore {
         return uploadFiles;
     }
 
-    private String createStoreFileName(String originalFilename) {
+    private String createStoreFileName(String originalFilename, String directory) {
         String ext = extractExt(originalFilename);
         String uuid = UUID.randomUUID().toString();
-        return BASE_DIR + uuid + "." + ext;
+        return directory + uuid + "." + ext;
     }
 
     // 확장자 추출 메소드
