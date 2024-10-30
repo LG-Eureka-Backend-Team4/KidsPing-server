@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.event.service;
 
+import com.kidsworld.kidsping.domain.event.dto.request.ApplyCouponRequest;
 import com.kidsworld.kidsping.domain.event.dto.request.CreateEventRequest;
 import com.kidsworld.kidsping.domain.event.dto.request.UpdateEventRequest;
 import com.kidsworld.kidsping.domain.event.dto.response.CreateEventResponse;
@@ -8,17 +9,23 @@ import com.kidsworld.kidsping.domain.event.dto.response.GetEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.UpdateEventResponse;
 import com.kidsworld.kidsping.domain.event.entity.Event;
 import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
+import com.kidsworld.kidsping.domain.event.repository.CouponRepository;
 import com.kidsworld.kidsping.domain.event.repository.EventRepository;
+import com.kidsworld.kidsping.infra.kafka.CouponCreateProducer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
+    private final CouponRepository couponRepository;
+    private final CouponCreateProducer couponCreateProducer;
 
     @Override
     public CreateEventResponse createEvent(CreateEventRequest createEventRequest) {
@@ -83,5 +90,24 @@ public class EventServiceImpl implements EventService {
         eventRepository.delete(event);
 
         return DeleteEventResponse.builder().id(id).build();
+    }
+
+    @Override
+    public void applyCoupon(ApplyCouponRequest applyCouponRequest) {
+        Long apply = couponRepository.add(applyCouponRequest.getEventId(), applyCouponRequest.getUserId());
+
+        if (apply != 1) {
+            return;
+        }
+
+        Long count = couponRepository.increment(applyCouponRequest.getEventId());
+
+        if (count > 100) {
+            return;
+        }
+
+        log.info("getUserId {}", applyCouponRequest.getUserId());
+        log.info("getName {}", applyCouponRequest.getName());
+//        couponCreateProducer.sendCouponCreateEvent(CouponCreateEvent.from(applyCouponRequest));
     }
 }
