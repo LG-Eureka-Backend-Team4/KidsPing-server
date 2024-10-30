@@ -43,12 +43,19 @@ public class UserController {
     회원가입
     */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
-        registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        User user = userService.save(registerRequest);
-        return ResponseEntity.ok(RegisterResponse.builder().id(user.getId()).email(user.getEmail()).role(user.getRole()).build());
-    }
+    public ResponseEntity<ApiResponse<RegisterResponse>> registerUser(@RequestBody RegisterRequest registerRequest) {
+        String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
+        registerRequest.setPassword(encodedPassword);
 
+        User user = userService.save(registerRequest);
+        RegisterResponse resopnse = RegisterResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
+
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), resopnse, "회원가입에 성공했습니다.");
+    }
 
     /*
     로그인
@@ -67,11 +74,7 @@ public class UserController {
 
         List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
 
-        return ApiResponse.ok(
-                ExceptionCode.OK.getCode(),
-                new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList),
-                "로그인에 성공했습니다."
-        );
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList), "로그인에 성공했습니다.");
     }
 
 
