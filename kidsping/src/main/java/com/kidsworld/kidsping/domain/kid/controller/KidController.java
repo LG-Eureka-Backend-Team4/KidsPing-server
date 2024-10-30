@@ -109,5 +109,6 @@ public class KidController {
                 .collect(Collectors.toList());
 
         return new KidLevelAndBadgesResponse(level, badges);
+
     }
 }
