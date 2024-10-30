@@ -224,7 +224,7 @@ class BookControllerTest {
         given(bookService.getBooksByGenre(eq(1L), any())).willReturn(bookPage);
 
         // When & Then
-        mockMvc.perform(get("/api/books/genre/1")
+        mockMvc.perform(get("/api/books/kid/1/genre/1")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
