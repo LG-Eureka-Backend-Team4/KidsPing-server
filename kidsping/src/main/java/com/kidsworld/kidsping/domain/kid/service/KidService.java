@@ -4,6 +4,7 @@ import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.*;
+import org.springframework.web.multipart.MultipartFile;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidBadgeAwarded;
 import com.kidsworld.kidsping.global.common.entity.CommonCode;
@@ -12,11 +13,10 @@ import java.util.List;
 
 public interface KidService {
 
-    CreateKidResponse createKid(CreateKidRequest request);
-
+    CreateKidResponse createKid(String request, MultipartFile profileImage);
     GetKidResponse getKid(Long kidId);
 
-    UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request);
+    UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request, MultipartFile profileImage);
 
     DeleteKidResponse deleteKid(Long kidId);
 

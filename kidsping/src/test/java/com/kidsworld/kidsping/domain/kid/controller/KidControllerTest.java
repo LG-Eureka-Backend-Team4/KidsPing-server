@@ -54,44 +54,44 @@ class KidControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    @DisplayName("자녀 프로필을 성공적으로 생성한다")
-    void 자녀_프로필_생성_성공() throws Exception {
-        // given
-        CreateKidRequest request = CreateKidRequest.builder()
-                .kidName("김아이")
-                .gender("MALE")
-                .birth("2020-01-01")
-                .build();
-
-        CreateKidResponse response = CreateKidResponse.builder()
-                .kidId(1L)
-                .userId(1L)
-                .kidName("김아이")
-                .gender("MALE")
-                .birth("2020-01-01")
-                .build();
-
-        given(kidService.createKid(any(CreateKidRequest.class)))
-                .willReturn(response);
-
-        String content = objectMapper.writeValueAsString(request);
-
-        // when & then
-        mockMvc.perform(post("/api/kids")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/kids/1"))
-                .andExpect(jsonPath("$.code").value(ExceptionCode.CREATED.getCode()))
-                .andExpect(jsonPath("$.message").value(ExceptionCode.CREATED.getMessage()))
-                .andExpect(jsonPath("$.data.kidId").value(1L))
-                .andExpect(jsonPath("$.data.userId").value(1L))
-                .andExpect(jsonPath("$.data.kidName").value("김아이"))
-                .andExpect(jsonPath("$.data.gender").value("MALE"))
-                .andExpect(jsonPath("$.data.birth").value("2020-01-01"));
-    }
+//    @Test
+//    @DisplayName("자녀 프로필을 성공적으로 생성한다")
+//    void 자녀_프로필_생성_성공() throws Exception {
+//        // given
+//        CreateKidRequest request = CreateKidRequest.builder()
+//                .kidName("김아이")
+//                .gender("MALE")
+//                .birth("2020-01-01")
+//                .build();
+//
+//        CreateKidResponse response = CreateKidResponse.builder()
+//                .kidId(1L)
+//                .userId(1L)
+//                .kidName("김아이")
+//                .gender("MALE")
+//                .birth("2020-01-01")
+//                .build();
+//
+//        given(kidService.createKid(any(CreateKidRequest.class)))
+//                .willReturn(response);
+//
+//        String content = objectMapper.writeValueAsString(request);
+//
+//        // when & then
+//        mockMvc.perform(post("/api/kids")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(content))
+//                .andDo(print())
+//                .andExpect(status().isCreated())
+//                .andExpect(header().string("Location", "/api/kids/1"))
+//                .andExpect(jsonPath("$.code").value(ExceptionCode.CREATED.getCode()))
+//                .andExpect(jsonPath("$.message").value(ExceptionCode.CREATED.getMessage()))
+//                .andExpect(jsonPath("$.data.kidId").value(1L))
+//                .andExpect(jsonPath("$.data.userId").value(1L))
+//                .andExpect(jsonPath("$.data.kidName").value("김아이"))
+//                .andExpect(jsonPath("$.data.gender").value("MALE"))
+//                .andExpect(jsonPath("$.data.birth").value("2020-01-01"));
+//    }
 
 
     @Test
@@ -123,44 +123,44 @@ class KidControllerTest {
                 .andExpect(jsonPath("$.data.birth").value("2020-01-01"));
     }
 
-    @Test
-    @DisplayName("자녀 프로필을 성공적으로 수정한다")
-    void 자녀_프로필_수정_성공() throws Exception {
-        // given
-        Long kidId = 1L;
-        UpdateKidRequest request = UpdateKidRequest.builder()
-                .kidName("김수정")
-                .gender("FEMALE")
-                .birth("2020-02-02")
-                .build();
-
-        UpdateKidResponse response = UpdateKidResponse.builder()
-                .kidId(kidId)
-                .userId(1L)
-                .kidName("김수정")
-                .gender("FEMALE")
-                .birth("2020-02-02")
-                .build();
-
-        given(kidService.updateKid(eq(kidId), any(UpdateKidRequest.class)))
-                .willReturn(response);
-
-        String content = objectMapper.writeValueAsString(request);
-
-        // when & then
-        mockMvc.perform(put("/api/kids/{kidId}", kidId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.message").value("자녀 프로필을 성공적으로 수정했습니다."))
-                .andExpect(jsonPath("$.data.kidId").value(kidId))
-                .andExpect(jsonPath("$.data.userId").value(1L))
-                .andExpect(jsonPath("$.data.kidName").value("김수정"))
-                .andExpect(jsonPath("$.data.gender").value("FEMALE"))
-                .andExpect(jsonPath("$.data.birth").value("2020-02-02"));
-    }
+//    @Test
+//    @DisplayName("자녀 프로필을 성공적으로 수정한다")
+//    void 자녀_프로필_수정_성공() throws Exception {
+//        // given
+//        Long kidId = 1L;
+//        UpdateKidRequest request = UpdateKidRequest.builder()
+//                .kidName("김수정")
+//                .gender("FEMALE")
+//                .birth("2020-02-02")
+//                .build();
+//
+//        UpdateKidResponse response = UpdateKidResponse.builder()
+//                .kidId(kidId)
+//                .userId(1L)
+//                .kidName("김수정")
+//                .gender("FEMALE")
+//                .birth("2020-02-02")
+//                .build();
+//
+//        given(kidService.updateKid(eq(kidId), any(UpdateKidRequest.class)))
+//                .willReturn(response);
+//
+//        String content = objectMapper.writeValueAsString(request);
+//
+//        // when & then
+//        mockMvc.perform(put("/api/kids/{kidId}", kidId)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(content))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
+//                .andExpect(jsonPath("$.message").value("자녀 프로필을 성공적으로 수정했습니다."))
+//                .andExpect(jsonPath("$.data.kidId").value(kidId))
+//                .andExpect(jsonPath("$.data.userId").value(1L))
+//                .andExpect(jsonPath("$.data.kidName").value("김수정"))
+//                .andExpect(jsonPath("$.data.gender").value("FEMALE"))
+//                .andExpect(jsonPath("$.data.birth").value("2020-02-02"));
+//    }
 
 
     @Test

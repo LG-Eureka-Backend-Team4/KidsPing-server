@@ -28,6 +28,7 @@ public enum ExceptionCode {
 
     // KID
     NOT_FOUND_KID(40401, HttpStatus.NOT_FOUND, "존재하지 않는 아이입니다."),
+    INVALID_REQUEST_FORMAT(40201, HttpStatus.BAD_REQUEST, "잘못된 요청 형식입니다."),
     MAX_KID_LIMIT_REACHED(40202, HttpStatus.BAD_REQUEST, "최대 5명의 자녀만 등록할 수 있습니다."),
 
 

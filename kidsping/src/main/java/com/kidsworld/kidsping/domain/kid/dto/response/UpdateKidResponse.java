@@ -16,6 +16,7 @@ public class UpdateKidResponse {
     private String kidName;
     private String gender;
     private String birth;
+    private String profileImageUrl;
 
     public static UpdateKidResponse from(Kid kid) {
         return UpdateKidResponse.builder()
@@ -24,6 +25,7 @@ public class UpdateKidResponse {
                 .kidName(kid.getName())
                 .gender(kid.getGender().name())
                 .birth(kid.getBirth().toString())
+                .profileImageUrl(kid.getUploadedFile().getFileUrl())
                 .build();
     }
 }
