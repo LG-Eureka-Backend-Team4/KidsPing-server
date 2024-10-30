@@ -64,8 +64,9 @@ public class BookController {
                 "도서가 성공적으로 삭제되었습니다.");
     }
 
-    @GetMapping("/genre/{genreId}")
+    @GetMapping("/kid/{kidId}/genre/{genreId}")
     public ResponseEntity<ApiResponse<Page<BookResponse>>> getBooksByGenre(
+            @PathVariable Long kidId,
             @PathVariable Long genreId,
             Pageable pageable) {
         Page<BookResponse> response = bookService.getBooksByGenre(genreId, pageable);
