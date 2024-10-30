@@ -38,7 +38,4 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     private boolean isDeleted;
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
-//    private List<EventParticipant> eventParticipants = new ArrayList<>();
 }
