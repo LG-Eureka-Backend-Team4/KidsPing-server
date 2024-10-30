@@ -22,6 +22,7 @@ public interface KidService {
 
     List<GetKidMbtiHistoryResponse> getKidMbtiHistory(Long kidId);
 
+
     void diagnoseKidMbti(KidMbtiDiagnosisRequest diagnosisRequest);
 
     List<KidBadgeAwarded> getAwardedBadges(Long kidId);

@@ -52,7 +52,7 @@ class MbtiAnswerServiceImpleTest {
         MbtiAnswerResponse mbtiAnswerResponse = mbtiAnswerService.getMbtiAnswer(mbtiAnswer.getId());
 
         // then
-        assertThat(mbtiAnswerResponse.getId()).isNotNull();
+        assertThat(mbtiAnswerResponse.getAnswerId()).isNotNull();
         assertThat(mbtiAnswerResponse)
                 .extracting("kidId", "eScore", "iScore", "sScore", "nScore", "tScore", "fScore", "pScore", "jScore")
                 .containsExactly(

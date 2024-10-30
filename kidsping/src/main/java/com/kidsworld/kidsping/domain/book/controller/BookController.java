@@ -28,9 +28,9 @@ public class BookController {
                 "도서가 성공적으로 등록되었습니다.");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<BookResponse>> getBook(@PathVariable Long id) {
-        BookResponse response = bookService.getBook(id);
+    @GetMapping("/{bookId}")
+    public ResponseEntity<ApiResponse<BookResponse>> getBook(@PathVariable Long bookId) {
+        BookResponse response = bookService.getBook(bookId);
         return ApiResponse.ok(ExceptionCode.OK.getCode(),
                 response,
                 ExceptionCode.OK.getMessage());
@@ -44,21 +44,21 @@ public class BookController {
                 ExceptionCode.OK.getMessage());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{bookId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BookResponse>> updateBook(
-            @PathVariable Long id,
+            @PathVariable Long bookId,
             @RequestBody BookRequest request) {
-        BookResponse response = bookService.updateBook(id, request);
+        BookResponse response = bookService.updateBook(bookId, request);
         return ApiResponse.ok(ExceptionCode.OK.getCode(),
                 response,
                 "도서가 성공적으로 수정되었습니다.");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{bookId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
+    public ResponseEntity<ApiResponse<Void>> deleteBook(@PathVariable Long bookId) {
+        bookService.deleteBook(bookId);
         return ApiResponse.ok(ExceptionCode.OK.getCode(),
                 null,
                 "도서가 성공적으로 삭제되었습니다.");
@@ -78,10 +78,24 @@ public class BookController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "최다 조회 장르의 도서 목록을 성공적으로 조회했습니다.");
     }
 
-    @GetMapping("/kid/{kidId}/compatibility")
+    @GetMapping("/kid/{kidId}/combi")
     public ResponseEntity<ApiResponse<Page<BookResponse>>> getCompatibleBooks (
             @PathVariable Long kidId, Pageable pageable) {
         Page<BookResponse> response = bookService.getCompatibleBooks(kidId, pageable);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "MBTI 궁합 도서를 성공적으로 조회했습니다.");
+    }
+
+    @GetMapping("/kid/{kidId}/genre")
+    public ResponseEntity<ApiResponse<Page<BookResponse>>> getTopGenreBooksByKid(
+            @PathVariable Long kidId, Pageable pageable) {
+        Page<BookResponse> response = bookService.getTopGenreBooksByKid(kidId, pageable);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "아이의 최고 선호 장르 도서 목록을 성공적으로 조회했습니다.");
+    }
+
+    @GetMapping("/kid/{kidId}/mbti")
+    public ResponseEntity<ApiResponse<Page<BookResponse>>> getRecommendedBooks(
+            @PathVariable Long kidId, Pageable pageable) {
+        Page<BookResponse> response = bookService.getRecommendedBooks(kidId, pageable);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "아이 성향에 맞는 도서를 성공적으로 조회했습니다");
     }
 }

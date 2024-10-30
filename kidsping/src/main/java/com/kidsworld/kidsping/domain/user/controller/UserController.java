@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.user.controller;
 
+import com.kidsworld.kidsping.domain.user.dto.response.GetKidListResponse;
 import com.kidsworld.kidsping.domain.user.dto.request.LoginRequest;
 import com.kidsworld.kidsping.domain.user.dto.request.RegisterRequest;
 import com.kidsworld.kidsping.domain.user.dto.response.GetUserResponse;
@@ -14,12 +15,17 @@ import com.kidsworld.kidsping.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 @Slf4j
@@ -33,6 +39,9 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    /*
+    회원가입
+    */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
@@ -40,8 +49,12 @@ public class UserController {
         return ResponseEntity.ok(RegisterResponse.builder().id(user.getId()).email(user.getEmail()).role(user.getRole()).build());
     }
 
+
+    /*
+    로그인
+    */
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<ApiResponse<LoginResponse>> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
@@ -49,10 +62,22 @@ public class UserController {
         final UserDetails userDetails = userService.loadUserByUsername(loginRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(LoginResponse.builder().email(userDetails.getUsername()).jwt(jwt).build());
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(UserNotFoundException::new);
+
+        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
+
+        return ApiResponse.ok(
+                ExceptionCode.OK.getCode(),
+                new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList),
+                "로그인에 성공했습니다."
+        );
     }
 
 
+    /*
+    로그아웃
+    */
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal UserDetails userDetails) {
 
@@ -63,6 +88,10 @@ public class UserController {
     }
 
 
+
+    /*
+    회원정보조회
+    */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<GetUserResponse>> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
@@ -85,5 +114,31 @@ public class UserController {
 
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
     }
+
+
+    /*
+     회원 자녀 리스트 조회
+     */
+    @GetMapping("/{userId}/kidslist")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId,
+                                                                @AuthenticationPrincipal UserDetails userDetails) {
+
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(UserNotFoundException::new);
+
+        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
+
+        if (kidsList.isEmpty()) {
+            return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "등록된 자녀가 없습니다. 자녀를 등록해주세요.");
+        }
+
+        List<Object> responseData = new ArrayList<>();
+        responseData.add(Collections.singletonMap("userId", user.getId()));
+        responseData.addAll(kidsList);
+
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
+    }
+
 
 }

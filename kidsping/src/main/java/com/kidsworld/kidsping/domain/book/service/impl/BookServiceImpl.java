@@ -8,9 +8,11 @@ import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
 import com.kidsworld.kidsping.domain.book.repository.BookMbtiRepository;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.book.service.BookService;
+import com.kidsworld.kidsping.domain.genre.dto.response.TopGenreResponse;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
 import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
+import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.global.common.entity.CommonCode;
@@ -33,6 +35,7 @@ public class BookServiceImpl implements BookService {
     private final GenreScoreRepository genreScoreRepository;
     private final KidRepository kidRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final GenreScoreService genreScoreService;
 
     @Override
     @Transactional
@@ -71,8 +74,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookResponse getBook(Long id) {
-        Book book = bookRepository.findBookWithMbtiByBookId(id)
+    public BookResponse getBook(Long bookId) {
+        Book book = bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
 
         if (book.getIsDeleted()) {
@@ -91,8 +94,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponse updateBook(Long id, BookRequest bookRequest) {
-        Book book = bookRepository.findBookWithMbtiByBookId(id)
+    public BookResponse updateBook(Long bookId, BookRequest bookRequest) {
+        Book book = bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
 
         BookMbti updatedBookMbti = BookMbti.builder()
@@ -131,8 +134,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void deleteBook(Long id) {
-        Book book = bookRepository.findBookWithMbtiByBookId(id)
+    public void deleteBook(Long bookId) {
+        Book book = bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
         book.setIsDeleted(true);
         book.getBookMbti().setIsDeleted(true);
@@ -178,6 +181,28 @@ public class BookServiceImpl implements BookService {
         MbtiType compatibleType = MbtiType.valueOf(compatibleMbtiStr);
 
         return bookRepository.findCompatibleBooks(compatibleType, pageable)
+                .map(BookResponse::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookResponse> getTopGenreBooksByKid(Long kidId, Pageable pageable) {
+        TopGenreResponse topGenre = genreScoreService.getTopGenre(kidId);
+        return getBooksByGenre(topGenre.getGenreId(), pageable);
+    }
+
+    @Override
+    public Page<BookResponse> getRecommendedBooks(Long kidId, Pageable pageable) {
+        Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        if (kid.getKidMbti() == null) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_KID_MBTI);
+        }
+
+        MbtiType kidMbtiType = MbtiType.valueOf(kid.getKidMbti().getMbtiStatus().name());
+
+        return bookRepository.findBooksByMbtiType(kidMbtiType, pageable)
                 .map(BookResponse::from);
     }
 }

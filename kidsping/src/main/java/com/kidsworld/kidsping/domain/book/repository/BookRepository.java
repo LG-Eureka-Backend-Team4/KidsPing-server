@@ -37,4 +37,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             @Param("mbtiType") MbtiType mbtiType,
             Pageable pageable
     );
+
+    @Query("SELECT b FROM Book b " +
+            "JOIN FETCH b.bookMbti bm " +
+            "WHERE bm.bookMbtiType = :mbtiType " +
+            "AND b.isDeleted = false")
+    Page<Book> findBooksByMbtiType(@Param("mbtiType") MbtiType mbtiType, Pageable pageable);
 }

@@ -17,6 +17,7 @@ import com.kidsworld.kidsping.domain.kid.repository.*;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.domain.like.repository.LikeGenreRepository;
+import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
@@ -50,6 +51,8 @@ public class KidServiceImpl implements KidService {
     private final LikeGenreService likeGenreService;
     private final GenreScoreService genreScoreService;
     private final KidBadgeAwardedRepository kidBadgeAwardedRepository;
+    private final LikeMbtiRepository likeMbtiRepository;
+
 
 
     /*
@@ -179,6 +182,8 @@ public class KidServiceImpl implements KidService {
             // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
             genreScoreService.resetGenreScoreForKid(kid.getId());
             likeGenreService.resetGenreLikesForKid(kid.getId());
+            List<Long> likeMbtiIds = likeMbtiRepository.findLikeMbtiIdsBy(kid.getId());
+            likeMbtiRepository.deleteLikeMbtis(likeMbtiIds);
         }
         kid.updateKidMbti(currentKidMbti);
     }
@@ -228,7 +233,7 @@ public class KidServiceImpl implements KidService {
         Kid kid = kidRepository.findById(kidId)
                 .orElseThrow(NotFoundKidException::new);
 
-        List<KidMbtiHistory> histories = kidMBTIHistoryRepository.findActiveHistories(kid);
+        List<KidMbtiHistory> histories = kidMBTIHistoryRepository.findTop5ActiveHistories(kid);
 
         return histories.stream()
                 .map(GetKidMbtiHistoryResponse::new)

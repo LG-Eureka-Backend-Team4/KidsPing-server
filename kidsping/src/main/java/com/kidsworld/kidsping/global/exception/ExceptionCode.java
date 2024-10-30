@@ -18,22 +18,32 @@ public enum ExceptionCode {
     NOT_FOUND_BOOK(10101, HttpStatus.NOT_FOUND, "존재하지 않는 책입니다."),
     NOT_FOUND_KID_MBTI(10201, HttpStatus.NOT_FOUND, "아이의 MBTI 정보가 없습니다."),
     NOT_FOUND_COMPATIBILITY(10202, HttpStatus.NOT_FOUND, "MBTI 궁합 정보를 찾을 수 없습니다."),
+    INVALID_REQUEST(10102, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    MBTI_DIAGNOSIS_REQUIRED(10103, HttpStatus.BAD_REQUEST, "성향 진단이 필요합니다."),
+
+
+    // Event,
+    NOT_FOUND_EVENT(20201, HttpStatus.NOT_FOUND, "존재하지 않는 이벤트입니다."),
 
 
     // KID
     NOT_FOUND_KID(40401, HttpStatus.NOT_FOUND, "존재하지 않는 아이입니다."),
     MAX_KID_LIMIT_REACHED(40202, HttpStatus.BAD_REQUEST, "최대 5명의 자녀만 등록할 수 있습니다."),
 
+
     //Like
     NOT_FOUND_LIKE_GENRE(50201, HttpStatus.NOT_FOUND, "해당 좋아요/싫어요가 없습니다."),
     ALREADY_LIKED_OR_DISLIKED(50202, HttpStatus.BAD_REQUEST, "이미 좋아요 또는 싫어요를 했습니다."),
+    NOT_FOUND_KID_WITH_MBTI(50203, HttpStatus.BAD_REQUEST, "성향을 가진 자녀가 존재하지 않습니다."),
+    DUPLICATE_EMPATHY_STATUS(50204, HttpStatus.NOT_FOUND, "자녀의 현재 공감 상태와 요청 공감 상태가 동일합니다."),
+    NOT_FOUND_BOOK_WITH_MBTI(50205, HttpStatus.NOT_FOUND, "성향을 가진 도서가 존재하지 않습니다."),
+    NOT_FOUND_EMPATHY(50206, HttpStatus.NOT_FOUND, "공감 정보가 없습니다."),
+
 
     // 회원
     UNAUTHORIZED_USER(80201, HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     NOT_FOUND_USER(80202, HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
 
-    // Event
-    NOT_FOUND_EVENT(20201, HttpStatus.NOT_FOUND, "존재하지 않는 이벤트입니다."),
 
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),

@@ -14,6 +14,7 @@ import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.response.LikeBookResponse;
 import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
+import com.kidsworld.kidsping.domain.like.exception.EmpathyStatusConflictException;
 import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeMbtiService;
 import com.kidsworld.kidsping.global.common.entity.MbtiScore;
@@ -175,7 +176,7 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
             currentLike.savePreviousLikeStatus(currentLike.getLikeStatus());
             // 자녀의 현재 공감 상태와 요청 공감 상태가 동일한 경우 예외 발생
             if (currentLike.getLikeStatus() == requestedStatus) {
-                throw new NotFoundException(ExceptionCode.ALREADY_LIKED_OR_DISLIKED);
+                throw new EmpathyStatusConflictException(ExceptionCode.DUPLICATE_EMPATHY_STATUS);
             }
             // 현재 공감 상태를 요청 공감 상태로 변경
             currentLike.changeLikeStatus(requestedStatus);
@@ -192,7 +193,7 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
      */
     private Kid findKidByKidId(Long kidId) {
         return kidRepository.findKidWithMbtiByKidId(kidId)
-                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_KID));
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_KID_WITH_MBTI));
     }
 
     /**
@@ -202,18 +203,18 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
      */
     private Book findBookByBookId(Long bookId) {
         return bookRepository.findBookWithMbtiByBookId(bookId)
-                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_BOOK));
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_BOOK_WITH_MBTI));
     }
 
     /**
-     * 도서 엔티티 조회하는 메서드
+     * 도서에 대한 공감 정보를 조회하는 메서드
      *
      * @param kid  자녀 엔티티
      * @param book 도서 엔티티
      */
     private LikeMbti findLikeMbtiByKidAndBook(Kid kid, Book book) {
         return likeMbtiRepository.findLikeMbtiByKidAndBook(kid, book)
-                .orElseThrow(() -> new NotFoundException(ExceptionCode.ALREADY_LIKED_OR_DISLIKED));
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_EMPATHY));
     }
 
     /**

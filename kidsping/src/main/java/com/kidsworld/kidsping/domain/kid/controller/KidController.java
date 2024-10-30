@@ -99,6 +99,7 @@ public class KidController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 히스토리를 성공적으로 조회했습니다.");
     }
 
+
     // Kid의 현재 레벨과 획득한 뱃지 조회
     @GetMapping("/{kidId}/level-and-badges")
     public KidLevelAndBadgesResponse getKidLevelAndBadges(@PathVariable Long kidId) {
@@ -111,4 +112,5 @@ public class KidController {
         return new KidLevelAndBadgesResponse(level, badges);
 
     }
+
 }
