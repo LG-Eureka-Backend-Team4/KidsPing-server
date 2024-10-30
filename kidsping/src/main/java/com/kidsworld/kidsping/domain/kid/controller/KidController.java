@@ -2,7 +2,6 @@ package com.kidsworld.kidsping.domain.kid.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.*;
@@ -29,6 +28,7 @@ public class KidController {
     자녀 프로필 생성
     */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(
             @RequestPart String request,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
