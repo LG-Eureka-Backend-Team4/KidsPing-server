@@ -5,6 +5,7 @@ import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
 import com.kidsworld.kidsping.domain.like.exception.EmpathyStatusConflictException;
 import com.kidsworld.kidsping.domain.mbti.exception.NotFoundMbtiInfoException;
+import com.kidsworld.kidsping.domain.user.exception.DuplicateEmailException;
 import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
@@ -41,6 +42,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EventNotFoundException.class)
     public ResponseEntity<ApiResponse> eventNotFoundExceptionHandler(GlobalException e) {
+        return ResponseEntity
+                .status(e.getErrorExceptionCode().getHttpStatus())
+                .body(new ApiResponse(
+                        e.getErrorExceptionCode().getMessage(),
+                        e.getErrorExceptionCode().getCode())
+                );
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ApiResponse> duplicateEmailExceptionHandler(GlobalException e) {
         return ResponseEntity
                 .status(e.getErrorExceptionCode().getHttpStatus())
                 .body(new ApiResponse(

@@ -1,34 +1,12 @@
 package com.kidsworld.kidsping.domain.event.repository;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.kidsworld.kidsping.domain.event.entity.Coupon;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-@RequiredArgsConstructor
-public class CouponRepository {
-
-    private static final String EVENT_KEY_PREFIX = "EVENT_KEY_";
-    private static final String EVENT_COUPON_COUNT = "EVENT_COUPON_COUNT_";
-
-    private final RedisTemplate<String, String> redisTemplate;
-
-    public Long add(Long eventId, Long userId) {
-        String eventKey = EVENT_KEY_PREFIX + eventId;
-        return redisTemplate
-                .opsForSet()
-                .add(eventKey, userId.toString());
-    }
-
-    public Long increment(Long eventId) {
-        String eventKey = EVENT_COUPON_COUNT + eventId;
-        return redisTemplate
-                .opsForValue()
-                .increment(eventKey);
-    }
-
-    // 등록된 key 모두 제거(테스트코드용)
-    public void deleteByKey(String key) {
-        redisTemplate.delete(key);
-    }
+public interface CouponRepository extends JpaRepository<Coupon,Long> {
+    Optional<Coupon> findByUserIdAndEventId(Long userId, Long eventId);
 }

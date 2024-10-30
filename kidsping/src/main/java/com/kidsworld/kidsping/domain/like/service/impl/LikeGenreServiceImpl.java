@@ -5,6 +5,8 @@ import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.kid.service.LevelBadgeService;
 import com.kidsworld.kidsping.domain.like.entity.LikeGenre;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.domain.like.repository.LikeGenreRepository;
@@ -26,7 +28,7 @@ public class LikeGenreServiceImpl implements LikeGenreService {
     private final KidRepository kidRepository;
     private final BookRepository bookRepository;
     private final GenreScoreService genreScoreService;
-
+    private final LevelBadgeService levelBadgeService;
 
 
     // 좋아요 처리
@@ -38,6 +40,8 @@ public class LikeGenreServiceImpl implements LikeGenreService {
         LikeGenre like = handleLikeOrDislike(kid, book, LikeStatus.LIKE);
 
         genreScoreService.updateScore(kid, book.getGenre(), like.getPreviousLikeStatus(), LikeStatus.LIKE);
+
+        levelBadgeService.checkAndAssignLevelAndBadge(kidId);
     }
 
     // 좋아요 취소 처리
@@ -51,6 +55,7 @@ public class LikeGenreServiceImpl implements LikeGenreService {
             genreScoreService.updateScore(kid, book.getGenre(), LikeStatus.LIKE, LikeStatus.CANCEL);
             likeGenreRepository.delete(like);
         }
+        levelBadgeService.checkAndAssignLevelAndBadge(kidId);
     }
 
     // 싫어요 처리
@@ -61,6 +66,8 @@ public class LikeGenreServiceImpl implements LikeGenreService {
         LikeGenre dislike = handleLikeOrDislike(kid, book, LikeStatus.DISLIKE);
 
         genreScoreService.updateScore(kid, book.getGenre(), dislike.getPreviousLikeStatus(), LikeStatus.DISLIKE);
+
+        levelBadgeService.checkAndAssignLevelAndBadge(kidId);
     }
 
     // 싫어요 취소 처리
@@ -74,6 +81,7 @@ public class LikeGenreServiceImpl implements LikeGenreService {
             genreScoreService.updateScore(kid, book.getGenre(), LikeStatus.DISLIKE, LikeStatus.CANCEL);
             likeGenreRepository.delete(dislike);
         }
+        levelBadgeService.checkAndAssignLevelAndBadge(kidId);
     }
 
     private LikeGenre createLike(Kid kid, Book book) {
