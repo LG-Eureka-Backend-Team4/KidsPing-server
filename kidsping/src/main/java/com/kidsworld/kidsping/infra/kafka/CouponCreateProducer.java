@@ -15,7 +15,7 @@ public class CouponCreateProducer {
 
     private final KafkaTemplate<String, CouponCreateEvent> kafkaTemplate;
 
-    public void setCouponCreateEvent(CouponCreateEvent couponCreateEvent) {
+    public void sendCouponCreateEvent(CouponCreateEvent couponCreateEvent) {
         kafkaTemplate.send(couponCreateEventTopic, couponCreateEvent);
     }
 }
