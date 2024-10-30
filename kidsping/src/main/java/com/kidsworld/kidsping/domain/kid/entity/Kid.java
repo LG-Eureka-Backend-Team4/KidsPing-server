@@ -61,10 +61,13 @@ public class Kid extends BaseTimeEntity {
     @OneToOne(mappedBy = "kid", fetch = FetchType.LAZY)
     private KidMbti kidMbti;
 
-    public void update(Gender gender, String name, LocalDate birth) {
+    public void update(Gender gender, String name, LocalDate birth,UploadedFile uploadedFile) {
         this.gender = gender;
         this.name = name;
         this.birth = birth;
+        if (uploadedFile != null) {
+            this.uploadedFile = uploadedFile;
+        }
     }
 
     public void updateKidMbti(KidMbti kidMbti) {
@@ -73,13 +76,14 @@ public class Kid extends BaseTimeEntity {
     }
 
     @Builder
-    public Kid(Gender gender, String name, LocalDate birth, boolean isDeleted, KidMbti kidMbti, User user) {
+    public Kid(Gender gender, String name, LocalDate birth, boolean isDeleted, KidMbti kidMbti, User user,UploadedFile uploadedFile) {
         this.gender = gender;
         this.name = name;
         this.birth = birth;
         this.isDeleted = isDeleted;
         this.kidMbti = kidMbti;
         this.user = user;
+        this.uploadedFile = uploadedFile;
     }
 
     public void delete() {

@@ -1,5 +1,7 @@
 package com.kidsworld.kidsping.domain.kid.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
@@ -9,16 +11,11 @@ import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -31,12 +28,13 @@ public class KidController {
     /*
     자녀 프로필 생성
     */
-    @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(@RequestBody CreateKidRequest request) {
-        CreateKidResponse response = kidService.createKid(request);
-        return ApiResponse.created("/api/kids/" + response.getKidId(),
-                ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(
+            @RequestPart String request,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+
+        CreateKidResponse response = kidService.createKid(request, profileImage);
+        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
     }
 
 
@@ -53,11 +51,17 @@ public class KidController {
     /*
     자녀 프로필 수정
     */
-    @PutMapping("/{kidId}")
+    @PutMapping(value = "/{kidId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<UpdateKidResponse>> updateKid(@PathVariable Long kidId,
-                                                                    @RequestBody UpdateKidRequest request) {
-        UpdateKidResponse response = kidService.updateKid(kidId, request);
+    public ResponseEntity<ApiResponse<UpdateKidResponse>> updateKid(
+            @PathVariable Long kidId,
+            @RequestPart String request,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) throws JsonProcessingException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        UpdateKidRequest kidRequest = mapper.readValue(request, UpdateKidRequest.class);
+
+        UpdateKidResponse response = kidService.updateKid(kidId, kidRequest, profileImage);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 프로필을 성공적으로 수정했습니다.");
     }
 

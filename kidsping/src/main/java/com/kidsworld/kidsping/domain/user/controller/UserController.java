@@ -67,11 +67,7 @@ public class UserController {
 
         List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
 
-        return ApiResponse.ok(
-                ExceptionCode.OK.getCode(),
-                new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList),
-                "로그인에 성공했습니다."
-        );
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList), "로그인에 성공했습니다.");
     }
 
 

@@ -1,5 +1,7 @@
 package com.kidsworld.kidsping.domain.kid.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
@@ -13,6 +15,7 @@ import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
 import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
+import com.kidsworld.kidsping.domain.kid.exception.InvalidRequestFormatException;
 import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
@@ -27,14 +30,20 @@ import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
 import com.kidsworld.kidsping.global.common.entity.MbtiScore;
+import com.kidsworld.kidsping.global.common.entity.UploadedFile;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
+import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.kidsworld.kidsping.infra.s3.FileStore;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -49,6 +58,11 @@ public class KidServiceImpl implements KidService {
     private final LikeGenreService likeGenreService;
     private final GenreScoreService genreScoreService;
     private final LikeMbtiRepository likeMbtiRepository;
+    private final FileStore fileStore;
+    private final ObjectMapper objectMapper;
+
+    @Value("${cloud.aws.s3.default-kid-profile}")
+    private String defaultProfileImage;
 
 
     /*
@@ -56,8 +70,15 @@ public class KidServiceImpl implements KidService {
     */
     @Override
     @Transactional
-    public CreateKidResponse createKid(CreateKidRequest request) {
-        User user = userRepository.findById(request.getUserId())
+    public CreateKidResponse createKid(String request, MultipartFile profileImage) {
+        CreateKidRequest kidRequest;
+        try {
+            kidRequest = objectMapper.readValue(request, CreateKidRequest.class);
+        } catch (JsonProcessingException e) {
+            throw new InvalidRequestFormatException();
+        }
+
+        User user = userRepository.findById(kidRequest.getUserId())
                 .orElseThrow(UnauthorizedUserException::new);
 
         long userKidCount = kidRepository.countByUserId(user.getId());
@@ -65,18 +86,33 @@ public class KidServiceImpl implements KidService {
             throw new MaxKidLimitReachedException();
         }
 
+        // 프로필 이미지 처리
+        UploadedFile uploadedFile;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            List<UploadedFile> uploadedFiles = fileStore.storeFiles(List.of(profileImage), FileStore.KID_PROFILE_DIR);
+            uploadedFile = uploadedFiles.isEmpty() ?
+                    new UploadedFile("default-profile.png", defaultProfileImage) :
+                    uploadedFiles.get(0);
+        } else {
+            uploadedFile = new UploadedFile("default-profile.png", defaultProfileImage);
+        }
+
         Kid kid = Kid.builder()
-                .gender(Gender.valueOf(request.getGender()))
-                .name(request.getKidName())
-                .birth(LocalDate.parse(request.getBirth()))
+                .gender(Gender.valueOf(kidRequest.getGender()))
+                .name(kidRequest.getKidName())
+                .birth(LocalDate.parse(kidRequest.getBirth()))
                 .isDeleted(false)
                 .user(user)
+                .uploadedFile(uploadedFile)
                 .build();
 
         Kid savedKid = kidRepository.save(kid);
 
         return CreateKidResponse.from(savedKid);
     }
+
+
+
 
     /*
     자녀 프로필 조회
@@ -95,14 +131,24 @@ public class KidServiceImpl implements KidService {
     */
     @Override
     @Transactional
-    public UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request) {
+    public UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request, MultipartFile profileImage) {
         Kid kid = kidRepository.findById(kidId)
                 .orElseThrow(NotFoundKidException::new);
+
+        // 프로필 이미지 처리
+        UploadedFile uploadedFile = null;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            List<UploadedFile> uploadedFiles = fileStore.storeFiles(List.of(profileImage), FileStore.KID_PROFILE_DIR);
+            if (!uploadedFiles.isEmpty()) {
+                uploadedFile = uploadedFiles.get(0);
+            }
+        }
 
         kid.update(
                 Gender.valueOf(request.getGender()),
                 request.getKidName(),
-                LocalDate.parse(request.getBirth())
+                LocalDate.parse(request.getBirth()),
+                uploadedFile
         );
 
         return UpdateKidResponse.from(kid);

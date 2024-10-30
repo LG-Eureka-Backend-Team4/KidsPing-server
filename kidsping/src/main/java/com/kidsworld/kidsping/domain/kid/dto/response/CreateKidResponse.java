@@ -16,6 +16,7 @@ public class CreateKidResponse {
     private String kidName;
     private String gender;
     private String birth;
+    private String fileUrl;
 
     public static CreateKidResponse from(Kid kid) {
         return CreateKidResponse.builder()
@@ -24,6 +25,7 @@ public class CreateKidResponse {
                 .kidName(kid.getName())
                 .gender(kid.getGender().name())
                 .birth(kid.getBirth().toString())
+                .fileUrl(kid.getUploadedFile() != null ? kid.getUploadedFile().getFileUrl() : null)
                 .build();
     }
 }
