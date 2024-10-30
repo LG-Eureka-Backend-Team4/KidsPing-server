@@ -10,6 +10,7 @@ import com.kidsworld.kidsping.domain.event.dto.response.CreateEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.DeleteEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.GetEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.UpdateEventResponse;
+import com.kidsworld.kidsping.domain.event.service.CouponService;
 import com.kidsworld.kidsping.domain.event.service.EventService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
 
     private final EventService eventService;
+    private final CouponService couponService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CreateEventResponse>> createEvent(@RequestBody CreateEventRequest request) {
@@ -64,7 +66,7 @@ public class EventController {
     @PostMapping("/coupon")
     public ResponseEntity<ApiResponse<ApplyCouponResponse>> applyCoupon(
             @RequestBody ApplyCouponRequest applyCouponRequest) {
-        eventService.applyCoupon(applyCouponRequest);
+        couponService.applyCoupon(applyCouponRequest);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), new ApplyCouponResponse("이벤트에 참여하셨습니다."),
                 ExceptionCode.OK.getMessage());
     }
@@ -75,7 +77,7 @@ public class EventController {
             @RequestParam Long userId) {
 
         CheckWinnerRequest request = CheckWinnerRequest.builder().eventId(eventId).userId(userId).build();
-        CheckWinnerResponse response = eventService.checkWinner(request);
+        CheckWinnerResponse response = couponService.checkWinner(request);
 
         String message = response.isWinningYn() ? "축하합니다! 이벤트에 당첨되셨습니다." : "이벤트에 당첨되지 않았습니다.";
 

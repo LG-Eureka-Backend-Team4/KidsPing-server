@@ -8,9 +8,9 @@ import com.kidsworld.kidsping.domain.event.dto.response.*;
 import com.kidsworld.kidsping.domain.event.entity.Coupon;
 import com.kidsworld.kidsping.domain.event.entity.Event;
 import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
-import com.kidsworld.kidsping.domain.event.repository.CouponRepository;
+import com.kidsworld.kidsping.domain.event.repository.CouponRedisRepository;
 import com.kidsworld.kidsping.domain.event.repository.EventRepository;
-import com.kidsworld.kidsping.domain.event.repository.EventWinnerRepository;
+import com.kidsworld.kidsping.domain.event.repository.CouponRepository;
 import com.kidsworld.kidsping.infra.kafka.CouponCreateProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +26,6 @@ import java.util.Optional;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
-    private final CouponRepository couponRepository;
-    private final CouponCreateProducer couponCreateProducer;
-    private final EventWinnerRepository eventWinnerRepository;
 
     @Override
     public CreateEventResponse createEvent(CreateEventRequest createEventRequest) {
@@ -95,36 +92,4 @@ public class EventServiceImpl implements EventService {
         return DeleteEventResponse.builder().id(id).build();
     }
 
-    @Override
-    public void applyCoupon(ApplyCouponRequest applyCouponRequest) {
-        Long apply = couponRepository.add(applyCouponRequest.getEventId(), applyCouponRequest.getUserId());
-
-        if (apply != 1) {
-            return;
-        }
-
-        Long count = couponRepository.increment(applyCouponRequest.getEventId());
-
-        if (count > 100) {
-            return;
-        }
-
-        log.info("getUserId {}", applyCouponRequest.getUserId());
-        log.info("getName {}", applyCouponRequest.getName());
-//        couponCreateProducer.sendCouponCreateEvent(CouponCreateEvent.from(applyCouponRequest));
-    }
-
-    @Override
-    public CheckWinnerResponse checkWinner(CheckWinnerRequest request) {
-        Long userId = request.getUserId();
-        Long eventId = request.getEventId();
-
-        Optional<Coupon> winner = eventWinnerRepository.findByUserIdAndEventId(userId, eventId);
-
-        if (winner.isPresent()) {
-            return CheckWinnerResponse.of(true);
-        } else {
-            return CheckWinnerResponse.of(false);
-        }
-    }
 }

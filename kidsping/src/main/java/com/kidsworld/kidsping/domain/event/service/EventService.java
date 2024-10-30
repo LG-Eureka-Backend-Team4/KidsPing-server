@@ -20,8 +20,4 @@ public interface EventService {
     UpdateEventResponse updateEvent(Long id, UpdateEventRequest updateEventRequest);
 
     DeleteEventResponse deleteEvent(Long id);
-
-    CheckWinnerResponse checkWinner(CheckWinnerRequest request);
-
-    void applyCoupon(ApplyCouponRequest applyCouponRequest);
 }
