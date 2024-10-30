@@ -12,6 +12,8 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -24,11 +26,7 @@ public class MbtiDiagnosisAspect {
     public void validateMbtiDiagnosis(JoinPoint joinPoint) {
         String uri = request.getRequestURI();
 
-        if (isBasicQueryPattern(uri)) {
-            return;
-        }
-
-        if (isAdminApiPattern(uri)) {
+        if (isBasicQueryPattern(uri) || isAdminApiPattern(uri)) {
             return;
         }
 
@@ -37,9 +35,13 @@ public class MbtiDiagnosisAspect {
             throw new GlobalException(ExceptionCode.INVALID_REQUEST);
         }
 
-        Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
-                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_KID));
+        Optional<Kid> kidOptional = kidRepository.findKidWithMbtiByKidId(kidId);
 
+        if (kidOptional.isEmpty()) {
+            throw new GlobalException(ExceptionCode.NOT_FOUND_KID);
+        }
+
+        Kid kid = kidOptional.get();
         if (kid.getKidMbti() == null) {
             throw new GlobalException(ExceptionCode.MBTI_DIAGNOSIS_REQUIRED,
                     "서비스를 이용하기 위해서 자녀 성향 진단이 필요합니다.");
