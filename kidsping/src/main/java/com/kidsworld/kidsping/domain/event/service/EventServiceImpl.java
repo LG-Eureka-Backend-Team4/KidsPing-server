@@ -1,24 +1,16 @@
 package com.kidsworld.kidsping.domain.event.service;
 
-import com.kidsworld.kidsping.domain.event.dto.request.ApplyCouponRequest;
 import com.kidsworld.kidsping.domain.event.dto.request.CreateEventRequest;
-import com.kidsworld.kidsping.domain.event.dto.request.CheckWinnerRequest;
 import com.kidsworld.kidsping.domain.event.dto.request.UpdateEventRequest;
 import com.kidsworld.kidsping.domain.event.dto.response.*;
-import com.kidsworld.kidsping.domain.event.entity.Coupon;
 import com.kidsworld.kidsping.domain.event.entity.Event;
 import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
-import com.kidsworld.kidsping.domain.event.repository.CouponRedisRepository;
 import com.kidsworld.kidsping.domain.event.repository.EventRepository;
-import com.kidsworld.kidsping.domain.event.repository.CouponRepository;
-import com.kidsworld.kidsping.infra.kafka.CouponCreateProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
