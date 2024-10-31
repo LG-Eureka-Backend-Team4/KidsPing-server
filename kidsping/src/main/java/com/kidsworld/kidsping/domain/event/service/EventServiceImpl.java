@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -50,8 +52,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<GetEventResponse> getAllEvents(Pageable pageable) {
-
-        return eventRepository.findAll(pageable)
+        LocalDateTime currentTime = LocalDateTime.now();
+        return eventRepository.findOngoingEvents(currentTime, pageable)
                 .map(GetEventResponse::of);
     }
 
