@@ -24,8 +24,9 @@ public class FileStore {
 
     private static final int FILE_COUNT = 10;
     public static final String KID_PROFILE_DIR = "자녀프로필/";
-    public static final String CATEGORY_IMAGE_DIR = "카테고리이미지/";
-
+    public static final String GENRE_IMAGE_DIR = "장르이미지/";
+    public static final String BADGE_IMAGE_DIR = "뱃지이미지/";
+    public static final String MBTI_IMAGE_DIR = "MBTI이미지/";
 
     private final AmazonS3Client amazonS3Client;
 
