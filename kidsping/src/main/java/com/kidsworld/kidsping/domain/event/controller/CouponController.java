@@ -25,7 +25,7 @@ public class CouponController {
 
     private final CouponService couponService;
 
-    @PostMapping("/coupon")
+    @PostMapping("/apply")
     public ResponseEntity<ApiResponse<ApplyCouponResponse>> applyCoupon(
             @RequestBody ApplyCouponRequest applyCouponRequest) {
         couponService.applyCoupon(applyCouponRequest);
@@ -33,7 +33,7 @@ public class CouponController {
                 ExceptionCode.OK.getMessage());
     }
 
-    @GetMapping("/check-winner")
+    @GetMapping("/winners/check")
     public ResponseEntity<ApiResponse<CheckWinnerResponse>> checkWinner(
             @RequestParam Long eventId,
             @RequestParam Long userId) {
