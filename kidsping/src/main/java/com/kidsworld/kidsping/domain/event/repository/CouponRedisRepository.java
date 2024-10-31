@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class CouponRedisRepository {
 
-    private static final String EVENT_KEY_PREFIX = "EVENT_KEY_";
-    private static final String EVENT_COUPON_COUNT = "EVENT_COUPON_COUNT_";
+    private static final String EVENT_KEY_PREFIX = "EVENT:KEY:";
+    private static final String EVENT_COUPON_COUNT = "COUPON:COUNT:EVENT:";
 
     private final RedisTemplate<String, String> redisTemplate;
 
