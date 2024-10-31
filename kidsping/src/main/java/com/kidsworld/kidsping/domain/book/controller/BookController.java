@@ -2,6 +2,7 @@ package com.kidsworld.kidsping.domain.book.controller;
 
 import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponse;
+import com.kidsworld.kidsping.domain.book.dto.response.GetBookResponse;
 import com.kidsworld.kidsping.domain.book.service.BookService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
@@ -29,8 +30,10 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<ApiResponse<BookResponse>> getBook(@PathVariable Long bookId) {
-        BookResponse response = bookService.getBook(bookId);
+    public ResponseEntity<ApiResponse<GetBookResponse>> getBook(
+            @PathVariable Long bookId,
+            @RequestParam(required = false) Long kidId) {
+        GetBookResponse response = bookService.getBook(bookId, kidId);
         return ApiResponse.ok(ExceptionCode.OK.getCode(),
                 response,
                 ExceptionCode.OK.getMessage());
