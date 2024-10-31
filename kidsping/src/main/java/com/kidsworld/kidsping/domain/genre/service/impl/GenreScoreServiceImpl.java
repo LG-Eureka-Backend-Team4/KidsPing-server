@@ -102,7 +102,9 @@ public class GenreScoreServiceImpl implements GenreScoreService {
     // 재진단 장르점수 초기화
     @Override
     @Transactional
-    public void resetGenreScoreForKid(Long kidId){
-        genreScoreRepository.deleteByKidId(kidId);
+    public void resetGenreScoreForKid(Long kidId) {
+        List<Long> genreScoreIds = genreScoreRepository.findGenreScoreIdsByKidId(kidId);
+        genreScoreRepository.deleteGenreScores(genreScoreIds);
     }
+
 }

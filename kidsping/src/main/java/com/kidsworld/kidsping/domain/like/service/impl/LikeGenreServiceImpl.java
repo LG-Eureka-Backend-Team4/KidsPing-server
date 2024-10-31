@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -125,7 +126,8 @@ public class LikeGenreServiceImpl implements LikeGenreService {
     @Override
     @Transactional
     public void resetGenreLikesForKid(Long kidId) {
-        likeGenreRepository.deleteByKidId(kidId);
+        List<Long> likeGenreIds = likeGenreRepository.findLikeGenreIdsByKidId(kidId);
+        likeGenreRepository.deleteLikeGenres(likeGenreIds);
     }
 
 
