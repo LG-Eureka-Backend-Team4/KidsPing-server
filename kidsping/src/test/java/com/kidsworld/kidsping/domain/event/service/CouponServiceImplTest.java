@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EventServiceImplTest {
+class CouponServiceImplTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -36,6 +36,8 @@ class EventServiceImplTest {
 
     @Autowired
     private EventRepository eventRepository;
+
+
 
     @Test
     void userCreate() {
