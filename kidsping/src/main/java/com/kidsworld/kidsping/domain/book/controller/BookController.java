@@ -7,7 +7,7 @@ import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +37,10 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<BookResponse>>> getAllBooks(Pageable pageable) {
-        Page<BookResponse> response = bookService.getAllBooks(pageable);
+    public ResponseEntity<ApiResponse<Page<BookResponse>>> getAllBooks(@RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BookResponse> response = bookService.getAllBooks(pageRequest);
         return ApiResponse.ok(ExceptionCode.OK.getCode(),
                 response,
                 ExceptionCode.OK.getMessage());
@@ -68,35 +70,40 @@ public class BookController {
     public ResponseEntity<ApiResponse<Page<BookResponse>>> getBooksByGenre(
             @PathVariable Long kidId,
             @PathVariable Long genreId,
-            Pageable pageable) {
-        Page<BookResponse> response = bookService.getBooksByGenre(genreId, pageable);
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BookResponse> response = bookService.getBooksByGenre(genreId, pageRequest);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "장르별 도서 목록을 성공적으로 조회했습니다.");
     }
 
-    @GetMapping("/top-genre")
-    public ResponseEntity<ApiResponse<Page<BookResponse>>> getTopGenreBooks(Pageable pageable) {
-        Page<BookResponse> response = bookService.getTopGenreBooks(pageable);
-        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "최다 조회 장르의 도서 목록을 성공적으로 조회했습니다.");
-    }
-
     @GetMapping("/kid/{kidId}/combi")
-    public ResponseEntity<ApiResponse<Page<BookResponse>>> getCompatibleBooks (
-            @PathVariable Long kidId, Pageable pageable) {
-        Page<BookResponse> response = bookService.getCompatibleBooks(kidId, pageable);
+    public ResponseEntity<ApiResponse<Page<BookResponse>>> getCompatibleBooks(
+            @PathVariable Long kidId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BookResponse> response = bookService.getCompatibleBooks(kidId, pageRequest);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "MBTI 궁합 도서를 성공적으로 조회했습니다.");
     }
 
     @GetMapping("/kid/{kidId}/genre")
     public ResponseEntity<ApiResponse<Page<BookResponse>>> getTopGenreBooksByKid(
-            @PathVariable Long kidId, Pageable pageable) {
-        Page<BookResponse> response = bookService.getTopGenreBooksByKid(kidId, pageable);
+            @PathVariable Long kidId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BookResponse> response = bookService.getTopGenreBooksByKid(kidId, pageRequest);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "아이의 최고 선호 장르 도서 목록을 성공적으로 조회했습니다.");
     }
 
     @GetMapping("/kid/{kidId}/mbti")
     public ResponseEntity<ApiResponse<Page<BookResponse>>> getRecommendedBooks(
-            @PathVariable Long kidId, Pageable pageable) {
-        Page<BookResponse> response = bookService.getRecommendedBooks(kidId, pageable);
+            @PathVariable Long kidId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BookResponse> response = bookService.getRecommendedBooks(kidId, pageRequest);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "아이 성향에 맞는 도서를 성공적으로 조회했습니다");
     }
 }
