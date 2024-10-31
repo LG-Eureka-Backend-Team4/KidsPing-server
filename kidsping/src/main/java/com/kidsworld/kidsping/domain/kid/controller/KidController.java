@@ -4,24 +4,32 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
-import com.kidsworld.kidsping.domain.kid.dto.response.*;
-import com.kidsworld.kidsping.domain.kid.entity.KidBadgeAwarded;
+import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.KidBadgeAwardedResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.KidLevelAndBadgesResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.domain.kid.service.LevelBadgeService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
-import com.kidsworld.kidsping.global.common.entity.CommonCode;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -43,7 +51,8 @@ public class KidController {
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
         CreateKidResponse response = kidService.createKid(request, profileImage);
-        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
+        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response,
+                ExceptionCode.CREATED.getMessage());
     }
 
 
@@ -65,7 +74,8 @@ public class KidController {
     public ResponseEntity<ApiResponse<UpdateKidResponse>> updateKid(
             @PathVariable Long kidId,
             @RequestPart String request,
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) throws JsonProcessingException {
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage)
+            throws JsonProcessingException {
 
         ObjectMapper mapper = new ObjectMapper();
         UpdateKidRequest kidRequest = mapper.readValue(request, UpdateKidRequest.class);
@@ -87,7 +97,7 @@ public class KidController {
     /*
     자녀 성향 진단
     */
-    @PostMapping("/mbti/diagonosis")
+    @PostMapping("/mbti/diagnosis")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public void diagnoseKidMbti(@RequestBody KidMbtiDiagnosisRequest diagnosisRequest) {
         kidService.diagnoseKidMbti(diagnosisRequest);
@@ -96,7 +106,7 @@ public class KidController {
     /*
     자녀 성향 히스토리 조회
     */
-    @GetMapping("/{kidId}/mbtihistory")
+    @GetMapping("/{kidId}/mbti-history")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<List<GetKidMbtiHistoryResponse>>> getKidMbtiHistory(@PathVariable Long kidId) {
         List<GetKidMbtiHistoryResponse> response = kidService.getKidMbtiHistory(kidId);
@@ -110,7 +120,8 @@ public class KidController {
         int level = levelBadgeService.getCurrentLevel(kidId);
         List<KidBadgeAwardedResponse> badges = kidService.getAwardedBadges(kidId)
                 .stream()
-                .map(badge -> new KidBadgeAwardedResponse(badge.getBadge().getBadgeName(), badge.getBadge().getDescription(), badge.getBadge().getImageUrl()))
+                .map(badge -> new KidBadgeAwardedResponse(badge.getBadge().getBadgeName(),
+                        badge.getBadge().getDescription(), badge.getBadge().getImageUrl()))
                 .collect(Collectors.toList());
 
         return new KidLevelAndBadgesResponse(level, badges);
