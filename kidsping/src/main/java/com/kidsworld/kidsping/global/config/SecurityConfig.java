@@ -1,6 +1,12 @@
 package com.kidsworld.kidsping.global.config;
 
+import com.kidsworld.kidsping.domain.user.entity.User;
+import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
+import com.kidsworld.kidsping.domain.user.service.KakaoService;
+import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
 import com.kidsworld.kidsping.global.jwt.JwtRequestFilter;
+import com.kidsworld.kidsping.global.jwt.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +27,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
+    private final JwtUtil jwtUtil;
+    private final KakaoService kakaoService;
+    private final UserServiceImpl userService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -42,12 +52,22 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
+                        .logoutUrl("/api/users/logout")
                         .addLogoutHandler((request, response, authentication) -> {
                             String authHeader = request.getHeader("Authorization");
                             if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                                response.setHeader("Authorization", "");
+                                String token = authHeader.substring(7);
+
+
+                                String email = jwtUtil.extractUsername(token);
+                                User user = userService.findByEmail(email)
+                                        .orElseThrow(UserNotFoundException::new);
+
+                                if (user.getSocialId() != null) { //social Id가있으면 카카오 로그인 사용자
+                                    kakaoService.kakaoLogout(token, email);
+                                }
                             }
+                            response.setHeader("Authorization", "");
                         })
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(200);

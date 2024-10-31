@@ -38,4 +38,24 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     private boolean isDeleted;
+
+
+
+    private String socialId;
+    private String refreshToken;
+    private String kakaoAccessToken;
+
+    public void updateRefreshToken(String refreshToken) { this.refreshToken = refreshToken;}
+
+    public void removeRefreshToken() { this.refreshToken = null;}
+
+    public void updateKakaoAccessToken(String kakaoAccessToken) { this.kakaoAccessToken = kakaoAccessToken;}
+
+    public void removeKakaoTokens() {
+        this.kakaoAccessToken = null;
+        this.refreshToken = null;
+    }
+
+
+
 }

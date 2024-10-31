@@ -15,5 +15,7 @@ public interface UserService extends UserDetailsService {
     //회원의 자녀 리스트 조회
     List<GetKidListResponse> getKidsList(Long userId);
 
-
+    User save(RegisterRequest registerRequest);
+    User update(User user);
+    Optional<User> findBySocialId(String socialId);
 }

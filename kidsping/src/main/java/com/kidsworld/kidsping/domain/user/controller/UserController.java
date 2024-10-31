@@ -8,10 +8,12 @@ import com.kidsworld.kidsping.domain.user.dto.response.LoginResponse;
 import com.kidsworld.kidsping.domain.user.dto.response.RegisterResponse;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
+import com.kidsworld.kidsping.domain.user.service.KakaoService;
 import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.jwt.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,7 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final KakaoService kakaoService;
 
     /*
     회원가입
@@ -140,6 +143,55 @@ public class UserController {
         responseData.addAll(kidsList);
 
         return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
+    }
+
+
+
+
+    /*
+    카카오 로그인
+    */
+    @GetMapping("/login/kakao")
+    public ResponseEntity<ApiResponse<LoginResponse>> kakaoLogin(@RequestParam("code") String code, HttpServletResponse httpServletResponse) {
+        LoginResponse response = kakaoService.handleKakaoLogin(code);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "카카오 로그인에 성공했습니다.");
+    }
+
+    /*
+    카카오 로그아웃
+    */
+    @PostMapping("/logout/kakao")
+    public ResponseEntity<ApiResponse<Void>> kakaoLogout(
+            @RequestHeader("Authorization") String bearerToken,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(UserNotFoundException::new);
+
+        if (user.getSocialId() != null) {
+            String accessToken = bearerToken.substring(7);
+            kakaoService.kakaoLogout(accessToken, userDetails.getUsername());
+        }
+
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "카카오 로그아웃 되었습니다.");
+    }
+
+
+    /*
+    리프레시 토큰
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            LoginResponse response = kakaoService.refreshUserToken(userDetails.getUsername());
+            return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "토큰이 갱신되었습니다.");
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("refresh_token_expired")) {
+                return ApiResponse.unAuthorized(ExceptionCode.UNAUTHORIZED_USER.getCode(), "재로그인이 필요합니다."
+                );
+            }
+            throw e;
+        }
     }
 
 

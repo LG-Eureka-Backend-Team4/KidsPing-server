@@ -46,6 +46,14 @@ public enum ExceptionCode {
     NOT_FOUND_USER(80202, HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     DUPLICATE_EMAIL(80203, HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다."),
 
+
+    //카카오
+    KAKAO_AUTH_CODE_EXPIRED(80203, HttpStatus.UNAUTHORIZED, "카카오 인증 코드가 만료되었거나 이미 사용되었습니다."),
+    KAKAO_TOKEN_EXPIRED(80204, HttpStatus.UNAUTHORIZED, "카카오 토큰이 만료되었습니다."),
+    KAKAO_REFRESH_TOKEN_EXPIRED(80205, HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 재로그인이 필요합니다."),
+    KAKAO_LOGIN_FAILED(80206, HttpStatus.BAD_REQUEST, "카카오 로그인 처리 중 오류가 발생했습니다."),
+
+
     // 500 예외
     INTERNAL_ERROR(90001, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
     DATA_ACCESS_ERROR(90002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
