@@ -3,6 +3,7 @@ package com.kidsworld.kidsping.domain.book.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponse;
+import com.kidsworld.kidsping.domain.book.dto.response.GetBookResponse;
 import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
 import com.kidsworld.kidsping.domain.book.service.BookService;
 import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
@@ -133,15 +134,19 @@ class BookControllerTest {
     @WithMockUser
     void getBook_Success() throws Exception {
         // Given
-        BookResponse response = createBookResponse();
-        given(bookService.getBook(1L)).willReturn(response);
+        GetBookResponse response = GetBookResponse.builder()
+                .bookInfo(createBookResponse())
+                .likeStatus(null)
+                .build();
+
+        given(bookService.getBook(1L, null)).willReturn(response);
 
         // When & Then
         mockMvc.perform(get("/api/books/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.id").value(response.getId()));
+                .andExpect(jsonPath("$.data.bookInfo.id").value(response.getBookInfo().getId()));
     }
 
     @Test
@@ -149,7 +154,7 @@ class BookControllerTest {
     @WithMockUser
     void getBook_NotFound() throws Exception {
         // Given
-        given(bookService.getBook(999L))
+        given(bookService.getBook(999L, null))
                 .willThrow(new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
 
         // When & Then
