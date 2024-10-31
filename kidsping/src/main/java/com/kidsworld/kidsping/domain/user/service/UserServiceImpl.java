@@ -51,4 +51,16 @@ public class UserServiceImpl implements UserService {
                 .map(GetKidListResponse::from)
                 .collect(Collectors.toList());
     }
+
+
+    @Override
+    public User save(RegisterRequest registerRequest) { return userRepository.save(registerRequest.toEntity());}
+
+    //기존 유저 정보 수정
+    @Override
+    public User update(User user) { return userRepository.save(user);}
+
+    @Override
+    public Optional<User> findBySocialId(String socialId) { return userRepository.findBySocialId(socialId);}
+
 }

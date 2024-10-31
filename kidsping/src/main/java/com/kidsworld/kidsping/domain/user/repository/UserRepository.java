@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
+    Optional<User> findBySocialId(String socialId);
 
     //User의 kid리스트
     @Query("select k from Kid k where k.user.id = :userId and k.isDeleted = false")

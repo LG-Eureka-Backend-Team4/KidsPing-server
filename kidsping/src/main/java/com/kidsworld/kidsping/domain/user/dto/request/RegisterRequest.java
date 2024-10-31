@@ -19,6 +19,7 @@ public class RegisterRequest implements Serializable {
     private String username;
     private String phone;
     private Role role;
+    private String socialId;
 
     public User toEntity() {
         return User.builder()
@@ -27,6 +28,7 @@ public class RegisterRequest implements Serializable {
                 .userName(username)
                 .phone(phone)
                 .role(role)
+                .socialId(socialId)
                 .build();
     }
 }
