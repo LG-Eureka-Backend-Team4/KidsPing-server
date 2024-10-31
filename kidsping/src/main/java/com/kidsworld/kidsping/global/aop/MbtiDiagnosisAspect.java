@@ -35,7 +35,7 @@ public class MbtiDiagnosisAspect {
             throw new GlobalException(ExceptionCode.INVALID_REQUEST);
         }
 
-        Optional<Kid> kidOptional = kidRepository.findKidWithMbtiByKidId(kidId);
+        Optional<Kid> kidOptional = kidRepository.findById(kidId);
 
         if (kidOptional.isEmpty()) {
             throw new GlobalException(ExceptionCode.NOT_FOUND_KID);

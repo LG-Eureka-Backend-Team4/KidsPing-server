@@ -6,7 +6,6 @@ import com.kidsworld.kidsping.domain.event.dto.response.CreateEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.DeleteEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.GetEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.UpdateEventResponse;
-import com.kidsworld.kidsping.domain.event.service.CouponService;
 import com.kidsworld.kidsping.domain.event.service.EventService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController {
 
     private final EventService eventService;
-    private final CouponService couponService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CreateEventResponse>> createEvent(@RequestBody CreateEventRequest request) {
