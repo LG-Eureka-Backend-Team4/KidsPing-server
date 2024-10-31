@@ -1,15 +1,14 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
 
-// 초당 1000명의 user가 30초간 요청을 보내는 상황을 가정
 export const options = {
     stages: [
-        {duration: '10s', target: 30000},   // 처음 10초 동안 초당 약 3000명
-        {duration: '10s', target: 30000},   // 초당 약 3000명
-        {duration: '10s', target: 20000},   // 초당 약 2000명
-        {duration: '10s', target: 10000},   // 초당 약 1000명
-        {duration: '10s', target: 5000},    // 초당 약 500명
-        {duration: '10s', target: 5000},    // 초당 약 500명
+        {duration: '10s', target: 30000},
+        {duration: '10s', target: 30000},
+        {duration: '10s', target: 20000},
+        {duration: '10s', target: 10000},
+        {duration: '10s', target: 5000},
+        {duration: '10s', target: 5000},
     ],
     thresholds: {
         http_req_duration: ['p(95)<500'], // 95% 요청이 500ms 이내에 응답
@@ -38,7 +37,7 @@ export default function () {
     };
 
     // POST 요청 전송
-    const response = http.post('http://localhost:8080/api/coupons/coupon', payload, {headers});
+    const response = http.post('http://localhost:8080/api/coupons/apply', payload, {headers});
 
     check(response, {
         'is OK': (r) => r.status === 200,
@@ -54,5 +53,5 @@ export default function () {
         },
     });
 
-    sleep(1);
+    sleep(0.1);
 }
