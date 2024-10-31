@@ -10,18 +10,12 @@ import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,25 +25,25 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class CouponSchedulerTest {
 
-    @Autowired
+    @InjectMocks
     private CouponScheduler couponScheduler;
 
-    @MockBean
+    @Mock
     private RedisTemplate<String, Object> redisTemplate;
 
     @Mock
     private HashOperations<String, Object, Object> hashOperations;
 
-    @MockBean
+    @Mock
     private CouponRepository couponRepository;
 
-    @MockBean
+    @Mock
     private UserRepository userRepository;
 
-    @MockBean
+    @Mock
     private EventRepository eventRepository;
 
     private User mockUser;
@@ -57,9 +51,7 @@ class CouponSchedulerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-
         when(redisTemplate.keys("event:*user:*")).thenReturn(Set.of("event:9999user:9999"));
 
         mockUser = User.builder().id(9999L).build();
