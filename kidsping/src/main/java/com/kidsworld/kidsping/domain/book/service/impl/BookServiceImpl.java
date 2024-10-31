@@ -2,6 +2,7 @@ package com.kidsworld.kidsping.domain.book.service.impl;
 
 import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponse;
+import com.kidsworld.kidsping.domain.book.dto.response.GetBookResponse;
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.book.entity.BookMbti;
 import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
@@ -13,6 +14,9 @@ import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
 import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
+import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
+import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.global.common.entity.CommonCode;
 import com.kidsworld.kidsping.global.common.repository.CommonCodeRepository;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
@@ -33,6 +37,7 @@ public class BookServiceImpl implements BookService {
     private final KidRepository kidRepository;
     private final CommonCodeRepository commonCodeRepository;
     private final GenreScoreService genreScoreService;
+    private final LikeMbtiRepository likeMbtiRepository;
 
     @Override
     @Transactional
@@ -71,7 +76,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookResponse getBook(Long bookId) {
+    public GetBookResponse getBook(Long bookId, Long kidId) {
         Book book = bookRepository.findBookWithMbtiByBookId(bookId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_BOOK));
 
@@ -79,7 +84,22 @@ public class BookServiceImpl implements BookService {
             throw new GlobalException(ExceptionCode.NOT_FOUND_BOOK);
         }
 
-        return BookResponse.from(book);
+        if (kidId == null) {
+            return GetBookResponse.of(book, null);
+        }
+
+        Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_KID));
+
+        if (kid.getKidMbti() == null) {
+            throw new GlobalException(ExceptionCode.MBTI_DIAGNOSIS_REQUIRED, "도서 상세 조회를 위해서 자녀 성향 진단이 필요합니다.");
+        }
+
+        LikeStatus likeStatus = likeMbtiRepository.findByKidIdAndBookId(kidId, bookId)
+                .map(LikeMbti::getLikeStatus)
+                .orElse(null);
+
+        return GetBookResponse.of(book, likeStatus);
     }
 
     @Override
