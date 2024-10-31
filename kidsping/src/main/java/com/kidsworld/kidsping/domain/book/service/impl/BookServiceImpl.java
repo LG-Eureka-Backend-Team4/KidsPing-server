@@ -9,9 +9,7 @@ import com.kidsworld.kidsping.domain.book.repository.BookMbtiRepository;
 import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.book.service.BookService;
 import com.kidsworld.kidsping.domain.genre.dto.response.TopGenreResponse;
-import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.repository.GenreRepository;
-import com.kidsworld.kidsping.domain.genre.repository.GenreScoreRepository;
 import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
@@ -32,7 +30,6 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final BookMbtiRepository bookMbtiRepository;
-    private final GenreScoreRepository genreScoreRepository;
     private final KidRepository kidRepository;
     private final CommonCodeRepository commonCodeRepository;
     private final GenreScoreService genreScoreService;
@@ -150,17 +147,6 @@ public class BookServiceImpl implements BookService {
         }
 
         Page<Book> books = bookRepository.findBookByGenreId(genreId, pageable);
-        return books.map(BookResponse::from);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<BookResponse> getTopGenreBooks(Pageable pageable) {
-        Genre topGenre = genreScoreRepository.findTopGenre()
-                .orElseThrow(() -> new GlobalException(ExceptionCode.NOT_FOUND_GENRE));
-
-        Page<Book> books = bookRepository.findBookByGenreId(topGenre.getId(), pageable);
-
         return books.map(BookResponse::from);
     }
 

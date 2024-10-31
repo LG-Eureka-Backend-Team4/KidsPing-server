@@ -233,27 +233,6 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("인기 장르의 도서를 성공적으로 조회한다")
-    @WithMockUser
-    void getTopGenreBooks_Success() throws Exception {
-        // Given
-        Page<BookResponse> bookPage = new PageImpl<>(
-                List.of(createBookResponse()),
-                PageRequest.of(0, 10),
-                1
-        );
-        given(bookService.getTopGenreBooks(any())).willReturn(bookPage);
-
-        // When & Then
-        mockMvc.perform(get("/api/books/top-genre")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()));
-    }
-
-    @Test
     @DisplayName("아이의 MBTI와 궁합이 맞는 MBTI 도서를 성공적으로 조회한다")
     @WithMockUser
     void getCompatibleBooks_Success() throws Exception {
