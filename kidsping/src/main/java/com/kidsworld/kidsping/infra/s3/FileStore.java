@@ -28,6 +28,7 @@ public class FileStore {
     public static final String BADGE_IMAGE_DIR = "뱃지이미지/";
     public static final String MBTI_IMAGE_DIR = "MBTI이미지/";
 
+
     private final AmazonS3Client amazonS3Client;
 
     private UploadedFile convertFile(MultipartFile multipartFile, String directory) {
