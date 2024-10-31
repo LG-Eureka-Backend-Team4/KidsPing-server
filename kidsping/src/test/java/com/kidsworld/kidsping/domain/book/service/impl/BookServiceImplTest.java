@@ -2,6 +2,7 @@ package com.kidsworld.kidsping.domain.book.service.impl;
 
 import com.kidsworld.kidsping.domain.book.dto.request.BookRequest;
 import com.kidsworld.kidsping.domain.book.dto.response.BookResponse;
+import com.kidsworld.kidsping.domain.book.dto.response.GetBookResponse;
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.domain.book.entity.BookMbti;
 import com.kidsworld.kidsping.domain.book.entity.enums.MbtiType;
@@ -163,13 +164,15 @@ class BookServiceImplTest {
                 .willReturn(Optional.of(book));
 
         // When
-        BookResponse response = bookService.getBook(1L);
+        GetBookResponse response = bookService.getBook(1L, null);
 
         // Then
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getTitle()).isEqualTo("테스트 책");
-        assertThat(response.getMbtiType()).isEqualTo(MbtiType.ENFP);
+        assertThat(response.getBookInfo()).isNotNull();
+        assertThat(response.getBookInfo().getId()).isEqualTo(1L);
+        assertThat(response.getBookInfo().getTitle()).isEqualTo("테스트 책");
+        assertThat(response.getBookInfo().getMbtiType()).isEqualTo(MbtiType.ENFP);
+        assertThat(response.getLikeStatus()).isNull();
     }
 
     @Test
@@ -180,7 +183,7 @@ class BookServiceImplTest {
                 .willReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> bookService.getBook(999L))
+        assertThatThrownBy(() -> bookService.getBook(999L, null))
                 .isInstanceOf(GlobalException.class)
                 .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.NOT_FOUND_BOOK);
     }
