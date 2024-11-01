@@ -5,6 +5,7 @@ import com.kidsworld.kidsping.domain.book.repository.BookRepository;
 import com.kidsworld.kidsping.domain.genre.service.GenreScoreService;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+import com.kidsworld.kidsping.domain.kid.service.LevelBadgeService;
 import com.kidsworld.kidsping.domain.like.entity.LikeGenre;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.domain.like.repository.LikeGenreRepository;
@@ -36,6 +37,9 @@ public class LikeGenreServiceImplTest {
 
     @Mock
     private GenreScoreService genreScoreService;
+
+    @Mock
+    private LevelBadgeService levelBadgeService;
 
     @InjectMocks
     private LikeGenreServiceImpl likeGenreService;
