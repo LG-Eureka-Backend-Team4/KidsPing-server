@@ -13,12 +13,12 @@ import org.springframework.data.repository.query.Param;
 
 public interface MbtiAnswerRepository extends JpaRepository<MbtiAnswer, Long> {
 
-    @Query(value = "select ma.mbti_answer_id from mbti_answer ma where ma.is_deleted = true and updated_at <= :currentDate - INTERVAL 1 MONTH", nativeQuery = true)
-    List<Long> findExpiredMbtiAnswerIds(@Param("currentDate") LocalDateTime currentDate);
+    @Query("select ma.id from MbtiAnswer ma where ma.isDeleted = true")
+    List<Long> findExpiredMbtiAnswerIds();
 
     @Modifying
-    @Query("delete from MbtiAnswer ma where ma.id IN :expiredMbtiAnswerIds")
-    void deleteExpiredMbtiAnswer(@Param("expiredMbtiAnswerIds") List<Long> expiredMbtiAnswerIds);
+    @Query(value = "delete from mbti_answer ma where ma.is_deleted = true and ma.updated_at <= :currentDate - INTERVAL 1 MONTH", nativeQuery = true)
+    void deleteExpiredMbtiAnswer(@Param("currentDate") LocalDateTime currentDate);
 
     @Query("select ma from MbtiAnswer ma where ma.kid.id = :kidId and ma.isDeleted = false")
     Page<MbtiAnswer> findMbtiAnswersBy(@Param("kidId") Long kidId, Pageable pageable);

@@ -3,7 +3,6 @@ package com.kidsworld.kidsping.global.batch;
 import com.kidsworld.kidsping.domain.kid.service.KidMbtiService;
 import com.kidsworld.kidsping.domain.question.service.GenreAnswerService;
 import com.kidsworld.kidsping.domain.question.service.MbtiAnswerService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -61,8 +60,7 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
     @Bean
     public Tasklet deleteExpiredKidMbtiTasklet(KidMbtiService kidMbtiService) {
         return (contribution, chunkContext) -> {
-            List<Long> expiredKidMbtiIds = kidMbtiService.findExpiredKidMbtiIds();
-            kidMbtiService.deleteExpiredKidMbti(expiredKidMbtiIds);
+            kidMbtiService.deleteExpiredKidMbti();
             return RepeatStatus.FINISHED;
         };
     }
@@ -70,8 +68,7 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
     @Bean
     public Tasklet deleteExpiredGenreAnswerTasklet(GenreAnswerService genreAnswerService) {
         return (contribution, chunkContext) -> {
-            List<Long> expiredGenreAnswerIds = genreAnswerService.findExpiredGenreAnswerIds();
-            genreAnswerService.deleteExpiredGenreAnswer(expiredGenreAnswerIds);
+            genreAnswerService.deleteExpiredGenreAnswer();
             return RepeatStatus.FINISHED;
         };
     }
@@ -79,8 +76,7 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
     @Bean
     public Tasklet deleteExpiredMbtiAnswerTasklet(MbtiAnswerService mbtiAnswerService) {
         return (contribution, chunkContext) -> {
-            List<Long> expiredMbtiAnswerIds = mbtiAnswerService.findExpiredMbtiAnswerIds();
-            mbtiAnswerService.deleteExpiredMbtiAnswer(expiredMbtiAnswerIds);
+            mbtiAnswerService.deleteExpiredMbtiAnswer();
             return RepeatStatus.FINISHED;
         };
     }

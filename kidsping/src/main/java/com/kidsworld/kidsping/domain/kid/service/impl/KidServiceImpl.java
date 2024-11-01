@@ -11,15 +11,22 @@ import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
-import com.kidsworld.kidsping.domain.kid.entity.*;
+import com.kidsworld.kidsping.domain.kid.entity.Kid;
+import com.kidsworld.kidsping.domain.kid.entity.KidBadgeAwarded;
+import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
+import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
 import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
 import com.kidsworld.kidsping.domain.kid.exception.InvalidRequestFormatException;
 import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
-import com.kidsworld.kidsping.domain.kid.repository.*;
+import com.kidsworld.kidsping.domain.kid.repository.KidBadgeAwardedRepository;
+import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
+import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
+import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
+import com.kidsworld.kidsping.domain.like.service.LikeMbtiService;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
@@ -29,11 +36,10 @@ import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.entity.UploadedFile;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
+import com.kidsworld.kidsping.infra.s3.FileStore;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.kidsworld.kidsping.infra.s3.FileStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,6 +58,7 @@ public class KidServiceImpl implements KidService {
     private final KidMbtiHistoryRepository kidMBTIHistoryRepository;
     private final LikeGenreService likeGenreService;
     private final GenreScoreService genreScoreService;
+    private final LikeMbtiService likeMbtiService;
     private final KidBadgeAwardedRepository kidBadgeAwardedRepository;
     private final LikeMbtiRepository likeMbtiRepository;
     private final FileStore fileStore;
@@ -59,7 +66,6 @@ public class KidServiceImpl implements KidService {
 
     @Value("${cloud.aws.s3.default-kid-profile}")
     private String defaultProfileImage;
-
 
 
     /*
@@ -107,8 +113,6 @@ public class KidServiceImpl implements KidService {
 
         return CreateKidResponse.from(savedKid);
     }
-
-
 
 
     /*
@@ -223,8 +227,7 @@ public class KidServiceImpl implements KidService {
             // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
             genreScoreService.resetGenreScoreForKid(kid.getId());
             likeGenreService.resetGenreLikesForKid(kid.getId());
-            List<Long> likeMbtiIds = likeMbtiRepository.findLikeMbtiIdsBy(kid.getId());
-            likeMbtiRepository.deleteLikeMbtis(likeMbtiIds);
+            likeMbtiService.resetMbtiLikesForKid(kid.getId());
         }
         kid.updateKidMbti(currentKidMbti);
     }
