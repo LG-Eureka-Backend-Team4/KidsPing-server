@@ -61,10 +61,28 @@ public class UserServiceImpl implements UserService {
 
 
     //Api를 위한 메서드 (User ID + 자녀 목록 반환)
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<Object> getUserKidsList(Long userId, String userEmail) {
+//        User user = findByEmail(userEmail)
+//                .orElseThrow(UserNotFoundException::new);
+//
+//        List<GetKidListResponse> kidsList = getKidsList(user.getId());
+//
+//        if (kidsList.isEmpty()) {
+//            return Collections.emptyList();
+//        }
+//
+//        List<Object> responseData = new ArrayList<>();
+//        responseData.add(Collections.singletonMap("userId", user.getId()));
+//        responseData.addAll(kidsList);
+//
+//        return responseData;
+//    }
     @Override
     @Transactional(readOnly = true)
-    public List<Object> getUserKidsList(Long userId, String userEmail) {
-        User user = findByEmail(userEmail)
+    public List<Object> getUserKidsListNoAuth(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         List<GetKidListResponse> kidsList = getKidsList(user.getId());
@@ -79,6 +97,8 @@ public class UserServiceImpl implements UserService {
 
         return responseData;
     }
+
+
 
 
     @Override

@@ -133,14 +133,21 @@ public class UserController {
     /*
      회원 자녀 리스트 조회
      */
+//    @GetMapping("/{userId}/kids/list")
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//    public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId,
+//                                                                @AuthenticationPrincipal UserDetails userDetails) {
+//        List<Object> responseData = userService.getUserKidsList(userId, userDetails.getUsername());
+//
+//        return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
+//    }
+    // 박종혁씨가 인증 풀어달라고 해서 풀어준 거
     @GetMapping("/{userId}/kids/list")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId,
-                                                                @AuthenticationPrincipal UserDetails userDetails) {
-        List<Object> responseData = userService.getUserKidsList(userId, userDetails.getUsername());
-
+    public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId) {
+        List<Object> responseData = userService.getUserKidsListNoAuth(userId);  // 새로운 서비스 메서드 호출
         return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
     }
+
 
 
 
