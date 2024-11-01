@@ -18,16 +18,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -100,12 +100,16 @@ class EventControllerTest {
     @DisplayName("진행중인 이벤트 조회 테스트")
     void getAllEvents_진행중인이벤트조회() {
         // Given
-        Pageable pageable = Pageable.unpaged();
-        Page<GetEventResponse> expectedResponse = mock(Page.class);
-        when(eventService.getAllEvents(pageable)).thenReturn(expectedResponse);
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        GetEventResponse eventResponse = GetEventResponse.of(mockEvent);
+        Page<GetEventResponse> expectedResponse = new PageImpl<>(Collections.singletonList(eventResponse), pageRequest, 1);
+
+        when(eventService.getAllEvents(pageRequest)).thenReturn(expectedResponse);
 
         // When
-        ResponseEntity<ApiResponse<Page<GetEventResponse>>> responseEntity = eventController.getAllEvents(pageable);
+        ResponseEntity<ApiResponse<Page<GetEventResponse>>> responseEntity = eventController.getAllEvents(page, size);
 
         // Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
