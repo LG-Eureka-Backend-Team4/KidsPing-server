@@ -1,167 +1,166 @@
 package com.kidsworld.kidsping.domain.event.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
-import com.kidsworld.kidsping.domain.event.dto.request.ApplyCouponRequest;
+import com.kidsworld.kidsping.domain.event.dto.request.CreateEventRequest;
+import com.kidsworld.kidsping.domain.event.dto.request.UpdateEventRequest;
+import com.kidsworld.kidsping.domain.event.dto.response.CreateEventResponse;
+import com.kidsworld.kidsping.domain.event.dto.response.DeleteEventResponse;
+import com.kidsworld.kidsping.domain.event.dto.response.GetEventResponse;
+import com.kidsworld.kidsping.domain.event.dto.response.UpdateEventResponse;
 import com.kidsworld.kidsping.domain.event.entity.Event;
-import com.kidsworld.kidsping.domain.event.repository.CouponRedisRepository;
-import com.kidsworld.kidsping.domain.event.repository.CouponRepository;
+import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
 import com.kidsworld.kidsping.domain.event.repository.EventRepository;
-import com.kidsworld.kidsping.domain.user.entity.User;
-import com.kidsworld.kidsping.domain.user.entity.enums.Role;
-import com.kidsworld.kidsping.domain.user.repository.UserRepository;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class EventServiceImplTest {
 
-    @Autowired
-    private UserRepository userRepository;
+    @InjectMocks
+    private EventServiceImpl eventService;
 
-    @Autowired
-    private CouponService couponService;
-
-    @Autowired
-    private CouponRedisRepository couponRedisRepository;
-
-    @Autowired
-    private CouponRepository couponRepository;
-
-    @Autowired
+    @Mock
     private EventRepository eventRepository;
 
-    @Test
-    void userCreate() {
-        for (int i = 0; i < 50000; i++) {
-            createUser(i);
-        }
-
-    }
+    private Event mockEvent;
 
     @BeforeEach
-    void tearDown() {
-        // Redis 키 제거
-        couponRepository.deleteAllInBatch();
-        eventRepository.deleteAllInBatch();
-        userRepository.deleteAllInBatch();
-        couponRedisRepository.deleteByKey("EVENT_KEY_1");
-        couponRedisRepository.deleteByKey("EVENT_COUPON_COUNT_1");
+    void setUp() {
+        mockEvent = Event.builder()
+                .id(1L)
+                .eventName("New Event")
+                .eventContent("New Event Content")
+                .maxParticipants(50L)
+                .announceTime(LocalDateTime.now())
+                .startTime(LocalDateTime.now().plusDays(1))
+                .endTime(LocalDateTime.now().plusDays(2))
+                .build();
     }
 
     @Test
-    @DisplayName("사용자가 한 번 응모 시 단일 쿠폰이 발급되는지 검증")
-    public void shouldIssueSingleCouponWhenUserAppliesOnce() {
-        createUser(1);
-        createEvent();
+    @DisplayName("이벤트 생성 테스트")
+    void createEvent_이벤트생성() {
+        // Given
+        CreateEventRequest request = CreateEventRequest.builder()
+                .eventName("New Event")
+                .eventContent("New Event Content")
+                .maxParticipants(50L)
+                .announceTime(LocalDateTime.now())
+                .startTime(LocalDateTime.now().plusDays(1))
+                .endTime(LocalDateTime.now().plusDays(2))
+                .build();
 
-        ApplyCouponRequest applyCouponRequest = applyCoupon(1L, 1L, "이름", "번호");
+        when(eventRepository.save(any(Event.class))).thenReturn(mockEvent);
 
-        couponService.applyCoupon(applyCouponRequest);
-        long count = couponRepository.count();
+        // When
+        CreateEventResponse response = eventService.createEvent(request);
 
-        assertThat(count).isEqualTo(1);
+        // Then
+        assertThat(response.getId()).isEqualTo(mockEvent.getId());
+        assertThat(response.getEventName()).isEqualTo(mockEvent.getEventName());
     }
 
     @Test
-    @DisplayName("동시에 1000명의 사용자가 이벤트 응모 시 중복 없이 100개의 쿠폰이 발급되는지 테스트")
-    public void concurrentCouponApplicationWith1000Users_shouldIssueOnly100Coupons() throws InterruptedException {
-        createEvent();
-        // 1000명의 유저 저장
-        for (int i = 0; i < 1000; i++) {
-            createUser(i);
-        }
+    @DisplayName("이벤트 조회 테스트")
+    void getEvent_이벤트조회() {
+        // Given
+        when(eventRepository.findById(mockEvent.getId())).thenReturn(Optional.of(mockEvent));
 
-        Thread.sleep(2000);
+        // When
+        GetEventResponse response = eventService.getEvent(mockEvent.getId());
 
-        int threadCount = 1000;
-        ExecutorService executorService = Executors.newFixedThreadPool(16);
-        CountDownLatch latch = new CountDownLatch(threadCount);
-
-        int startUserId = 1;
-        for (int i = 0; i < threadCount; i++) {
-            Long userId = (long) (startUserId + i);
-            executorService.submit(() -> {
-                try {
-                    ApplyCouponRequest applyCouponRequest = applyCoupon(1L, userId, "이름" + userId, "번호" + userId);
-                    couponService.applyCoupon(applyCouponRequest);
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        latch.await();
-
-        Thread.sleep(2000);
-
-        long count = couponRepository.count();
-        assertThat(count).isEqualTo(100);
-
-        couponRedisRepository.deleteByKey("EVENT_KEY_1");
-        couponRedisRepository.deleteByKey("EVENT_COUPON_COUNT_1");
+        // Then
+        assertThat(response.getId()).isEqualTo(mockEvent.getId());
+        assertThat(response.getEventName()).isEqualTo(mockEvent.getEventName());
     }
 
     @Test
-    @DisplayName("동일한 사용자가 중복 요청 시 단일 쿠폰만 발급되는지 검증")
-    public void shouldIssueOnlyOneCouponPerUserWhenMultipleRequestsAreMade() throws InterruptedException {
-        createUser(1);
-        createEvent();
+    @DisplayName("존재하지 않는 이벤트 조회 시 예외 발생")
+    void getEvent_이벤트존재하지않음() {
+        // Given
+        when(eventRepository.findById(mockEvent.getId())).thenReturn(Optional.empty());
 
-        ApplyCouponRequest applyCouponRequest = applyCoupon(1L, 1L, "이름2", "번호2");
-        int threadCount = 1000;
-        ExecutorService executorService = Executors.newFixedThreadPool(16);
-        CountDownLatch latch = new CountDownLatch(threadCount);
-
-        for (int i = 0; i < threadCount; i++) {
-            executorService.submit(() -> {
-                try {
-                    couponService.applyCoupon(applyCouponRequest);
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        latch.await();
-
-        Thread.sleep(2000);
-
-        long count = couponRepository.count();
-        assertThat(count).isEqualTo(1);
+        // When & Then
+        assertThrows(EventNotFoundException.class, () -> eventService.getEvent(mockEvent.getId()));
     }
 
-    private void createUser(int id) {
-        User user = User.builder()
-                .email("user" + id + "@example.com")
-                .password("password" + id)
-                .userName("User" + id)
-                .phone("010-1234-" + String.format("%04d", id))
-                .role(Role.USER) // Role에 따라 적절한 값 설정
-                .isDeleted(false)
+    void updateEvent_이벤트업데이트() {
+        // Given
+        UpdateEventRequest updateRequest = UpdateEventRequest.builder()
+                .eventName("Updated Event")
+                .eventContent("Updated content")
+                .maxParticipants(200L)
+                .announceTime(LocalDateTime.now())
+                .startTime(LocalDateTime.now().plusHours(1))
+                .endTime(LocalDateTime.now().plusDays(1))
                 .build();
-        userRepository.save(user);
+
+        Event updatedMockEvent = Event.builder()
+                .id(mockEvent.getId())
+                .eventName("Updated Event")
+                .eventContent("Updated content")
+                .maxParticipants(200L)
+                .announceTime(LocalDateTime.now())
+                .startTime(LocalDateTime.now().plusHours(1))
+                .endTime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        when(eventRepository.findById(mockEvent.getId())).thenReturn(Optional.of(mockEvent));
+        when(eventRepository.save(any(Event.class))).thenReturn(updatedMockEvent);
+
+        // When
+        UpdateEventResponse response = eventService.updateEvent(mockEvent.getId(), updateRequest);
+
+        // Then
+        assertThat(response.getId()).isEqualTo(updatedMockEvent.getId());
+        assertThat(response.getEventName()).isEqualTo(updateRequest.getEventName()); // Check for updated value
     }
 
-    private void createEvent() {
-        Event event = Event.builder()
-                .eventContent("이벤트 내용")
-                .eventName("이벤트 이름")
-                .build();
-        eventRepository.save(event);
+    @Test
+    @DisplayName("존재하지 않는 이벤트 업데이트 시 예외 발생")
+    void updateEvent_이벤트존재하지않음() {
+        // Given
+        UpdateEventRequest updateRequest = UpdateEventRequest.builder().build();
+
+        when(eventRepository.findById(mockEvent.getId())).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EventNotFoundException.class, () -> eventService.updateEvent(mockEvent.getId(), updateRequest));
     }
 
-    private static ApplyCouponRequest applyCoupon(Long eventId, Long userId, String name, String phone) {
-        return ApplyCouponRequest
-                .builder()
-                .eventId(eventId)
-                .userId(userId)
-                .name(name)
-                .phone(phone)
-                .build();
+    @Test
+    @DisplayName("이벤트 삭제 테스트")
+    void deleteEvent_이벤트삭제() {
+        // Given
+        when(eventRepository.findById(mockEvent.getId())).thenReturn(Optional.of(mockEvent));
+
+        // When
+        DeleteEventResponse response = eventService.deleteEvent(mockEvent.getId());
+
+        // Then
+        assertThat(response.getId()).isEqualTo(mockEvent.getId());
+        verify(eventRepository, times(1)).delete(mockEvent);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 이벤트 삭제 시 예외 발생")
+    void deleteEvent_이벤트존재하지않음() {
+        // Given
+        when(eventRepository.findById(mockEvent.getId())).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EventNotFoundException.class, () -> eventService.deleteEvent(mockEvent.getId()));
     }
 }
