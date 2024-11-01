@@ -151,6 +151,41 @@ class LikeMbtiRepositoryTest {
                 );
     }
 
+    @Test
+    @DisplayName("자녀 ID로 모든 LikeMbti 엔티티를 삭제한다.")
+    void deleteLikeMbtisByKidId() {
+        // given
+        Kid kid = createKid(Gender.MALE, "이름1", LocalDate.now());
+        Genre genre = new Genre("제목");
+        BookMbti bookMbti1 = createBookMbti(MbtiType.ENFJ, 1, 2, 3, 4, 5, 6, 7, 8);
+        BookMbti bookMbti2 = createBookMbti(MbtiType.INFJ, 11, 2, 13, 4, 15, 6, 17, 8);
+        BookMbti bookMbti3 = createBookMbti(MbtiType.ESFJ, 16, 25, 34, 43, 52, 26, 27, 8);
+        Book book1 = createBook(bookMbti1, genre, "제목", "요약", "작가", "출판사", 5, "http://url");
+        Book book2 = createBook(bookMbti2, genre, "제목2", "요약2", "작가2", "출판사2", 3, "http://url2");
+        Book book3 = createBook(bookMbti3, genre, "제목3", "요약3", "작가3", "출판사3", 8, "http://url3");
+        LikeMbti likeMbti1 = createLikeMbti(book1, kid, LikeStatus.LIKE);
+        LikeMbti likeMbti2 = createLikeMbti(book2, kid, LikeStatus.LIKE);
+        LikeMbti likeMbti3 = createLikeMbti(book3, kid, LikeStatus.DISLIKE);
+
+        // when
+        kidRepository.save(kid);
+        genreRepository.save(genre);
+        bookMbtiRepository.saveAll(List.of(bookMbti1, bookMbti2, bookMbti3));
+        bookRepository.saveAll(List.of(book1, book2, book3));
+        likeMbtiRepository.saveAll(List.of(likeMbti1, likeMbti2, likeMbti3));
+
+        // 삭제 전 확인
+        List<LikeMbti> likeMbtisBeforeDelete = likeMbtiRepository.findAll();
+        assertThat(likeMbtisBeforeDelete).hasSize(3);
+
+        // when
+        likeMbtiRepository.deleteLikeMbtisByKidId(kid.getId());
+
+        // then
+        List<LikeMbti> likeMbtisAfterDelete = likeMbtiRepository.findAll();
+        assertThat(likeMbtisAfterDelete).isEmpty();
+    }
+
     private static LikeMbti createLikeMbti(Book book, Kid kid, LikeStatus likeStatus) {
         return LikeMbti.builder()
                 .previousLikeStatus(LikeStatus.LIKE)

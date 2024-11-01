@@ -12,12 +12,10 @@ import com.kidsworld.kidsping.domain.like.repository.LikeGenreRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.GlobalException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -125,8 +123,7 @@ public class LikeGenreServiceImpl implements LikeGenreService {
     @Override
     @Transactional
     public void resetGenreLikesForKid(Long kidId) {
-        List<Long> likeGenreIds = likeGenreRepository.findLikeGenreIdsByKidId(kidId);
-        likeGenreRepository.deleteLikeGenres(likeGenreIds);
+        likeGenreRepository.deleteLikeGenresByKidId(kidId);
     }
 
 
