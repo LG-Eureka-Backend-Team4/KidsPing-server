@@ -40,7 +40,7 @@ public class EventController {
     }
 
     @GetMapping
-    @Cacheable(value = "eventPagesCache", key = "#pageable.pageNumber")
+    @Cacheable(value = "eventPagesCache", key = "#page + '-' + #size")
     public ResponseEntity<ApiResponse<Page<GetEventResponse>>> getAllEvents(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
