@@ -9,13 +9,17 @@ import com.kidsworld.kidsping.domain.event.dto.response.UpdateEventResponse;
 import com.kidsworld.kidsping.domain.event.entity.Event;
 import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
 import com.kidsworld.kidsping.domain.event.repository.EventRepository;
+import com.kidsworld.kidsping.global.cache.CachedPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,6 +29,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
 
     @Override
+    @CacheEvict(value = "eventPagesCache", allEntries = true)
     public CreateEventResponse createEvent(CreateEventRequest createEventRequest) {
 
         Event event = Event.builder()
@@ -51,13 +56,22 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<GetEventResponse> getAllEvents(Pageable pageable) {
-        LocalDateTime currentTime = LocalDateTime.now();
-        return eventRepository.findOngoingEvents(currentTime, pageable)
-                .map(GetEventResponse::of);
+    @Cacheable(value = "eventPagesCache", key = "'events:page:' + #p0 + ':size:' + #p1")
+    public CachedPage<GetEventResponse> getAllEvents(int page, int size) {
+        log.info("check page and size value! page: {}, size: {}", page, size);
+
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<Event> eventPage = eventRepository.findOngoingEvents(LocalDateTime.now(), pageRequest);
+
+        List<GetEventResponse> eventResponses = eventPage
+                .map(GetEventResponse::of)
+                .getContent();
+
+        return new CachedPage<>(eventResponses, eventPage.getNumber(), eventPage.getSize(), eventPage.getTotalElements());
     }
 
     @Override
+    @CacheEvict(value = "eventPagesCache", allEntries = true)
     public UpdateEventResponse updateEvent(Long id, UpdateEventRequest updateEventRequest) {
 
         Event event = eventRepository.findById(id)
@@ -79,6 +93,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @CacheEvict(value = "eventPagesCache", allEntries = true)
     public DeleteEventResponse deleteEvent(Long id) {
 
         Event event = eventRepository.findById(id)

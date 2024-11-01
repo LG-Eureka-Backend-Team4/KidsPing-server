@@ -8,6 +8,7 @@ import com.kidsworld.kidsping.domain.event.dto.response.GetEventResponse;
 import com.kidsworld.kidsping.domain.event.dto.response.UpdateEventResponse;
 import com.kidsworld.kidsping.domain.event.entity.Event;
 import com.kidsworld.kidsping.domain.event.service.EventService;
+import com.kidsworld.kidsping.global.cache.CachedPage;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,13 +101,18 @@ class EventControllerTest {
     @DisplayName("진행중인 이벤트 조회 테스트")
     void getAllEvents_진행중인이벤트조회() {
         // Given
-        int page = 0;
+        int page = 1;
         int size = 10;
-        PageRequest pageRequest = PageRequest.of(page, size);
         GetEventResponse eventResponse = GetEventResponse.of(mockEvent);
-        Page<GetEventResponse> expectedResponse = new PageImpl<>(Collections.singletonList(eventResponse), pageRequest, 1);
 
-        when(eventService.getAllEvents(pageRequest)).thenReturn(expectedResponse);
+        CachedPage<GetEventResponse> expectedResponse = new CachedPage<>(
+                Collections.singletonList(eventResponse), // content
+                0, // number (페이지 번호)
+                size, // size
+                1 // totalElements (총 개수)
+        );
+
+        when(eventService.getAllEvents(page, size)).thenReturn(expectedResponse);
 
         // When
         ResponseEntity<ApiResponse<Page<GetEventResponse>>> responseEntity = eventController.getAllEvents(page, size);

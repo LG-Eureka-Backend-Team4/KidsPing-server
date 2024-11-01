@@ -1,13 +1,14 @@
 package com.kidsworld.kidsping.domain.event.dto.response;
 
 import com.kidsworld.kidsping.domain.event.entity.Event;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class GetEventResponse {
 
     private Long id;
