@@ -1,8 +1,7 @@
 package com.kidsworld.kidsping.domain.question.service;
 
-import com.kidsworld.kidsping.domain.question.dto.response.MbtiQuestionResponse;
-import java.util.List;
+import com.kidsworld.kidsping.domain.question.dto.response.MbtiQuestions;
 
 public interface MbtiQuestionService {
-    List<MbtiQuestionResponse> findAllQuestion();
+    MbtiQuestions findAllQuestion();
 }

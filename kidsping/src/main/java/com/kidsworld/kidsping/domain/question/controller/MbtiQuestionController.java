@@ -1,6 +1,7 @@
 package com.kidsworld.kidsping.domain.question.controller;
 
 import com.kidsworld.kidsping.domain.question.dto.response.MbtiQuestionResponse;
+import com.kidsworld.kidsping.domain.question.dto.response.MbtiQuestions;
 import com.kidsworld.kidsping.domain.question.service.MbtiQuestionService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
@@ -22,7 +23,8 @@ public class MbtiQuestionController {
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<List<MbtiQuestionResponse>>> findAllQuestion() {
-        List<MbtiQuestionResponse> questionResponses = mbtiQuestionService.findAllQuestion();
-        return ApiResponse.ok(ExceptionCode.OK.getCode(), questionResponses, ExceptionCode.OK.getMessage());
+        MbtiQuestions mbtiQuestions = mbtiQuestionService.findAllQuestion();
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), mbtiQuestions.getMbtiQuestionResponses(),
+                ExceptionCode.OK.getMessage());
     }
 }

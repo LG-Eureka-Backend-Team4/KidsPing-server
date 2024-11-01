@@ -34,6 +34,7 @@ public class CouponRedisRepository {
                         "if isMember == 0 then " +
                         "    return 0 " +  // 이미 참여한 사용자임을 의미
                         "end " +
+
                         // 쿠폰 수량 증가 및 초과 확인
                         "local currentCount = redis.call('INCR', KEYS[2]) " +
                         "if currentCount > tonumber(ARGV[2]) then " +
@@ -41,6 +42,7 @@ public class CouponRedisRepository {
                         "    redis.call('SREM', KEYS[1], ARGV[1]) " +  // 참여 취소
                         "    return -1 " +  // 쿠폰 초과
                         "end " +
+
                         // 쿠폰 신청 정보 저장
                         "redis.call('HMSET', KEYS[3], " +
                         "    'userId', ARGV[1], " +
@@ -48,6 +50,7 @@ public class CouponRedisRepository {
                         "    'name', ARGV[4], " +
                         "    'phone', ARGV[5]) " +
                         "return 1";  // 쿠폰 신청 성공
+
         List<String> keys = Arrays.asList(
                 EVENT_KEY + request.getEventId(),
                 EVENT_COUPON_COUNT + request.getEventId(),
@@ -71,7 +74,6 @@ public class CouponRedisRepository {
 
         return 0L;
     }
-
 
     public Long verifyParticipation(Long eventId, Long userId) {
         String eventKey = EVENT_KEY + eventId;

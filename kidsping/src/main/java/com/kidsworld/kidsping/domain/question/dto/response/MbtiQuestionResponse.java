@@ -4,10 +4,12 @@ import com.kidsworld.kidsping.domain.question.entity.MbtiQuestion;
 import com.kidsworld.kidsping.global.common.enums.PersonalityTrait;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MbtiQuestionResponse {
 
     private Long id;
