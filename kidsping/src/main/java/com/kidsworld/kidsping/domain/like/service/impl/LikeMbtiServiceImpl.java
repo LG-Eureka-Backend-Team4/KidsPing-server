@@ -22,6 +22,7 @@ import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.custom.NotFoundException;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -262,5 +263,13 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
                 .isDeleted(false)
                 .build();
         kidMbtiHistoryRepository.save(kidMbtiHistory);
+    }
+
+    // 재진단 장르점수 초기화
+    @Override
+    @Transactional
+    public void resetMbtiLikesForKid(Long kidId) {
+        List<Long> likeMbtiIds = likeMbtiRepository.findLikeMbtiIdsBy(kidId);
+        likeMbtiRepository.deleteLikeMbtis(likeMbtiIds);
     }
 }

@@ -77,77 +77,53 @@ class MbtiAnswerRepositoryTest {
         assertThat(mbtiAnswersPage.getContent()).hasSize(0);
     }
 
-    @DisplayName("한 달 이상 지난 삭제된 MBTI 응답 값들을 조회한다.")
     @Test
-    void findExpiredMbtiAnswerIds_ReturnsExpiredAnswersAfterOneMonth() {
-        // given, when
-        setUpKidWithDeletedMbtiAnswers();
-        LocalDateTime referenceDate = LocalDateTime.now().plusMonths(2);
-
-        // then
-        List<Long> expiredMbtiAnswerIds = mbtiAnswerRepository.findExpiredMbtiAnswerIds(referenceDate);
-        assertThat(expiredMbtiAnswerIds).hasSize(2);
-    }
-
-    @DisplayName("한 달이 지난 직후 경계 값에서 삭제된 응답을 조회한다.")
-    @Test
-    void findExpiredMbtiAnswerIds_ReturnsExpiredAnswersAtBoundary() {
-        // given, when
-        setUpKidWithDeletedMbtiAnswers();
-        LocalDateTime referenceDate = LocalDateTime.now().plusMonths(1).plusSeconds(1);
-
-        // then
-        List<Long> expiredMbtiAnswerIds = mbtiAnswerRepository.findExpiredMbtiAnswerIds(referenceDate);
-        assertThat(expiredMbtiAnswerIds).hasSize(2);
-    }
-
-    @DisplayName("한 달 이내에 삭제된 MBTI 응답 값들은 조회하지 못한다.")
-    @Test
-    void findExpiredMbtiAnswerIds_DoesNotReturnAnswersWithinOneMonth() {
-        // given, when
-        setUpKidWithDeletedMbtiAnswers();
-        LocalDateTime referenceDate1 = LocalDateTime.now().plusMonths(1);
-        LocalDateTime referenceDate2 = LocalDateTime.now().plusDays(20);
-
-        // then
-        List<Long> expiredMbtiAnswerIds1 = mbtiAnswerRepository.findExpiredMbtiAnswerIds(referenceDate1);
-        List<Long> expiredMbtiAnswerIds2 = mbtiAnswerRepository.findExpiredMbtiAnswerIds(referenceDate2);
-        assertThat(expiredMbtiAnswerIds1).hasSize(0);
-        assertThat(expiredMbtiAnswerIds2).hasSize(0);
-    }
-
-    @DisplayName("삭제되지 않은 응답은 한 달이 지나도 조회되지 않는다.")
-    @Test
-    void findExpiredMbtiAnswerIds_DoesNotReturnNonDeletedAnswersRegardlessOfTime() {
+    @DisplayName("한 달이 지나지 않은 Soft delete 된 데이터는 물리적으로 삭제되지 않아야 한다")
+    void softDeletedDataLessThanOneMonthShouldNotBeDeleted() {
         // given
-        Kid kid = createKid(Gender.MALE, "이름1", LocalDate.now());
-        MbtiAnswer mbtiAnswer1 = createMbtiAnswer(kid, 3, 2, 4, 5, 6, 7, 8, 1);
-        MbtiAnswer mbtiAnswer2 = createMbtiAnswer(kid, 13, 12, 14, 15, 16, 17, 18, 11);
-        MbtiAnswer mbtiAnswer3 = createMbtiAnswer(kid, 3, 2, 4, 5, 6, 7, 8, 1);
+        Kid kid = createKid(Gender.MALE, "이름2", LocalDate.now());
+        MbtiAnswer mbtiAnswer = createMbtiAnswer(kid, 13, 12, 14, 15, 16, 17, 18, 11);
+        LocalDateTime referenceDate = LocalDateTime.now().minusDays(20);
 
         // when
         kidRepository.save(kid);
-        mbtiAnswerRepository.saveAll(List.of(mbtiAnswer1, mbtiAnswer2, mbtiAnswer3));
-        LocalDateTime referenceDate1 = LocalDateTime.now().plusMonths(1);
-        LocalDateTime referenceDate2 = LocalDateTime.now().plusMonths(2);
-        List<Long> expiredMbtiAnswerIds1 = mbtiAnswerRepository.findExpiredMbtiAnswerIds(referenceDate1);
-        List<Long> expiredMbtiAnswerIds2 = mbtiAnswerRepository.findExpiredMbtiAnswerIds(referenceDate2);
+        mbtiAnswerRepository.save(mbtiAnswer);
+        mbtiAnswer.delete();
+        mbtiAnswerRepository.deleteExpiredMbtiAnswer(referenceDate);
+        List<Long> answerIds = mbtiAnswerRepository.findExpiredMbtiAnswerIds();
 
         // then
-        assertThat(expiredMbtiAnswerIds1).hasSize(0);
-        assertThat(expiredMbtiAnswerIds2).hasSize(0);
+        assertThat(answerIds).hasSize(1);
     }
 
-    @DisplayName("한달이 지난 삭제된 데이터를 조회하고 해당 데이터들을 삭제한다.")
     @Test
+    @DisplayName("Soft delete 되지 않은 데이터는 삭제되지 않아야 한다")
+    void nonSoftDeletedDataShouldNotBeDeleted() {
+        // given
+        Kid kid = createKid(Gender.MALE, "이름1", LocalDate.now());
+        MbtiAnswer mbtiAnswer = createMbtiAnswer(kid, 3, 2, 4, 5, 6, 7, 8, 1);
+        LocalDateTime referenceDate = LocalDateTime.now().plusMonths(2);
+        Pageable pageable = PageRequest.of(0, 1);
+
+        // when
+        kidRepository.save(kid);
+        mbtiAnswerRepository.save(mbtiAnswer);
+        mbtiAnswerRepository.deleteExpiredMbtiAnswer(referenceDate);
+        Page<MbtiAnswer> mbtiAnswers = mbtiAnswerRepository.findMbtiAnswersBy(kid.getId(), pageable);
+
+        // then
+        assertThat(mbtiAnswers.getContent()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("Soft delete 된 지 한 달 이상 지난 데이터들을 영구적으로 삭제한다.")
     void findAndDeleteExpiredMbtiAnswers() {
         // given
         Kid kid = createKid(Gender.MALE, "이름1", LocalDate.now());
         MbtiAnswer mbtiAnswer1 = createMbtiAnswer(kid, 3, 2, 4, 5, 6, 7, 8, 1);
         MbtiAnswer mbtiAnswer2 = createMbtiAnswer(kid, 13, 12, 14, 15, 16, 17, 18, 11);
         MbtiAnswer mbtiAnswer3 = createMbtiAnswer(kid, 3, 2, 4, 5, 6, 7, 8, 1);
-        LocalDateTime referenceDate = LocalDateTime.now().plusMonths(2);
-        Pageable pageable = PageRequest.of(0, 2);
+        LocalDateTime referenceDate = LocalDateTime.now().plusMonths(1).plusSeconds(1);
 
         // when
         kidRepository.save(kid);
@@ -155,26 +131,11 @@ class MbtiAnswerRepositoryTest {
         mbtiAnswer1.delete();
         mbtiAnswer2.delete();
         mbtiAnswer3.delete();
-        List<Long> expiredMbtiAnswerIds1 = mbtiAnswerRepository.findExpiredMbtiAnswerIds(referenceDate);
-        mbtiAnswerRepository.deleteExpiredMbtiAnswer(expiredMbtiAnswerIds1);
-        Page<MbtiAnswer> mbtiAnswers = mbtiAnswerRepository.findMbtiAnswersBy(kid.getId(), pageable);
+        mbtiAnswerRepository.deleteExpiredMbtiAnswer(referenceDate);
+        List<Long> answerIds = mbtiAnswerRepository.findExpiredMbtiAnswerIds();
 
         // then
-        assertThat(mbtiAnswers.getContent()).hasSize(0);
-    }
-
-    private void setUpKidWithDeletedMbtiAnswers() {
-        // given
-        Kid kid = createKid(Gender.MALE, "이름1", LocalDate.now());
-        MbtiAnswer mbtiAnswer1 = createMbtiAnswer(kid, 3, 2, 4, 5, 6, 7, 8, 1);
-        MbtiAnswer mbtiAnswer2 = createMbtiAnswer(kid, 13, 12, 14, 15, 16, 17, 18, 11);
-        MbtiAnswer mbtiAnswer3 = createMbtiAnswer(kid, 3, 2, 4, 5, 6, 7, 8, 1);
-
-        // when
-        kidRepository.save(kid);
-        mbtiAnswerRepository.saveAll(List.of(mbtiAnswer1, mbtiAnswer2, mbtiAnswer3));
-        mbtiAnswer1.delete();
-        mbtiAnswer2.delete();
+        assertThat(answerIds).hasSize(0);
     }
 
     private static Kid createKid(Gender gender, String name, LocalDate birth) {

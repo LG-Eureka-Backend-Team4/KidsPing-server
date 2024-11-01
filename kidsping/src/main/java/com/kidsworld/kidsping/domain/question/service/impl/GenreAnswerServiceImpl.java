@@ -3,7 +3,6 @@ package com.kidsworld.kidsping.domain.question.service.impl;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.question.dto.response.GenreAnswerResponse;
-import com.kidsworld.kidsping.domain.question.entity.GenreAnswer;
 import com.kidsworld.kidsping.domain.question.repository.GenreAnswerRepository;
 import com.kidsworld.kidsping.domain.question.service.GenreAnswerService;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
@@ -34,16 +33,8 @@ public class GenreAnswerServiceImpl implements GenreAnswerService {
                 .collect(Collectors.toList());
     }
 
-    /*
-     * isDeleted 값이 true 이면서 날짜가 현재 기준으로 한달이 지난 id 값을 조회하는 메서드
-     * */
     @Override
-    public List<Long> findExpiredGenreAnswerIds() {
-        return genreAnswerRepository.findExpiredGenreAnswerIds(LocalDateTime.now());
-    }
-
-    @Override
-    public void deleteExpiredGenreAnswer(List<Long> expiredGenreAnswerIds) {
-        genreAnswerRepository.deleteExpiredGenreAnswer(expiredGenreAnswerIds);
+    public void deleteExpiredGenreAnswer() {
+        genreAnswerRepository.deleteExpiredGenreAnswer(LocalDateTime.now());
     }
 }

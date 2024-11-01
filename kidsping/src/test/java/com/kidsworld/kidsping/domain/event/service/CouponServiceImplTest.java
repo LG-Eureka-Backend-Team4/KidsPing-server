@@ -36,17 +36,7 @@ class CouponServiceImplTest {
 
     @Autowired
     private EventRepository eventRepository;
-
-
-
-    @Test
-    void userCreate() {
-        for (int i = 0; i < 50000; i++) {
-            createUser(i);
-        }
-
-    }
-
+    
     @BeforeEach
     void tearDown() {
         // Redis 키 제거
