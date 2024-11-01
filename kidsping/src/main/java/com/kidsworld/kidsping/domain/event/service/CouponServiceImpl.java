@@ -20,6 +20,14 @@ public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
 
     @Override
+    public void applyCouponAtomically(ApplyCouponRequest applyCouponRequest) {
+        Long result = couponRedisRepository.applyCouponAtomically(applyCouponRequest);
+        if (result == 1) {
+            log.info("쿠폰 발급 성공 - 사용자 ID {}", applyCouponRequest.getUserId());
+        }
+    }
+
+    @Override
     public void applyCoupon(ApplyCouponRequest applyCouponRequest) {
         Long isAlreadyApplied = couponRedisRepository.verifyParticipation(applyCouponRequest.getEventId(),
                 applyCouponRequest.getUserId());
