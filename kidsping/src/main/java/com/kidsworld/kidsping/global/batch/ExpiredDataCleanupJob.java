@@ -13,6 +13,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,9 +23,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
 
     @Bean
-    public Job deleteExpiredDataJob(JobRepository jobRepository, Step deleteExpiredKidMbtiStep,
-                                    Step deleteExpiredGenreAnswerStep,
-                                    Step deleteExpiredMbtiAnswerStep) {
+    public Job deleteExpiredDataJob(JobRepository jobRepository,
+                                    @Qualifier("deleteExpiredKidMbtiStep") Step deleteExpiredKidMbtiStep,
+                                    @Qualifier("deleteExpiredGenreAnswerStep") Step deleteExpiredGenreAnswerStep,
+                                    @Qualifier("deleteExpiredMbtiAnswerStep") Step deleteExpiredMbtiAnswerStep) {
         return new JobBuilder("deleteExpiredDataJob", jobRepository)
                 .start(deleteExpiredKidMbtiStep)
                 .next(deleteExpiredGenreAnswerStep)
@@ -34,7 +36,7 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
 
     @Bean
     public Step deleteExpiredKidMbtiStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                                         Tasklet deleteExpiredKidMbtiTasklet) {
+                                         @Qualifier("deleteExpiredKidMbtiTasklet") Tasklet deleteExpiredKidMbtiTasklet) {
         return new StepBuilder("deleteExpiredKidMbtiStep", jobRepository)
                 .tasklet(deleteExpiredKidMbtiTasklet, transactionManager)
                 .build();
@@ -42,7 +44,7 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
 
     @Bean
     public Step deleteExpiredGenreAnswerStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                                             Tasklet deleteExpiredGenreAnswerTasklet) {
+                                             @Qualifier("deleteExpiredGenreAnswerTasklet") Tasklet deleteExpiredGenreAnswerTasklet) {
         return new StepBuilder("deleteExpiredGenreAnswerStep", jobRepository)
                 .tasklet(deleteExpiredGenreAnswerTasklet, transactionManager)
                 .build();
@@ -50,7 +52,7 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
 
     @Bean
     public Step deleteExpiredMbtiAnswerStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                                            Tasklet deleteExpiredMbtiAnswerTasklet) {
+                                            @Qualifier("deleteExpiredMbtiAnswerTasklet") Tasklet deleteExpiredMbtiAnswerTasklet) {
         return new StepBuilder("deleteExpiredMbtiAnswerStep", jobRepository)
                 .tasklet(deleteExpiredMbtiAnswerTasklet, transactionManager)
                 .build();
