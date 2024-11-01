@@ -18,8 +18,6 @@ import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
 import com.kidsworld.kidsping.domain.kid.repository.*;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
-import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
-import com.kidsworld.kidsping.domain.like.repository.LikeGenreRepository;
 import com.kidsworld.kidsping.domain.like.repository.LikeMbtiRepository;
 import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
@@ -27,14 +25,9 @@ import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.exception.UnauthorizedUserException;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
-import com.kidsworld.kidsping.global.common.entity.CommonCode;
 import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.entity.UploadedFile;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
-import com.kidsworld.kidsping.global.exception.ExceptionCode;
-import com.kidsworld.kidsping.global.common.repository.CommonCodeRepository;
-import com.kidsworld.kidsping.global.exception.ExceptionCode;
-import com.kidsworld.kidsping.global.exception.GlobalException;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import java.time.LocalDate;
 import java.util.List;
@@ -164,9 +157,11 @@ public class KidServiceImpl implements KidService {
     @Override
     @Transactional
     public DeleteKidResponse deleteKid(Long kidId) {
-        Kid kid = kidRepository.findById(kidId)
-                .orElseThrow(NotFoundKidException::new);
-        kidRepository.delete(kid);
+        if (!kidRepository.existsById(kidId)) {
+            throw new NotFoundKidException();
+        }
+        kidRepository.softDeleteKidAndRelatedData(kidId);
+
         return new DeleteKidResponse(kidId);
     }
 
