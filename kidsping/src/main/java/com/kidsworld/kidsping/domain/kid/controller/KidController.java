@@ -12,7 +12,7 @@ import com.kidsworld.kidsping.domain.kid.dto.response.KidBadgeAwardedResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidLevelAndBadgesResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
-import com.kidsworld.kidsping.domain.kid.service.LevelBadgeService;
+import com.kidsworld.kidsping.domain.kid.service.impl.LevelBadgeService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import java.util.List;

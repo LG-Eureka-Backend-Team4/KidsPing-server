@@ -1,4 +1,4 @@
-package com.kidsworld.kidsping.domain.kid.service;
+package com.kidsworld.kidsping.domain.kid.service.impl;
 
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidBadge;
