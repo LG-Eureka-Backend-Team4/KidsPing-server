@@ -11,6 +11,8 @@ import com.kidsworld.kidsping.global.common.dto.ApiResponse;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping
+    @CacheEvict(value = "eventPagesCache", allEntries = true)
     public ResponseEntity<ApiResponse<CreateEventResponse>> createEvent(@RequestBody CreateEventRequest request) {
         CreateEventResponse response = eventService.createEvent(request);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
@@ -44,12 +47,14 @@ public class EventController {
     }
 
     @GetMapping
+    @Cacheable(value = "eventPagesCache", key = "#pageable.pageNumber")
     public ResponseEntity<ApiResponse<Page<GetEventResponse>>> getAllEvents(Pageable pageable) {
         Page<GetEventResponse> response = eventService.getAllEvents(pageable);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "eventPagesCache", allEntries = true)
     public ResponseEntity<ApiResponse<UpdateEventResponse>> updateEvent(
             @PathVariable Long id,
             @RequestBody UpdateEventRequest request) {
@@ -59,6 +64,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "eventPagesCache", allEntries = true)
     public ResponseEntity<ApiResponse<DeleteEventResponse>> deleteEvent(@PathVariable Long id) {
         DeleteEventResponse response = eventService.deleteEvent(id);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
