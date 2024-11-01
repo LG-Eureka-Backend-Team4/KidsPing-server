@@ -10,6 +10,8 @@ import com.kidsworld.kidsping.domain.event.entity.Event;
 import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
 import com.kidsworld.kidsping.domain.event.repository.EventRepository;
 import com.kidsworld.kidsping.global.cache.CachedPage;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,9 +19,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -47,6 +46,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Cacheable(value = "eventPagesCache", key = "#id")
     public GetEventResponse getEvent(Long id) {
 
         Event event = eventRepository.findById(id)
@@ -67,7 +67,8 @@ public class EventServiceImpl implements EventService {
                 .map(GetEventResponse::of)
                 .getContent();
 
-        return new CachedPage<>(eventResponses, eventPage.getNumber(), eventPage.getSize(), eventPage.getTotalElements());
+        return new CachedPage<>(eventResponses, eventPage.getNumber(), eventPage.getSize(),
+                eventPage.getTotalElements());
     }
 
     @Override
