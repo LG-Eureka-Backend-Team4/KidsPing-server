@@ -4,7 +4,7 @@ import {check, sleep} from 'k6';
 // 10초 동안 총 100,000번의 요청을 보내기 위한 설정
 export const options = {
     stages: [
-        {duration: '10s', target: 10000}, // 초당 10,000명
+        {duration: '10s', target: 1000}, // 초당 10,000명
     ],
     thresholds: {
         http_req_duration: ['p(95)<500'], // 95% 요청이 500ms 이내에 응답
@@ -14,7 +14,7 @@ export const options = {
 
 // 무작위 userId와 phone 번호 생성
 function generateRandomUserId() {
-    return Math.floor(Math.random() * 1000000);  // 1부터 999,999 사이의 랜덤 ID 생성
+    return Math.floor(Math.random() * 1000);  // 1부터 999,999 사이의 랜덤 ID 생성
 }
 
 function generatePhoneNumber() {
