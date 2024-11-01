@@ -23,7 +23,7 @@ public interface LikeMbtiRepository extends JpaRepository<LikeMbti, Long> {
             + "JOIN FETCH lb.book b "
             + "JOIN FETCH b.bookMbti "
             + "where lb.kid.id = :kidId and b.isDeleted = false and lb.likeStatus = :likeStatus")
-    Page<LikeMbti> findBooksByLikeMbtiId(@Param("kidId") Long kidId, Pageable pageable, LikeStatus likeStatus);
+    Page<LikeMbti> findBooksByLikeMbtiId(@Param("kidId") Long kidId, Pageable pageable, @Param("likeStatus") LikeStatus likeStatus);
 
     @Query("select lm.id from LikeMbti lm where lm.kid.id = :kidId")
     List<Long> findLikeMbtiIdsBy(@Param("kidId") Long kidId);
