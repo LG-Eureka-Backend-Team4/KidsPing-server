@@ -32,7 +32,7 @@ public class KidMbtiHistory extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private MbtiStatus mbtiStatus;
 
-    private boolean isDeleted;
+    private boolean isDeleted =Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kid_id")
