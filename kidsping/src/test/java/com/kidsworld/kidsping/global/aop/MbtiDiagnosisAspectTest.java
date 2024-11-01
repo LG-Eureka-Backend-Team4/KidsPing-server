@@ -90,13 +90,13 @@ class MbtiDiagnosisAspectTest {
     void validateMbtiDiagnosis_KidNotFound() {
         // Given
         when(request.getRequestURI()).thenReturn("/api/books/kid/1/mbti");
-        when(kidRepository.findKidWithMbtiByKidId(1L)).thenReturn(Optional.empty());
+        when(kidRepository.findById(1L)).thenReturn(Optional.empty());
 
         // When & Then
         assertThatThrownBy(() -> mbtiDiagnosisAspect.validateMbtiDiagnosis(joinPoint))
                 .isInstanceOf(GlobalException.class)
                 .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.NOT_FOUND_KID);
-        verify(kidRepository).findKidWithMbtiByKidId(1L);
+        verify(kidRepository).findById(1L);
     }
 
     @Test
@@ -105,14 +105,14 @@ class MbtiDiagnosisAspectTest {
         // Given
         when(request.getRequestURI()).thenReturn("/api/books/kid/1/genre");
         when(kid.getKidMbti()).thenReturn(null);
-        when(kidRepository.findKidWithMbtiByKidId(1L)).thenReturn(Optional.of(kid));
+        when(kidRepository.findById(1L)).thenReturn(Optional.of(kid));
 
         // When & Then
         assertThatThrownBy(() -> mbtiDiagnosisAspect.validateMbtiDiagnosis(joinPoint))
                 .isInstanceOf(GlobalException.class)
                 .hasFieldOrPropertyWithValue("errorExceptionCode", ExceptionCode.MBTI_DIAGNOSIS_REQUIRED)
                 .hasMessage("서비스를 이용하기 위해서 자녀 성향 진단이 필요합니다.");
-        verify(kidRepository).findKidWithMbtiByKidId(1L);
+        verify(kidRepository).findById(1L);
     }
 
     @Test
@@ -121,10 +121,10 @@ class MbtiDiagnosisAspectTest {
         // Given
         when(request.getRequestURI()).thenReturn("/api/books/kid/1/combi");
         when(kid.getKidMbti()).thenReturn(kidMbti);
-        when(kidRepository.findKidWithMbtiByKidId(1L)).thenReturn(Optional.of(kid));
+        when(kidRepository.findById(1L)).thenReturn(Optional.of(kid));
 
         // When & Then
         assertThatNoException().isThrownBy(() -> mbtiDiagnosisAspect.validateMbtiDiagnosis(joinPoint));
-        verify(kidRepository).findKidWithMbtiByKidId(1L);
+        verify(kidRepository).findById(1L);
     }
 }

@@ -78,7 +78,7 @@ class BookControllerTest {
 
     private BookResponse createBookResponse() {
         return BookResponse.builder()
-                .id(1L)
+                .bookId(1L)
                 .genreId(1L)
                 .title("테스트 책")
                 .summary("테스트 요약")
@@ -107,7 +107,7 @@ class BookControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.CREATED.getCode()))
-                .andExpect(jsonPath("$.data.id").value(response.getId()))
+                .andExpect(jsonPath("$.data.bookId").value(response.getBookId()))
                 .andExpect(jsonPath("$.data.title").value(response.getTitle()));
     }
 
@@ -146,7 +146,7 @@ class BookControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.bookInfo.id").value(response.getBookInfo().getId()));
+                .andExpect(jsonPath("$.data.bookInfo.bookId").value(response.getBookInfo().getBookId()));
     }
 
     @Test
@@ -183,7 +183,7 @@ class BookControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()));
+                .andExpect(jsonPath("$.data.content[0].bookId").value(bookPage.getContent().get(0).getBookId()));
     }
 
     @Test
@@ -202,7 +202,7 @@ class BookControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.id").value(response.getId()));
+                .andExpect(jsonPath("$.data.bookId").value(response.getBookId()));
     }
 
     @Test
@@ -234,7 +234,7 @@ class BookControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()));
+                .andExpect(jsonPath("$.data.content[0].bookId").value(bookPage.getContent().get(0).getBookId()));
     }
 
     @Test
@@ -252,7 +252,7 @@ class BookControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()))
+                .andExpect(jsonPath("$.data.content[0].bookId").value(bookPage.getContent().get(0).getBookId()))
                 .andExpect(jsonPath("$.data.content[0].title").value(bookPage.getContent().get(0).getTitle()));
     }
 
@@ -287,7 +287,7 @@ class BookControllerTest {
                 .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()))
+                .andExpect(jsonPath("$.data.content[0].bookId").value(bookPage.getContent().get(0).getBookId()))
                 .andExpect(jsonPath("$.data.content[0].title").value(bookPage.getContent().get(0).getTitle()));
     }
 
@@ -325,7 +325,7 @@ class BookControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ExceptionCode.OK.getCode()))
-                .andExpect(jsonPath("$.data.content[0].id").value(bookPage.getContent().get(0).getId()))
+                .andExpect(jsonPath("$.data.content[0].bookId").value(bookPage.getContent().get(0).getBookId()))
                 .andExpect(jsonPath("$.data.content[0].title").value(bookPage.getContent().get(0).getTitle()));
     }
 
