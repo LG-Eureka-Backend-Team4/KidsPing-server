@@ -149,7 +149,7 @@ class BookServiceImplTest {
 
         // Then
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getBookId()).isEqualTo(1L);
         assertThat(response.getTitle()).isEqualTo("테스트 책");
         assertThat(response.getMbtiType()).isEqualTo(MbtiType.ENFP);
         verify(bookMbtiRepository).save(any(BookMbti.class));
@@ -169,10 +169,10 @@ class BookServiceImplTest {
         // Then
         assertThat(response).isNotNull();
         assertThat(response.getBookInfo()).isNotNull();
-        assertThat(response.getBookInfo().getId()).isEqualTo(1L);
+        assertThat(response.getBookInfo().getBookId()).isEqualTo(1L);
         assertThat(response.getBookInfo().getTitle()).isEqualTo("테스트 책");
         assertThat(response.getBookInfo().getMbtiType()).isEqualTo(MbtiType.ENFP);
-        assertThat(response.getLikeStatus()).isNull();
+        assertThat(response.getLikeStatus()).isEqualTo("NONE");
     }
 
     @Test
@@ -202,7 +202,7 @@ class BookServiceImplTest {
         // Then
         assertThat(responses).isNotNull();
         assertThat(responses.getContent()).hasSize(1);
-        assertThat(responses.getContent().get(0).getId()).isEqualTo(1L);
+        assertThat(responses.getContent().get(0).getBookId()).isEqualTo(1L);
     }
 
     @Test
@@ -249,7 +249,7 @@ class BookServiceImplTest {
 
         // Then
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getBookId()).isEqualTo(1L);
         assertThat(response.getTitle()).isEqualTo("테스트 책");
     }
 
@@ -291,7 +291,7 @@ class BookServiceImplTest {
         assertThat(response).isNotNull();
         assertThat(response.getContent()).hasSize(1);
         BookResponse bookResponse = response.getContent().get(0);
-        assertThat(bookResponse.getId()).isEqualTo(1L);
+        assertThat(bookResponse.getBookId()).isEqualTo(1L);
         assertThat(bookResponse.getTitle()).isEqualTo("테스트 책");
 
         verify(kidRepository).findKidWithMbtiByKidId(1L);
@@ -338,7 +338,7 @@ class BookServiceImplTest {
         BookResponse bookResponse = response.getContent().get(0);
         assertThat(bookResponse)
                 .satisfies(r -> {
-                    assertThat(r.getId()).isEqualTo(1L);
+                    assertThat(r.getBookId()).isEqualTo(1L);
                     assertThat(r.getGenreId()).isEqualTo(1L);
                     assertThat(r.getTitle()).isEqualTo("테스트 책");
                     assertThat(r.getMbtiType()).isEqualTo(MbtiType.ENFP);
@@ -386,7 +386,7 @@ class BookServiceImplTest {
         BookResponse bookResponse = response.getContent().get(0);
         assertThat(bookResponse)
                 .satisfies(r -> {
-                    assertThat(r.getId()).isEqualTo(1L);
+                    assertThat(r.getBookId()).isEqualTo(1L);
                     assertThat(r.getTitle()).isEqualTo("테스트 책");
                     assertThat(r.getMbtiType()).isEqualTo(MbtiType.ENFP);
                 });
