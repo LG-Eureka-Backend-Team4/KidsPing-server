@@ -12,13 +12,15 @@ import java.util.List;
 public class LoginResponse {
     private String email;
     private final String jwt;
+    private final String refreshToken;
     private Long userId;
     private List<GetKidListResponse> data;
 
-    public static LoginResponse of(String email, String jwt, Long userId, List<GetKidListResponse> kidsList) {
+    public static LoginResponse of(String email, String jwt,String refreshToken ,Long userId, List<GetKidListResponse> kidsList) {
         return LoginResponse.builder()
                 .email(email)
                 .jwt(jwt)
+                .refreshToken(refreshToken)
                 .userId(userId)
                 .data(kidsList)
                 .build();
