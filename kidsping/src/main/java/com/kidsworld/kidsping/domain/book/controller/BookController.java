@@ -23,7 +23,7 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BookResponse>> createBook(@RequestBody BookRequest request) {
         BookResponse response = bookService.createBook(request);
-        return ApiResponse.created("/api/books/" + response.getId(),
+        return ApiResponse.created("/api/books/" + response.getBookId(),
                 ExceptionCode.CREATED.getCode(),
                 response,
                 "도서가 성공적으로 등록되었습니다.");
