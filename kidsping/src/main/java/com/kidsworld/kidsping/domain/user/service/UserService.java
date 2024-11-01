@@ -17,7 +17,9 @@ public interface UserService extends UserDetailsService {
 
     List<GetKidListResponse> getKidsList(Long userId);
 
-    List<Object> getUserKidsList(Long userId, String userEmail);
+    //List<Object> getUserKidsList(Long userId, String userEmail);
+
+    List<Object> getUserKidsListNoAuth(Long userId);
 
     Optional<User> findBySocialId(String socialId);
 
