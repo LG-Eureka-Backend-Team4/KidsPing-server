@@ -11,11 +11,10 @@ import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.exception.GlobalException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -78,7 +77,7 @@ public class GenreScoreServiceImpl implements GenreScoreService {
             return +4;  // 싫어요에서 좋아요로: +4점
         } else if (newStatus == LikeStatus.LIKE) {
             return +2;  // 처음 좋아요: +2점
-        }else if (newStatus == LikeStatus.DISLIKE) {
+        } else if (newStatus == LikeStatus.DISLIKE) {
             return -2;  // 처음 싫어요: -2점
         } else if (newStatus == LikeStatus.CANCEL && previousStatus == LikeStatus.LIKE) {
             return -2;  // 좋아요 취소: -2점
@@ -87,7 +86,7 @@ public class GenreScoreServiceImpl implements GenreScoreService {
         }
         return 0;
     }
-  
+
     @Transactional(readOnly = true)
     public TopGenreResponse getTopGenre(Long kidId) {
         Kid kid = kidRepository.findById(kidId)
@@ -103,8 +102,6 @@ public class GenreScoreServiceImpl implements GenreScoreService {
     @Override
     @Transactional
     public void resetGenreScoreForKid(Long kidId) {
-        List<Long> genreScoreIds = genreScoreRepository.findGenreScoreIdsByKidId(kidId);
-        genreScoreRepository.deleteGenreScores(genreScoreIds);
+        genreScoreRepository.deleteGenreScoresByKidId(kidId);
     }
-
 }

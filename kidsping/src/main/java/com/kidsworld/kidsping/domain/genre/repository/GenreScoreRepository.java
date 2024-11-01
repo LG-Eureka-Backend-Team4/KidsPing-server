@@ -3,13 +3,11 @@ package com.kidsworld.kidsping.domain.genre.repository;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.entity.GenreScore;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface GenreScoreRepository extends JpaRepository<GenreScore, Long> {
     Optional<GenreScore> findByKidAndGenre(Kid kid, Genre genre);
@@ -28,12 +26,7 @@ public interface GenreScoreRepository extends JpaRepository<GenreScore, Long> {
             "LIMIT 1")
     Optional<Genre> findTopGenre();
 
-    @Query("SELECT gs.id FROM GenreScore gs WHERE gs.kid.id = :kidId")
-    List<Long> findGenreScoreIdsByKidId(@Param("kidId") Long kidId);
-
     @Modifying
-    @Query("delete from GenreScore gs where gs.id in :genreScoreIds")
-    void deleteGenreScores(@Param("genreScoreIds") List<Long> genreScoreIds);
-
-
+    @Query("delete from GenreScore gs where gs.kid.id = :kidId")
+    void deleteGenreScoresByKidId(@Param("kidId") Long kidId);
 }
