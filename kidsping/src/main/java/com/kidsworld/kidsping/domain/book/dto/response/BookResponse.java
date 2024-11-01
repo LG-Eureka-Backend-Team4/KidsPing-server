@@ -19,6 +19,15 @@ public class BookResponse {
     private String imageUrl;
     private MbtiType mbtiType;
 
+    private Integer eScore;
+    private Integer iScore;
+    private Integer sScore;
+    private Integer nScore;
+    private Integer tScore;
+    private Integer fScore;
+    private Integer jScore;
+    private Integer pScore;
+
     public static BookResponse from(Book book) {
         return BookResponse.builder()
                 .bookId(book.getId())
@@ -30,6 +39,14 @@ public class BookResponse {
                 .age(book.getAge())
                 .imageUrl(book.getImageUrl())
                 .mbtiType(book.getBookMbti().getBookMbtiType())
+                .eScore(book.getBookMbti().getEScore())
+                .iScore(book.getBookMbti().getIScore())
+                .sScore(book.getBookMbti().getSScore())
+                .nScore(book.getBookMbti().getNScore())
+                .tScore(book.getBookMbti().getTScore())
+                .fScore(book.getBookMbti().getFScore())
+                .jScore(book.getBookMbti().getJScore())
+                .pScore(book.getBookMbti().getPScore())
                 .build();
     }
 }
