@@ -11,7 +11,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class KidBadge {
+public class KidBadge extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +21,14 @@ public class KidBadge {
     private String description;
     private int requiredLevel;
     private String imageUrl;
+    private boolean isDeleted = Boolean.FALSE;
 
     @Builder
-    public KidBadge(String badgeName, String description, int requiredLevel, String imageUrl) {
+    public KidBadge(String badgeName, String description, int requiredLevel, String imageUrl, boolean isDeleted) {
         this.badgeName = badgeName;
         this.description = description;
         this.requiredLevel = requiredLevel;
         this.imageUrl = imageUrl;
+        this.isDeleted = isDeleted;
     }
 }
