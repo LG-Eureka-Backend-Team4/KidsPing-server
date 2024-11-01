@@ -14,16 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -47,9 +40,12 @@ public class EventController {
     }
 
     @GetMapping
-    @Cacheable(value = "eventPagesCache", key = "#pageable.pageNumber")
-    public ResponseEntity<ApiResponse<Page<GetEventResponse>>> getAllEvents(Pageable pageable) {
-        Page<GetEventResponse> response = eventService.getAllEvents(pageable);
+    @Cacheable(value = "eventPagesCache", key = "#page + '-' + #size")
+    public ResponseEntity<ApiResponse<Page<GetEventResponse>>> getAllEvents(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<GetEventResponse> response = eventService.getAllEvents(pageRequest);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
     }
 
