@@ -1,5 +1,6 @@
 package com.kidsworld.kidsping.domain.user.controller;
 
+import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.user.dto.response.GetKidListResponse;
 import com.kidsworld.kidsping.domain.user.dto.request.LoginRequest;
 import com.kidsworld.kidsping.domain.user.dto.request.RegisterRequest;
@@ -25,10 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
 
 @Slf4j
 @RestController
@@ -71,13 +69,18 @@ public class UserController {
 
         final UserDetails userDetails = userService.loadUserByUsername(loginRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
+        final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
 
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
+        user.updateRefreshToken(refreshToken);
+        userService.update(user);
+
         List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
 
-        return ApiResponse.ok(ExceptionCode.OK.getCode(), new LoginResponse(userDetails.getUsername(), jwt, user.getId(), kidsList), "로그인에 성공했습니다.");
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), new LoginResponse(userDetails.getUsername(), jwt, refreshToken, user.getId(), kidsList), "로그인에 성공했습니다.");
     }
 
 
@@ -87,8 +90,11 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal UserDetails userDetails) {
 
-        userService.findByEmail(userDetails.getUsername())
+        User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(UserNotFoundException::new);
+
+        user.removeRefreshToken();
+        userService.update(user);
 
         return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "로그아웃 되었습니다.");
     }
@@ -107,14 +113,17 @@ public class UserController {
         }
 
         User user = userService.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
+
+        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
 
         GetUserResponse response = GetUserResponse.builder()
-                .id(user.getId())
+                .userId(user.getId())
                 .userName(user.getUserName())
                 .phone(user.getPhone())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .kids(kidsList)
                 .build();
 
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
@@ -124,27 +133,14 @@ public class UserController {
     /*
      회원 자녀 리스트 조회
      */
-    @GetMapping("/{userId}/kidslist")
+    @GetMapping("/{userId}/kids/list")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId,
                                                                 @AuthenticationPrincipal UserDetails userDetails) {
-
-        User user = userService.findByEmail(userDetails.getUsername())
-                .orElseThrow(UserNotFoundException::new);
-
-        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
-
-        if (kidsList.isEmpty()) {
-            return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "등록된 자녀가 없습니다. 자녀를 등록해주세요.");
-        }
-
-        List<Object> responseData = new ArrayList<>();
-        responseData.add(Collections.singletonMap("userId", user.getId()));
-        responseData.addAll(kidsList);
+        List<Object> responseData = userService.getUserKidsList(userId, userDetails.getUsername());
 
         return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
     }
-
 
 
 
@@ -157,18 +153,18 @@ public class UserController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "카카오 로그인에 성공했습니다.");
     }
 
+
     /*
     카카오 로그아웃
     */
     @PostMapping("/logout/kakao")
-    public ResponseEntity<ApiResponse<Void>> kakaoLogout(
-            @RequestHeader("Authorization") String bearerToken,
-            @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ApiResponse<Void>> kakaoLogout(@RequestHeader("Authorization") String bearerToken,
+                                                         @AuthenticationPrincipal UserDetails userDetails) {
 
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (user.getSocialId() != null) {
+        if (user.getSocialId() != null) { //카카오 계정인지 검증
             String accessToken = bearerToken.substring(7);
             kakaoService.kakaoLogout(accessToken, userDetails.getUsername());
         }
@@ -178,13 +174,36 @@ public class UserController {
 
 
     /*
-    리프레시 토큰
+    일반회원 리프레시 토큰
+    */
+    @PostMapping("/refresh/token")
+    public ResponseEntity<ApiResponse<LoginResponse>> refreshNormalToken(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        LoginResponse response = userService.refreshNormalUserToken(userDetails.getUsername());
+
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "토큰이 갱신되었습니다.");
+    }
+
+
+
+    /*
+    카카오 리프레시 토큰
      */
-    @PostMapping("/refresh")
+    @PostMapping("/refresh/kakao")
     public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@AuthenticationPrincipal UserDetails userDetails) {
         try {
+            User user = userService.findByEmail(userDetails.getUsername())
+                    .orElseThrow(UserNotFoundException::new);
+
+            // 일반 로그인 사용자의 접근 차단
+            if (user.getSocialId() == null) {
+                return ApiResponse.forbidden(ExceptionCode.GENERAL_LOGIN_NOT_ALLOWED.getCode(), "일반 로그인 사용자는 이 엔드포인트를 사용할 수 없습니다.");
+            }
+
             LoginResponse response = kakaoService.refreshUserToken(userDetails.getUsername());
             return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "토큰이 갱신되었습니다.");
+
+
         } catch (RuntimeException e) {
             if (e.getMessage().equals("refresh_token_expired")) {
                 return ApiResponse.unAuthorized(ExceptionCode.UNAUTHORIZED_USER.getCode(), "재로그인이 필요합니다."

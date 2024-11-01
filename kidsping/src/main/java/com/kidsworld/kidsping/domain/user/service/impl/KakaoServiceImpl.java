@@ -93,6 +93,7 @@ public class KakaoServiceImpl implements KakaoService {
         return LoginResponse.builder()
                 .email(user.getEmail())
                 .jwt(token)
+                .refreshToken(refreshToken)
                 .userId(user.getId())
                 .data(kidsList)
                 .build();
@@ -113,7 +114,8 @@ public class KakaoServiceImpl implements KakaoService {
                 .bodyToMono(String.class)
                 .block();
 
-        user.removeKakaoTokens();  // 모든 토큰 제거
+        user.removeKakaoTokens();
+        user.removeRefreshToken();
         userService.update(user);
     }
 
@@ -134,9 +136,14 @@ public class KakaoServiceImpl implements KakaoService {
                 )
         );
 
+        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
+
         return LoginResponse.builder()
                 .email(email)
                 .jwt(newJwtToken)
+                .refreshToken(newTokens.getRefresh_token())
+                .userId(user.getId())
+                .data(kidsList)
                 .build();
     }
 }

@@ -45,13 +45,16 @@ public enum ExceptionCode {
     UNAUTHORIZED_USER(80201, HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     NOT_FOUND_USER(80202, HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     DUPLICATE_EMAIL(80203, HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다."),
+    GENERAL_LOGIN_NOT_ALLOWED(80301, HttpStatus.FORBIDDEN, "일반 로그인 사용자는 이 엔드포인트를 사용할 수 없습니다."),
+    SOCIAL_LOGIN_NOT_ALLOWED(80302, HttpStatus.FORBIDDEN, "소셜 로그인 사용자는 이 엔드포인트를 사용할 수 없습니다."),
 
 
     //카카오
-    KAKAO_AUTH_CODE_EXPIRED(80203, HttpStatus.UNAUTHORIZED, "카카오 인증 코드가 만료되었거나 이미 사용되었습니다."),
-    KAKAO_TOKEN_EXPIRED(80204, HttpStatus.UNAUTHORIZED, "카카오 토큰이 만료되었습니다."),
-    KAKAO_REFRESH_TOKEN_EXPIRED(80205, HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 재로그인이 필요합니다."),
-    KAKAO_LOGIN_FAILED(80206, HttpStatus.BAD_REQUEST, "카카오 로그인 처리 중 오류가 발생했습니다."),
+    KAKAO_AUTH_CODE_EXPIRED(80204, HttpStatus.UNAUTHORIZED, "카카오 인증 코드가 만료되었거나 이미 사용되었습니다."),
+    KAKAO_TOKEN_EXPIRED(80205, HttpStatus.UNAUTHORIZED, "카카오 토큰이 만료되었습니다."),
+    KAKAO_REFRESH_TOKEN_EXPIRED(80206, HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 재로그인이 필요합니다."),
+    KAKAO_LOGIN_FAILED(80207, HttpStatus.BAD_REQUEST, "카카오 로그인 처리 중 오류가 발생했습니다."),
+
 
 
     // 500 예외

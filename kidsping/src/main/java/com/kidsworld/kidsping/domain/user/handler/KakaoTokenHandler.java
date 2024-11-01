@@ -131,13 +131,4 @@ public class KakaoTokenHandler {
     }
 
 
-    /**
-    리프레시 토큰 삭제 (로그아웃 시 사용)
-     */
-    public void removeRefreshToken(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-        user.removeRefreshToken();
-        userRepository.save(user);
-    }
 }
