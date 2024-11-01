@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class BookResponse {
-    private Long id;
+    private Long bookId;
     private Long genreId;
     private String title;
     private String summary;
@@ -21,7 +21,7 @@ public class BookResponse {
 
     public static BookResponse from(Book book) {
         return BookResponse.builder()
-                .id(book.getId())
+                .bookId(book.getId())
                 .genreId(book.getGenre().getId())
                 .title(book.getTitle())
                 .summary(book.getSummary())

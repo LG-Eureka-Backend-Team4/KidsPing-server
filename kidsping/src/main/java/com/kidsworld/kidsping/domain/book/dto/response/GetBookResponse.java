@@ -9,12 +9,12 @@ import lombok.Getter;
 @Builder
 public class GetBookResponse {
     private BookResponse bookInfo;
-    private LikeStatus likeStatus;
+    private String likeStatus;
 
     public static GetBookResponse of(Book book, LikeStatus likeStatus) {
         return GetBookResponse.builder()
                 .bookInfo(BookResponse.from(book))
-                .likeStatus(likeStatus)
+                .likeStatus(likeStatus != null ? likeStatus.name() : "NONE")
                 .build();
     }
 }
