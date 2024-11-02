@@ -38,6 +38,7 @@ import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import com.kidsworld.kidsping.infra.s3.FileStore;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -165,6 +166,10 @@ public class KidServiceImpl implements KidService {
             throw new NotFoundKidException();
         }
         kidRepository.softDeleteKidAndRelatedData(kidId);
+        // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
+        genreScoreService.resetGenreScoreForKid(kidId);
+        likeGenreService.resetGenreLikesForKid(kidId);
+        likeMbtiService.resetMbtiLikesForKid(kidId);
 
         return new DeleteKidResponse(kidId);
     }
@@ -268,7 +273,6 @@ public class KidServiceImpl implements KidService {
         kidMBTIHistoryRepository.save(kidMbtiHistory);
     }
 
-
     /*
     자녀 성향 히스토리 조회
     */
@@ -287,5 +291,10 @@ public class KidServiceImpl implements KidService {
     @Override
     public List<KidBadgeAwarded> getAwardedBadges(Long kidId) {
         return kidBadgeAwardedRepository.findAllByKidId(kidId);
+    }
+
+    @Override
+    public void deleteExpiredKid() {
+        kidRepository.deleteExpiredKid(LocalDateTime.now());
     }
 }
