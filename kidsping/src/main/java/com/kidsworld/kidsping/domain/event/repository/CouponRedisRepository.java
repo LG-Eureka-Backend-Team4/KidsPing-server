@@ -19,11 +19,11 @@ public class CouponRedisRepository {
     private static final String USER_KEY = "USER:";
     private static final String MAX_COUPON_COUNT = "100";
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final HashOperations<String, String, String> hashOperations;
 
     @Autowired
-    public CouponRedisRepository(RedisTemplate<String, String> redisTemplate) {
+    public CouponRedisRepository(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();  // HashOperations 초기화
     }
@@ -65,14 +65,38 @@ public class CouponRedisRepository {
         );
 
         try {
+            log.info("Executing Lua script with keys: {}", keys);
+            log.info("Executing Lua script with args: {}", args);
+
             DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>(luaScript, Long.class);
-            return redisTemplate.execute(redisScript, keys, args.toArray());
+            Long result = redisTemplate.execute(redisScript, keys, args.toArray());
+
+            log.info("DEBUG: EVENT_KEY SET members for key {}: {}", keys.get(0), redisTemplate.opsForSet().members(keys.get(0)));
+            log.info("DEBUG: EVENT_COUPON_COUNT current value for key {}: {}", keys.get(1), redisTemplate.opsForValue().get(keys.get(1)));
+            log.info("DEBUG: User Hash data for key {}: {}", keys.get(2), redisTemplate.opsForHash().entries(keys.get(2)));
+
+            return result;
+
         } catch (Exception e) {
             log.info("쿠폰 발급 중 예외 발생 - 사용자ID {}, 이벤트 ID {}, 이름 {}, 전화번호 {}", request.getUserId(), request.getEventId(),
                     request.getName(), request.getPhone());
         }
 
         return 0L;
+    }
+
+    // 쿠폰 데이터를 Redis에서 삭제하는 메서드
+    public void deleteCouponKeys(Long eventId, Long userId) {
+        String eventKey = EVENT_KEY + eventId;
+        String couponCountKey = EVENT_COUPON_COUNT + eventId;
+        String userCouponKey = EVENT_KEY + eventId + USER_KEY + userId;
+
+        // 각 키 삭제
+        redisTemplate.delete(eventKey);
+        redisTemplate.delete(couponCountKey);
+        redisTemplate.delete(userCouponKey);
+
+        log.info("Deleted Redis keys: {}, {}, {}", eventKey, couponCountKey, userCouponKey);
     }
 
     public Long verifyParticipation(Long eventId, Long userId) {

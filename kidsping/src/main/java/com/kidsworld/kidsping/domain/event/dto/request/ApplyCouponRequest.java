@@ -2,10 +2,12 @@ package com.kidsworld.kidsping.domain.event.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ApplyCouponRequest {
 
     private Long userId;

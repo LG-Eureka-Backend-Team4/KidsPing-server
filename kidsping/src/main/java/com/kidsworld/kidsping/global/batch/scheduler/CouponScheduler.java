@@ -3,6 +3,7 @@ package com.kidsworld.kidsping.global.batch.scheduler;
 import com.kidsworld.kidsping.domain.event.entity.Coupon;
 import com.kidsworld.kidsping.domain.event.entity.Event;
 import com.kidsworld.kidsping.domain.event.exception.EventNotFoundException;
+import com.kidsworld.kidsping.domain.event.repository.CouponRedisRepository;
 import com.kidsworld.kidsping.domain.event.repository.CouponRepository;
 import com.kidsworld.kidsping.domain.event.repository.EventRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
@@ -25,11 +26,12 @@ public class CouponScheduler {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final CouponRepository couponRepository;
+    private final CouponRedisRepository couponRedisRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
 //    @Scheduled(cron = "0 0 4 * * *")
-    @Scheduled(cron = "*/1 * * * * *")  // 매 1초마다 실행 for Test
+    @Scheduled(cron = "*/10 * * * * *")  // 매 1초마다 실행 for Test
     @Transactional
     public void saveRedisDataToDatabase() {
         Set<String> keys = redisTemplate.keys("EVENT:*USER:*");
@@ -56,6 +58,10 @@ public class CouponScheduler {
                             .build();
 
                     couponRepository.save(coupon);
+
+                    // 데이터베이스에 저장이 완료되면 Redis 데이터 삭제
+                    couponRedisRepository.deleteCouponKeys(eventId, userId);
+
                 } catch (Exception e) {
                     log.error("[saveRedisDataToDatabase] Error processing key {}: {}", key, e.getMessage());
                     throw e;
@@ -65,7 +71,7 @@ public class CouponScheduler {
     }
 
     private Long extractEventId(String key) {
-        String[] parts = key.split("event:|user:");
+        String[] parts = key.split("EVENT:|USER:");
         if (parts.length < 3) {
             throw new IllegalArgumentException("Invalid key format: " + key);
         }
@@ -73,7 +79,7 @@ public class CouponScheduler {
     }
 
     private Long extractUserId(String key) {
-        String[] parts = key.split("event:|user:");
+        String[] parts = key.split("EVENT:|USER:");
         if (parts.length < 3) {
             throw new IllegalArgumentException("Invalid key format: " + key);
         }
