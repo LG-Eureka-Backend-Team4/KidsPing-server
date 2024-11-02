@@ -85,6 +85,20 @@ public class CouponRedisRepository {
         return 0L;
     }
 
+    // 쿠폰 데이터를 Redis에서 삭제하는 메서드
+    public void deleteCouponKeys(Long eventId, Long userId) {
+        String eventKey = EVENT_KEY + eventId;
+        String couponCountKey = EVENT_COUPON_COUNT + eventId;
+        String userCouponKey = EVENT_KEY + eventId + USER_KEY + userId;
+
+        // 각 키 삭제
+        redisTemplate.delete(eventKey);
+        redisTemplate.delete(couponCountKey);
+        redisTemplate.delete(userCouponKey);
+
+        log.info("Deleted Redis keys: {}, {}, {}", eventKey, couponCountKey, userCouponKey);
+    }
+
     public Long verifyParticipation(Long eventId, Long userId) {
         String eventKey = EVENT_KEY + eventId;
         return redisTemplate
