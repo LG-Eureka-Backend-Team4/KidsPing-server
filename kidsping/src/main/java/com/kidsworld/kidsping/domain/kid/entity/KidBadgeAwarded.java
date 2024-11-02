@@ -22,9 +22,12 @@ public class KidBadgeAwarded extends BaseTimeEntity {
     @JoinColumn(name = "badge_id", nullable = false)
     private KidBadge badge;
 
+    private boolean isDeleted = Boolean.FALSE;
+
     @Builder
-    public KidBadgeAwarded(Kid kid, KidBadge badge) {
+    public KidBadgeAwarded(Kid kid, KidBadge badge, boolean isDeleted) {
         this.kid = kid;
         this.badge = badge;
+        this.isDeleted = isDeleted;
     }
 }
