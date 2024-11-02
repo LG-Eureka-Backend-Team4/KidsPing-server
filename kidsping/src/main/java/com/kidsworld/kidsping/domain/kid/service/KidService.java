@@ -6,6 +6,7 @@ import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.KidBadgeAwarded;
@@ -29,4 +30,6 @@ public interface KidService {
     List<KidBadgeAwarded> getAwardedBadges(Long kidId);
 
     void deleteExpiredKid();
+
+    GetKidMbtiResponse getKidMbti(Long kidId);
 }

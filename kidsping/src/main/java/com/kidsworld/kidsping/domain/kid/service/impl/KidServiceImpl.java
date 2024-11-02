@@ -9,6 +9,7 @@ import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
@@ -35,6 +36,8 @@ import com.kidsworld.kidsping.domain.user.repository.UserRepository;
 import com.kidsworld.kidsping.global.common.entity.MbtiScore;
 import com.kidsworld.kidsping.global.common.entity.UploadedFile;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
+import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import com.kidsworld.kidsping.global.exception.custom.NotFoundException;
 import com.kidsworld.kidsping.global.util.MbtiCalculator;
 import com.kidsworld.kidsping.infra.s3.FileStore;
 import java.time.LocalDate;
@@ -286,6 +289,13 @@ public class KidServiceImpl implements KidService {
         return histories.stream()
                 .map(GetKidMbtiHistoryResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public GetKidMbtiResponse getKidMbti(Long kidId) {
+        KidMbti kidMbti = kidMBTIRepository.findKidMbtiBy(kidId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_KID_MBTI));
+        return GetKidMbtiResponse.from(kidMbti);
     }
 
     @Override

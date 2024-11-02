@@ -7,6 +7,7 @@ import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidBadgeAwardedResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidLevelAndBadgesResponse;
@@ -113,6 +114,15 @@ public class KidController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 히스토리를 성공적으로 조회했습니다.");
     }
 
+    /*
+     * 현재 자녀 성향 조회
+     */
+    @GetMapping("/{kidId}/mbti")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<GetKidMbtiResponse>> getKidMbti(@PathVariable("kidId") Long kidId) {
+        GetKidMbtiResponse kidMbtiResponse = kidService.getKidMbti(kidId);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), kidMbtiResponse, "자녀 성향을 성공적으로 조회했습니다.");
+    }
 
     // Kid의 현재 레벨과 획득한 뱃지 조회
     @GetMapping("/{kidId}/level-and-badges")
