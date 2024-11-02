@@ -2,7 +2,9 @@ package com.kidsworld.kidsping.domain.event.repository;
 
 import com.kidsworld.kidsping.domain.event.dto.request.ApplyCouponRequest;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
@@ -19,11 +21,11 @@ public class CouponRedisRepository {
     private static final String USER_KEY = "USER:";
     private static final String MAX_COUPON_COUNT = "100";
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final HashOperations<String, String, String> hashOperations;
 
     @Autowired
-    public CouponRedisRepository(RedisTemplate<String, String> redisTemplate) {
+    public CouponRedisRepository(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();  // HashOperations 초기화
     }
@@ -90,12 +92,25 @@ public class CouponRedisRepository {
     }
 
     // 쿠폰 요청 데이터를 Redis에 저장
+//    public void saveApplyCoupon(ApplyCouponRequest request) {
+//        String couponKey = EVENT_KEY + request.getEventId() + USER_KEY + request.getUserId();
+//        hashOperations.put(couponKey, "userId", request.getUserId().toString());
+//        hashOperations.put(couponKey, "eventId", request.getEventId().toString());
+//        hashOperations.put(couponKey, "name", request.getName());
+//        hashOperations.put(couponKey, "phone", request.getPhone());
+//    }
     public void saveApplyCoupon(ApplyCouponRequest request) {
         String couponKey = EVENT_KEY + request.getEventId() + USER_KEY + request.getUserId();
-        hashOperations.put(couponKey, "userId", request.getUserId().toString());
-        hashOperations.put(couponKey, "eventId", request.getEventId().toString());
-        hashOperations.put(couponKey, "name", request.getName());
-        hashOperations.put(couponKey, "phone", request.getPhone());
+
+        // 데이터를 해시 타입으로 저장하기 위해 Map을 사용
+        Map<String, Object> data = new HashMap<>();
+        data.put("userId", request.getUserId().toString());
+        data.put("eventId", request.getEventId().toString());
+        data.put("name", request.getName());
+        data.put("phone", request.getPhone());
+
+        // opsForHash().putAll()을 사용하여 해시 타입으로 저장
+        redisTemplate.opsForHash().putAll(couponKey, data);
     }
 
     // 등록된 key 모두 제거(테스트코드용)
