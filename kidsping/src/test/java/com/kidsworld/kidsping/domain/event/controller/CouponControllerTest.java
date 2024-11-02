@@ -1,5 +1,9 @@
 package com.kidsworld.kidsping.domain.event.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.kidsworld.kidsping.domain.event.dto.request.ApplyCouponRequest;
 import com.kidsworld.kidsping.domain.event.dto.request.CheckWinnerRequest;
 import com.kidsworld.kidsping.domain.event.dto.response.ApplyCouponResponse;
@@ -14,11 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CouponControllerTest {
@@ -47,7 +46,7 @@ class CouponControllerTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isNotNull();
         assertThat(responseEntity.getBody().getData()).isInstanceOf(ApplyCouponResponse.class);
-        assertThat(responseEntity.getBody().getData().getResponseMessage()).isEqualTo("이벤트에 참여하셨습니다.");
+        assertThat(responseEntity.getBody().getData().getApplyResponseMessage()).isEqualTo("이벤트에 참여하셨습니다.");
     }
 
     @Test
