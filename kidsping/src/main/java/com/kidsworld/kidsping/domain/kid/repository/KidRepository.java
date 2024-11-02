@@ -18,22 +18,31 @@ public interface KidRepository extends JpaRepository<Kid, Long> {
     @Query("select k from Kid k where k.id = :kidId and k.isDeleted = false")
     Optional<Kid> findKidBy(@Param("kidId") Long kidId);
 
-    @Transactional
-    @Modifying
-    @Query(value = """
-            UPDATE kid k
-            LEFT JOIN kid_mbti km ON km.kid_id = k.kid_id
-            LEFT JOIN kid_mbti_history kmh ON kmh.kid_id = k.kid_id
-            LEFT JOIN mbti_answer ma ON ma.kid_id = k.kid_id
-            SET k.is_deleted = true,
-                km.is_deleted = CASE WHEN km.kid_id IS NOT NULL THEN true ELSE km.is_deleted END,
-                kmh.is_deleted = CASE WHEN kmh.kid_id IS NOT NULL THEN true ELSE kmh.is_deleted END,
-                ma.is_deleted = CASE WHEN ma.kid_id IS NOT NULL THEN true ELSE ma.is_deleted END
-            WHERE k.kid_id = :kidId
-            """, nativeQuery = true)
-    void softDeleteKidAndRelatedData(@Param("kidId") Long kidId);
-
     @Modifying
     @Query(value = "delete from kid k where k.is_deleted = true and k.updated_at <= :currentDate - INTERVAL 1 MONTH", nativeQuery = true)
     void deleteExpiredKid(@Param("currentDate") LocalDateTime currentDate);
+
+
+
+    @Modifying
+    @Query("UPDATE Kid k SET k.isDeleted = true WHERE k.id = :kidId")
+    void softDeleteKid(@Param("kidId") Long kidId);
+
+    @Modifying
+    @Query("UPDATE KidMbti km SET km.isDeleted = true WHERE km.kid.id = :kidId")
+    void softDeleteKidMbti(@Param("kidId") Long kidId);
+
+    @Modifying
+    @Query("UPDATE KidMbtiHistory kmh SET kmh.isDeleted = true WHERE kmh.kid.id = :kidId")
+    void softDeleteKidMbtiHistory(@Param("kidId") Long kidId);
+
+    @Modifying
+    @Query("UPDATE MbtiAnswer ma SET ma.isDeleted = true WHERE ma.kid.id = :kidId")
+    void softDeleteMbtiAnswer(@Param("kidId") Long kidId);
+
+    @Modifying
+    @Query("UPDATE KidBadgeAwarded kba SET kba.isDeleted = true WHERE kba.kid.id = :kidId")
+    void softDeleteKidBadgeAwarded(@Param("kidId") Long kidId);
+
+
 }

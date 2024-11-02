@@ -8,6 +8,7 @@ import com.kidsworld.kidsping.domain.user.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
@@ -19,7 +20,7 @@ public interface UserService extends UserDetailsService {
 
     //List<Object> getUserKidsList(Long userId, String userEmail);
 
-    List<Object> getUserKidsListNoAuth(Long userId);
+    Map<String, Object> getUserKidsListNoAuth(Long userId);
 
     Optional<User> findBySocialId(String socialId);
 
