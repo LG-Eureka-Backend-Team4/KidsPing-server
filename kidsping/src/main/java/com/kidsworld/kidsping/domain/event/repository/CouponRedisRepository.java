@@ -100,13 +100,13 @@ public class CouponRedisRepository {
     }
 
     // 쿠폰 요청 데이터를 Redis에 저장
-//    public void saveApplyCoupon(ApplyCouponRequest request) {
-//        String couponKey = EVENT_KEY + request.getEventId() + USER_KEY + request.getUserId();
-//        hashOperations.put(couponKey, "userId", request.getUserId().toString());
-//        hashOperations.put(couponKey, "eventId", request.getEventId().toString());
-//        hashOperations.put(couponKey, "name", request.getName());
-//        hashOperations.put(couponKey, "phone", request.getPhone());
-//    }
+    public void saveApplyCoupon(ApplyCouponRequest request) {
+        String couponKey = EVENT_KEY + request.getEventId() + USER_KEY + request.getUserId();
+        hashOperations.put(couponKey, "userId", request.getUserId().toString());
+        hashOperations.put(couponKey, "eventId", request.getEventId().toString());
+        hashOperations.put(couponKey, "name", request.getName());
+        hashOperations.put(couponKey, "phone", request.getPhone());
+    }
 
     // 등록된 key 모두 제거(테스트코드용)
     public void deleteByKey(String key) {
