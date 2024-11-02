@@ -8,7 +8,7 @@ import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidWithMbtiAndBadgeResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidBadgeAwardedResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.KidLevelAndBadgesResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
@@ -56,14 +56,13 @@ public class KidController {
                 ExceptionCode.CREATED.getMessage());
     }
 
-
     /*
     자녀 프로필 조회
     */
     @GetMapping("/{kidId}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<GetKidResponse>> getKid(@PathVariable Long kidId) {
-        GetKidResponse response = kidService.getKid(kidId);
+    public ResponseEntity<ApiResponse<GetKidWithMbtiAndBadgeResponse>> getKid(@PathVariable Long kidId) {
+        GetKidWithMbtiAndBadgeResponse response = kidService.getKid(kidId);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "자녀 프로필을 성공적으로 조회했습니다.");
     }
 

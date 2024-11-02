@@ -8,7 +8,7 @@ public interface CouponService {
 
     void applyCoupon(ApplyCouponRequest applyCouponRequest);
 
-    void applyCouponAtomically(ApplyCouponRequest applyCouponRequest);
+    String applyCouponAtomically(ApplyCouponRequest applyCouponRequest);
 
     CheckWinnerResponse checkWinner(CheckWinnerRequest request);
 }
