@@ -1,6 +1,9 @@
 package com.kidsworld.kidsping.global.batch;
 
+import com.kidsworld.kidsping.domain.kid.service.KidMbtiHistoryService;
 import com.kidsworld.kidsping.domain.kid.service.KidMbtiService;
+import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.kid.service.impl.LevelBadgeService;
 import com.kidsworld.kidsping.domain.question.service.GenreAnswerService;
 import com.kidsworld.kidsping.domain.question.service.MbtiAnswerService;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +28,17 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
     public Job deleteExpiredDataJob(JobRepository jobRepository,
                                     @Qualifier("deleteExpiredKidMbtiStep") Step deleteExpiredKidMbtiStep,
                                     @Qualifier("deleteExpiredGenreAnswerStep") Step deleteExpiredGenreAnswerStep,
-                                    @Qualifier("deleteExpiredMbtiAnswerStep") Step deleteExpiredMbtiAnswerStep) {
+                                    @Qualifier("deleteExpiredMbtiAnswerStep") Step deleteExpiredMbtiAnswerStep,
+                                    @Qualifier("deleteExpiredKidMbtiHistoryStep") Step deleteExpiredKidMbtiHistoryStep,
+                                    @Qualifier("deleteExpiredKidBadgeAwardedStep") Step deleteExpiredKidBadgeAwardedStep,
+                                    @Qualifier("deleteExpiredKidStep") Step deleteExpiredKidStep) {
         return new JobBuilder("deleteExpiredDataJob", jobRepository)
                 .start(deleteExpiredKidMbtiStep)
                 .next(deleteExpiredGenreAnswerStep)
                 .next(deleteExpiredMbtiAnswerStep)
+                .next(deleteExpiredKidMbtiHistoryStep)
+                .next(deleteExpiredKidBadgeAwardedStep)
+                .next(deleteExpiredKidStep)
                 .build();
     }
 
@@ -58,6 +67,33 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
     }
 
     @Bean
+    public Step deleteExpiredKidMbtiHistoryStep(JobRepository jobRepository,
+                                                PlatformTransactionManager transactionManager,
+                                                @Qualifier("deleteExpiredKidMbtiHistoryTasklet") Tasklet deleteExpiredKidMbtiHistoryTasklet) {
+        return new StepBuilder("deleteExpiredKidMbtiHistoryStep", jobRepository)
+                .tasklet(deleteExpiredKidMbtiHistoryTasklet, transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Step deleteExpiredKidBadgeAwardedStep(JobRepository jobRepository,
+                                                 PlatformTransactionManager transactionManager,
+                                                 @Qualifier("deleteExpiredKidBadgeAwardedTasklet") Tasklet deleteExpiredKidBadgeAwardedTasklet) {
+        return new StepBuilder("deleteExpiredKidBadgeAwardedStep", jobRepository)
+                .tasklet(deleteExpiredKidBadgeAwardedTasklet, transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Step deleteExpiredKidStep(JobRepository jobRepository,
+                                     PlatformTransactionManager transactionManager,
+                                     @Qualifier("deleteExpiredKidTasklet") Tasklet deleteExpiredKidTasklet) {
+        return new StepBuilder("deleteExpiredKidStep", jobRepository)
+                .tasklet(deleteExpiredKidTasklet, transactionManager)
+                .build();
+    }
+
+    @Bean
     public Tasklet deleteExpiredKidMbtiTasklet(KidMbtiService kidMbtiService) {
         return (contribution, chunkContext) -> {
             kidMbtiService.deleteExpiredKidMbti();
@@ -77,6 +113,30 @@ public class ExpiredDataCleanupJob extends DefaultBatchConfiguration {
     public Tasklet deleteExpiredMbtiAnswerTasklet(MbtiAnswerService mbtiAnswerService) {
         return (contribution, chunkContext) -> {
             mbtiAnswerService.deleteExpiredMbtiAnswer();
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    @Bean
+    public Tasklet deleteExpiredKidMbtiHistoryTasklet(KidMbtiHistoryService kidMbtiHistoryService) {
+        return (contribution, chunkContext) -> {
+            kidMbtiHistoryService.deleteExpiredKidMbtiHistory();
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    @Bean
+    public Tasklet deleteExpiredKidBadgeAwardedTasklet(LevelBadgeService levelBadgeService) {
+        return (contribution, chunkContext) -> {
+            levelBadgeService.deleteExpiredKidBadgeAwarded();
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    @Bean
+    public Tasklet deleteExpiredKidTasklet(KidService kidService) {
+        return (contribution, chunkContext) -> {
+            kidService.deleteExpiredKid();
             return RepeatStatus.FINISHED;
         };
     }

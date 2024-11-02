@@ -10,10 +10,14 @@ import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
 import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
+import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
+import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
+import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +41,13 @@ class KidServiceImplTest {
 
     @Autowired
     private KidService kidService;
+    @Autowired
+    private KidMbtiRepository kidMbtiRepository;
+    @Autowired
+    private MbtiAnswerRepository mbtiAnswerRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @DisplayName("자녀 성향을 진단하여 자녀의 성향과 성향 히스토리를 생성한다.")
     @Test
@@ -141,7 +152,7 @@ class KidServiceImplTest {
                 );
     }
 
-    
+
     @DisplayName("처음 진단 시 KidMbti가 생성되고, 재진단 시 동일한 KidMbti가 업데이트된다.")
     @Test
     void diagnoseKidMbti_createsOrUpdateKidMbtiOnFirstAndReDiagnosis() {
@@ -193,11 +204,92 @@ class KidServiceImplTest {
                 .hasMessage(ExceptionCode.NOT_FOUND_KID.getMessage());
     }
 
+    @DisplayName("자녀 삭제 시 자녀와 연관되어 있는 데이터들이 soft delete 된다.")
+    @Test
+    void softDeleteKidAndRelatedData() {
+        // given
+        Kid kid = createKid(Gender.MALE, "테스트아이", LocalDate.now());
+        Kid saveKid = kidRepository.save(kid);
+        KidMbti kidMbti = createKidMbti(1, 2, 3, 4, 5, 6, 7, 8, MbtiStatus.ENFJ);
+        kid.updateKidMbti(kidMbti);
+        kidMbtiRepository.save(kidMbti);
+
+        KidMbtiHistory kidMbtiHistory = createKidMbtiHistory(kid);
+        MbtiAnswer mbtiAnswer = createMbtiAnswer(kid, 1, 2, 3, 4, 5, 6, 7, 8);
+
+        // when
+        kidMbtiHistoryRepository.save(kidMbtiHistory);
+        mbtiAnswerRepository.save(mbtiAnswer);
+        kidRepository.softDeleteKidAndRelatedData(saveKid.getId());
+
+        // Hibernate 캐시 플러시 및 클리어
+        entityManager.flush();
+        entityManager.clear();
+
+        Kid deletedKid = kidRepository.findById(kid.getId()).orElse(null);
+        KidMbti deletedKidMbti = kidMbtiRepository.findById(kidMbti.getId()).orElse(null);
+        KidMbtiHistory deletedKidMbtiHistory = kidMbtiHistoryRepository.findById(kidMbtiHistory.getId()).orElse(null);
+        MbtiAnswer deletedMbtiAnswer = mbtiAnswerRepository.findById(mbtiAnswer.getId()).orElse(null);
+
+        // then
+        assertThat(deletedKid).isNotNull();
+        assertThat(deletedKid.isDeleted()).isTrue();
+
+        assertThat(deletedKidMbti).isNotNull();
+        assertThat(deletedKidMbti.getIsDeleted()).isTrue();
+
+        assertThat(deletedKidMbtiHistory).isNotNull();
+        assertThat(deletedKidMbtiHistory.isDeleted()).isTrue();
+
+        assertThat(deletedMbtiAnswer).isNotNull();
+        assertThat(deletedMbtiAnswer.getIsDeleted()).isTrue();
+    }
+
+    private static KidMbtiHistory createKidMbtiHistory(Kid kid) {
+        return KidMbtiHistory.builder()
+                .kid(kid)
+                .mbtiStatus(MbtiStatus.INFJ)
+                .isDeleted(false)
+                .build();
+    }
+
     private static Kid createKid(Gender gender, String name, LocalDate birth) {
         return Kid.builder()
                 .gender(gender)
                 .name(name)
                 .birth(birth)
+                .build();
+    }
+
+    private static KidMbti createKidMbti(int e, int i, int s, int n, int t, int f, int p, int j,
+                                         MbtiStatus mbtiStatus) {
+        return KidMbti
+                .builder()
+                .eScore(e)
+                .iScore(i)
+                .sScore(s)
+                .nScore(n)
+                .tScore(t)
+                .fScore(f)
+                .pScore(p)
+                .jScore(j)
+                .mbtiStatus(mbtiStatus)
+                .build();
+    }
+
+    private static MbtiAnswer createMbtiAnswer(Kid kid, int e, int i, int s, int n, int t, int f, int p, int j) {
+        return MbtiAnswer
+                .builder()
+                .kid(kid)
+                .eScore(e)
+                .iScore(i)
+                .sScore(s)
+                .nScore(n)
+                .tScore(t)
+                .fScore(f)
+                .pScore(p)
+                .jScore(j)
+                .isDeleted(false)
                 .build();
     }
 

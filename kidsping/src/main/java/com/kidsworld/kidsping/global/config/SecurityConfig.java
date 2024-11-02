@@ -6,9 +6,9 @@ import com.kidsworld.kidsping.domain.user.service.KakaoService;
 import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
 import com.kidsworld.kidsping.global.jwt.JwtRequestFilter;
 import com.kidsworld.kidsping.global.jwt.JwtUtil;
-import lombok.RequiredArgsConstructor;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/**",
+                                "/",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/api/users/**"
@@ -57,7 +57,6 @@ public class SecurityConfig {
                             String authHeader = request.getHeader("Authorization");
                             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                                 String token = authHeader.substring(7);
-
 
                                 String email = jwtUtil.extractUsername(token);
                                 User user = userService.findByEmail(email)

@@ -8,6 +8,7 @@ import com.kidsworld.kidsping.domain.kid.repository.KidBadgeRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.domain.like.repository.LikeGenreRepository;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,8 @@ public class LevelBadgeService {
     private final LikeGenreRepository likeGenreRepository;
 
     public LevelBadgeService(KidRepository kidRepository, KidBadgeRepository kidBadgeRepository,
-                             KidBadgeAwardedRepository kidBadgeAwardedRepository, LikeGenreRepository likeGenreRepository) {
+                             KidBadgeAwardedRepository kidBadgeAwardedRepository,
+                             LikeGenreRepository likeGenreRepository) {
         this.kidRepository = kidRepository;
         this.kidBadgeRepository = kidBadgeRepository;
         this.kidBadgeAwardedRepository = kidBadgeAwardedRepository;
@@ -51,5 +53,9 @@ public class LevelBadgeService {
     public int getCurrentLevel(Long kidId) {
         int likeCount = likeGenreRepository.countLikesByKidId(kidId, LikeStatus.LIKE);
         return likeCount / 10; // 10개 좋아요당 1레벨로 계산
+    }
+
+    public void deleteExpiredKidBadgeAwarded() {
+        kidBadgeAwardedRepository.deleteExpiredGenreScore(LocalDateTime.now());
     }
 }

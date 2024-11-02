@@ -3,6 +3,7 @@ package com.kidsworld.kidsping.domain.genre.repository;
 import com.kidsworld.kidsping.domain.genre.entity.Genre;
 import com.kidsworld.kidsping.domain.genre.entity.GenreScore;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,4 +30,8 @@ public interface GenreScoreRepository extends JpaRepository<GenreScore, Long> {
     @Modifying
     @Query("delete from GenreScore gs where gs.kid.id = :kidId")
     void deleteGenreScoresByKidId(@Param("kidId") Long kidId);
+
+    @Modifying
+    @Query(value = "delete from genre_score gs where gs.is_deleted = true and gs.updated_at <= :currentDate - INTERVAL 1 MONTH", nativeQuery = true)
+    void deleteExpiredGenreScore(@Param("currentDate") LocalDateTime currentDate);
 }
