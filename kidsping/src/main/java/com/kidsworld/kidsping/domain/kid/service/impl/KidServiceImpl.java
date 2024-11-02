@@ -10,7 +10,8 @@ import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidWithMbtiAndBadgeResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.KidBadgeAwardedResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.kid.entity.KidBadgeAwarded;
@@ -118,17 +119,20 @@ public class KidServiceImpl implements KidService {
         return CreateKidResponse.from(savedKid);
     }
 
-
     /*
     자녀 프로필 조회
     */
     @Override
-    public GetKidResponse getKid(Long kidId) {
-
-        Kid kid = kidRepository.findById(kidId)
+    public GetKidWithMbtiAndBadgeResponse getKid(Long kidId) {
+        Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
                 .orElseThrow(NotFoundKidException::new);
+        List<KidBadgeAwardedResponse> kidBadgeAwardeds = kidBadgeAwardedRepository.findAllByKidId(kidId)
+                .stream()
+                .map(badge -> new KidBadgeAwardedResponse(badge.getBadge().getBadgeName(),
+                        badge.getBadge().getDescription(), badge.getBadge().getImageUrl()))
+                .toList();
 
-        return new GetKidResponse(kid);
+        return GetKidWithMbtiAndBadgeResponse.createKidWithMbtiAndBadgeResponse(kid, kidBadgeAwardeds);
     }
 
     /*

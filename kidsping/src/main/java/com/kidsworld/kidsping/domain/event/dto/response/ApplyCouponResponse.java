@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ApplyCouponResponse {
 
-    private String responseMessage;
+    private String applyResponseMessage;
 }

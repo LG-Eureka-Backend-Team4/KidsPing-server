@@ -7,7 +7,7 @@ import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.DeleteKidResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiHistoryResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.GetKidMbtiResponse;
-import com.kidsworld.kidsping.domain.kid.dto.response.GetKidResponse;
+import com.kidsworld.kidsping.domain.kid.dto.response.GetKidWithMbtiAndBadgeResponse;
 import com.kidsworld.kidsping.domain.kid.dto.response.UpdateKidResponse;
 import com.kidsworld.kidsping.domain.kid.entity.KidBadgeAwarded;
 import java.util.List;
@@ -17,7 +17,7 @@ public interface KidService {
 
     CreateKidResponse createKid(String request, MultipartFile profileImage);
 
-    GetKidResponse getKid(Long kidId);
+    GetKidWithMbtiAndBadgeResponse getKid(Long kidId);
 
     UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request, MultipartFile profileImage);
 
