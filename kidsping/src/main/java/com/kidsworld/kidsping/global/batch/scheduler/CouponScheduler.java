@@ -31,7 +31,7 @@ public class CouponScheduler {
     @Scheduled(cron = "0 0 4 * * *")
     @Transactional
     public void saveRedisDataToDatabase() {
-        Set<String> keys = redisTemplate.keys("event:*user:*");
+        Set<String> keys = redisTemplate.keys("EVENT:*USER:*");
 
         if (keys != null) {
             for (String key : keys) {
