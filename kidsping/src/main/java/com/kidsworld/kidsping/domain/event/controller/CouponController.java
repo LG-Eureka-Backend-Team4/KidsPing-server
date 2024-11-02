@@ -35,8 +35,8 @@ public class CouponController {
 
     @GetMapping("/winners/check")
     public ResponseEntity<ApiResponse<CheckWinnerResponse>> checkWinner(
-            @RequestParam Long eventId,
-            @RequestParam Long userId) {
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("userId") Long userId) {
 
         CheckWinnerRequest request = CheckWinnerRequest.builder().eventId(eventId).userId(userId).build();
         CheckWinnerResponse response = couponService.checkWinner(request);
