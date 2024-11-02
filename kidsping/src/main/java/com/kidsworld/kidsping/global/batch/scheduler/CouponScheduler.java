@@ -28,7 +28,8 @@ public class CouponScheduler {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
-    @Scheduled(cron = "0 0 4 * * *")
+//    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "*/10 * * * * *")  // 매 10초마다 실행 for Test
     @Transactional
     public void saveRedisDataToDatabase() {
         Set<String> keys = redisTemplate.keys("EVENT:*USER:*");
