@@ -29,7 +29,7 @@ public class CouponScheduler {
     private final EventRepository eventRepository;
 
 //    @Scheduled(cron = "0 0 4 * * *")
-    @Scheduled(cron = "*/1 * * * * *")  // 매 1초마다 실행 for Test
+//    @Scheduled(cron = "*/1 * * * * *")  // 매 1초마다 실행 for Test
     @Transactional
     public void saveRedisDataToDatabase() {
         Set<String> keys = redisTemplate.keys("EVENT:*USER:*");
@@ -65,7 +65,7 @@ public class CouponScheduler {
     }
 
     private Long extractEventId(String key) {
-        String[] parts = key.split("event:|user:");
+        String[] parts = key.split("EVENT:|USER:");
         if (parts.length < 3) {
             throw new IllegalArgumentException("Invalid key format: " + key);
         }
@@ -73,7 +73,7 @@ public class CouponScheduler {
     }
 
     private Long extractUserId(String key) {
-        String[] parts = key.split("event:|user:");
+        String[] parts = key.split("EVENT:|USER:");
         if (parts.length < 3) {
             throw new IllegalArgumentException("Invalid key format: " + key);
         }
