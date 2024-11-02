@@ -16,10 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
 
     //Api를 위한 메서드 (User ID + 자녀 목록 반환)
+    //종혁님이 풀어달라해서 인증 풀어놓음 잠깐
 //    @Override
 //    @Transactional(readOnly = true)
 //    public List<Object> getUserKidsList(Long userId, String userEmail) {
@@ -79,26 +77,22 @@ public class UserServiceImpl implements UserService {
 //
 //        return responseData;
 //    }
+
+
     @Override
     @Transactional(readOnly = true)
-    public List<Object> getUserKidsListNoAuth(Long userId) {
+    public Map<String, Object> getUserKidsListNoAuth(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         List<GetKidListResponse> kidsList = getKidsList(user.getId());
 
-        if (kidsList.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<Object> responseData = new ArrayList<>();
-        responseData.add(Collections.singletonMap("userId", user.getId()));
-        responseData.addAll(kidsList);
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("userId", user.getId());
+        responseData.put("kids", kidsList);
 
         return responseData;
     }
-
-
 
 
     @Override
