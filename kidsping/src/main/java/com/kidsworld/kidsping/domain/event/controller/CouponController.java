@@ -28,8 +28,8 @@ public class CouponController {
     @PostMapping("/apply")
     public ResponseEntity<ApiResponse<ApplyCouponResponse>> applyCoupon(
             @RequestBody ApplyCouponRequest applyCouponRequest) {
-        couponService.applyCouponAtomically(applyCouponRequest);
-        return ApiResponse.ok(ExceptionCode.OK.getCode(), new ApplyCouponResponse("이벤트에 참여하셨습니다."),
+        String applyResult = couponService.applyCouponAtomically(applyCouponRequest);
+        return ApiResponse.ok(ExceptionCode.OK.getCode(), new ApplyCouponResponse(applyResult),
                 ExceptionCode.OK.getMessage());
     }
 
