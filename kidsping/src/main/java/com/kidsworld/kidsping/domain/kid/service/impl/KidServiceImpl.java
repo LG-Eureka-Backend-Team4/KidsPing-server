@@ -162,20 +162,44 @@ public class KidServiceImpl implements KidService {
     /*
     자녀 프로필 삭제
     */
+//    @Override
+//    @Transactional
+//    public DeleteKidResponse deleteKid(Long kidId) {
+//        if (!kidRepository.existsById(kidId)) {
+//            throw new NotFoundKidException();
+//        }
+//        kidRepository.softDeleteKidAndRelatedData(kidId);
+//        // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
+//        genreScoreService.resetGenreScoreForKid(kidId);
+//        likeGenreService.resetGenreLikesForKid(kidId);
+//        likeMbtiService.resetMbtiLikesForKid(kidId);
+//
+//        return new DeleteKidResponse(kidId);
+//    }
+
     @Override
     @Transactional
     public DeleteKidResponse deleteKid(Long kidId) {
         if (!kidRepository.existsById(kidId)) {
             throw new NotFoundKidException();
         }
-        kidRepository.softDeleteKidAndRelatedData(kidId);
-        // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
-        genreScoreService.resetGenreScoreForKid(kidId);
-        likeGenreService.resetGenreLikesForKid(kidId);
-        likeMbtiService.resetMbtiLikesForKid(kidId);
+
+        // 연관 데이터들 먼저 논리적 삭제
+        kidRepository.softDeleteKidMbti(kidId);
+        kidRepository.softDeleteKidMbtiHistory(kidId);
+        kidRepository.softDeleteMbtiAnswer(kidId);
+        kidRepository.softDeleteKidBadgeAwarded(kidId);
+
+        // Kid 엔티티 논리적 삭제
+        kidRepository.softDeleteKid(kidId);
 
         return new DeleteKidResponse(kidId);
     }
+
+
+
+
+
 
     /**
      * 자녀의 MBTI를 진단하는 메서드
