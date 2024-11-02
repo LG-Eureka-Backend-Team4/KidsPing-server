@@ -2,9 +2,7 @@ package com.kidsworld.kidsping.domain.event.repository;
 
 import com.kidsworld.kidsping.domain.event.dto.request.ApplyCouponRequest;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
@@ -67,14 +65,38 @@ public class CouponRedisRepository {
         );
 
         try {
+            log.info("Executing Lua script with keys: {}", keys);
+            log.info("Executing Lua script with args: {}", args);
+
             DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>(luaScript, Long.class);
-            return redisTemplate.execute(redisScript, keys, args.toArray());
+            Long result = redisTemplate.execute(redisScript, keys, args.toArray());
+
+            log.info("DEBUG: EVENT_KEY SET members for key {}: {}", keys.get(0), redisTemplate.opsForSet().members(keys.get(0)));
+            log.info("DEBUG: EVENT_COUPON_COUNT current value for key {}: {}", keys.get(1), redisTemplate.opsForValue().get(keys.get(1)));
+            log.info("DEBUG: User Hash data for key {}: {}", keys.get(2), redisTemplate.opsForHash().entries(keys.get(2)));
+
+            return result;
+
         } catch (Exception e) {
             log.info("쿠폰 발급 중 예외 발생 - 사용자ID {}, 이벤트 ID {}, 이름 {}, 전화번호 {}", request.getUserId(), request.getEventId(),
                     request.getName(), request.getPhone());
         }
 
         return 0L;
+    }
+
+    // 쿠폰 데이터를 Redis에서 삭제하는 메서드
+    public void deleteCouponKeys(Long eventId, Long userId) {
+        String eventKey = EVENT_KEY + eventId;
+        String couponCountKey = EVENT_COUPON_COUNT + eventId;
+        String userCouponKey = EVENT_KEY + eventId + USER_KEY + userId;
+
+        // 각 키 삭제
+        redisTemplate.delete(eventKey);
+        redisTemplate.delete(couponCountKey);
+        redisTemplate.delete(userCouponKey);
+
+        log.info("Deleted Redis keys: {}, {}, {}", eventKey, couponCountKey, userCouponKey);
     }
 
     public Long verifyParticipation(Long eventId, Long userId) {
@@ -92,25 +114,12 @@ public class CouponRedisRepository {
     }
 
     // 쿠폰 요청 데이터를 Redis에 저장
-//    public void saveApplyCoupon(ApplyCouponRequest request) {
-//        String couponKey = EVENT_KEY + request.getEventId() + USER_KEY + request.getUserId();
-//        hashOperations.put(couponKey, "userId", request.getUserId().toString());
-//        hashOperations.put(couponKey, "eventId", request.getEventId().toString());
-//        hashOperations.put(couponKey, "name", request.getName());
-//        hashOperations.put(couponKey, "phone", request.getPhone());
-//    }
     public void saveApplyCoupon(ApplyCouponRequest request) {
         String couponKey = EVENT_KEY + request.getEventId() + USER_KEY + request.getUserId();
-
-        // 데이터를 해시 타입으로 저장하기 위해 Map을 사용
-        Map<String, Object> data = new HashMap<>();
-        data.put("userId", request.getUserId().toString());
-        data.put("eventId", request.getEventId().toString());
-        data.put("name", request.getName());
-        data.put("phone", request.getPhone());
-
-        // opsForHash().putAll()을 사용하여 해시 타입으로 저장
-        redisTemplate.opsForHash().putAll(couponKey, data);
+        hashOperations.put(couponKey, "userId", request.getUserId().toString());
+        hashOperations.put(couponKey, "eventId", request.getEventId().toString());
+        hashOperations.put(couponKey, "name", request.getName());
+        hashOperations.put(couponKey, "phone", request.getPhone());
     }
 
     // 등록된 key 모두 제거(테스트코드용)
