@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -70,7 +71,6 @@ public class UserController {
         final UserDetails userDetails = userService.loadUserByUsername(loginRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
-
 
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(UserNotFoundException::new);
@@ -143,12 +143,14 @@ public class UserController {
 //    }
     // 박종혁씨가 인증 풀어달라고 해서 풀어준 거
     @GetMapping("/{userId}/kids/list")
-    public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId) {
-        List<Object> responseData = userService.getUserKidsListNoAuth(userId);  // 새로운 서비스 메서드 호출
-        return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getKidList(@PathVariable("userId") Long userId) {
+        Map<String, Object> responseData = userService.getUserKidsListNoAuth(userId);
+        return ApiResponse.ok(
+                ExceptionCode.OK.getCode(),
+                responseData,
+                "자녀 목록을 성공적으로 조회했습니다."
+        );
     }
-
-
 
 
     /*
@@ -180,6 +182,8 @@ public class UserController {
     }
 
 
+
+
     /*
     일반회원 리프레시 토큰
     */
@@ -199,26 +203,15 @@ public class UserController {
     @PostMapping("/refresh/kakao")
     public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@AuthenticationPrincipal UserDetails userDetails) {
         try {
-            User user = userService.findByEmail(userDetails.getUsername())
-                    .orElseThrow(UserNotFoundException::new);
-
-            // 일반 로그인 사용자의 접근 차단
-            if (user.getSocialId() == null) {
-                return ApiResponse.forbidden(ExceptionCode.GENERAL_LOGIN_NOT_ALLOWED.getCode(), "일반 로그인 사용자는 이 엔드포인트를 사용할 수 없습니다.");
-            }
-
-            LoginResponse response = kakaoService.refreshUserToken(userDetails.getUsername());
+            LoginResponse response = kakaoService.refreshKakaoUserToken(userDetails.getUsername());
             return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "토큰이 갱신되었습니다.");
-
-
         } catch (RuntimeException e) {
             if (e.getMessage().equals("refresh_token_expired")) {
-                return ApiResponse.unAuthorized(ExceptionCode.UNAUTHORIZED_USER.getCode(), "재로그인이 필요합니다."
-                );
+                return ApiResponse.unAuthorized(ExceptionCode.UNAUTHORIZED_USER.getCode(), "재로그인이 필요합니다.");
             }
-            throw e;
+            return ApiResponse.forbidden(ExceptionCode.GENERAL_LOGIN_NOT_ALLOWED.getCode(), e.getMessage());
         }
     }
 
-
 }
+

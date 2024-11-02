@@ -7,15 +7,21 @@ import com.kidsworld.kidsping.domain.user.dto.response.GetKidListResponse;
 import com.kidsworld.kidsping.domain.user.dto.response.LoginResponse;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.entity.enums.Role;
+import com.kidsworld.kidsping.domain.user.exception.GeneralLoginNotAllowedException;
 import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
 import com.kidsworld.kidsping.domain.user.handler.KakaoTokenHandler;
 import com.kidsworld.kidsping.domain.user.service.KakaoService;
 import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
+import com.kidsworld.kidsping.global.common.dto.ApiResponse;
+import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
@@ -74,7 +80,6 @@ public class KakaoServiceImpl implements KakaoService {
             user = userService.save(registerRequest);
         } else {
             user = existingUser.get();
-
         }
 
         // 토큰 저장
@@ -82,12 +87,9 @@ public class KakaoServiceImpl implements KakaoService {
         tokenHandler.storeRefreshToken(user.getId(), refreshToken);
 
         String token = jwtUtil.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        "",
-                        new ArrayList<>()
-                )
+                new org.springframework.security.core.userdetails.User(user.getEmail(), "", new ArrayList<>())
         );
+
         List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
 
         return LoginResponse.builder()
@@ -119,31 +121,44 @@ public class KakaoServiceImpl implements KakaoService {
         userService.update(user);
     }
 
-    @Override
-    public LoginResponse refreshUserToken(String email) {
+
+
+
+    public LoginResponse refreshKakaoUserToken(String email) {
         User user = userService.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
-        GetKakaoTokenResponse newTokens = tokenHandler.refreshKakaoToken(user);
-        user.updateKakaoAccessToken(newTokens.getAccess_token());
-        userService.update(user);
+        // 일반 로그인 사용자의 접근 차단
+        if (user.getSocialId() == null) {
+            throw new GeneralLoginNotAllowedException();
+        }
 
-        String newJwtToken = jwtUtil.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                        email,
-                        "",
-                        new ArrayList<>()
-                )
-        );
+        try {
+            GetKakaoTokenResponse newTokens = tokenHandler.refreshKakaoToken(user);
+            user.updateKakaoAccessToken(newTokens.getAccess_token());
+            userService.update(user);
 
-        List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
+            String newJwtToken = jwtUtil.generateToken(
+                    new org.springframework.security.core.userdetails.User(email, "", new ArrayList<>())
+            );
 
-        return LoginResponse.builder()
-                .email(email)
-                .jwt(newJwtToken)
-                .refreshToken(newTokens.getRefresh_token())
-                .userId(user.getId())
-                .data(kidsList)
-                .build();
+            List<GetKidListResponse> kidsList = userService.getKidsList(user.getId());
+
+            return LoginResponse.builder()
+                    .email(email)
+                    .jwt(newJwtToken)
+                    .refreshToken(newTokens.getRefresh_token())
+                    .userId(user.getId())
+                    .data(kidsList)
+                    .build();
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("refresh_token_expired")) {
+                throw new RuntimeException("refresh_token_expired");
+            }
+            throw e;
+        }
     }
+
+
+
 }
