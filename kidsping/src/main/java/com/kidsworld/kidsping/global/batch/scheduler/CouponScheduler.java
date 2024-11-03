@@ -9,15 +9,14 @@ import com.kidsworld.kidsping.domain.event.repository.EventRepository;
 import com.kidsworld.kidsping.domain.user.entity.User;
 import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
 import com.kidsworld.kidsping.domain.user.repository.UserRepository;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
-import java.util.Set;
 
 @Slf4j
 @Component
@@ -30,8 +29,8 @@ public class CouponScheduler {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
-//    @Scheduled(cron = "0 0 4 * * *")
-    @Scheduled(cron = "*/10 * * * * *")  // 매 1초마다 실행 for Test
+    @Scheduled(cron = "0 0 4 * * *")
+//    @Scheduled(cron = "*/10 * * * * *")  // 매 1초마다 실행 for Test
     @Transactional
     public void saveRedisDataToDatabase() {
         Set<String> keys = redisTemplate.keys("EVENT:*USER:*");

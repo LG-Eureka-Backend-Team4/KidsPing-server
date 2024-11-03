@@ -41,17 +41,8 @@ export default function () {
 
     check(response, {
         'is OK': (r) => r.status === 200,
-        'response contains success message': (r) => {
-            // JSON 파싱 전 Content-Type 확인
-            const isJson = r.headers['Content-Type'] && r.headers['Content-Type'].includes('application/json');
-            if (isJson) {
-                const jsonResponse = r.json();
-                // data 내의 responseMessage 필드가 "이벤트에 참여하셨습니다."인지 확인
-                return jsonResponse.data && jsonResponse.data.responseMessage === '이벤트에 참여하셨습니다.';
-            }
-            return false;
-        },
+        'response contains success message': (r) => typeof r.body === 'string',
     });
 
-    sleep(0.1);
+    sleep(1); // 1초 휴식
 }

@@ -25,10 +25,10 @@ public class CouponServiceImpl implements CouponService {
         if (applyStatus == 1) {
             log.info("쿠폰 발급 성공 - 사용자 ID {}", applyCouponRequest.getUserId());
         } else if (applyStatus == 0) {
-            log.warn("사용자 {}는 이미 이벤트에 참여했습니다.", applyCouponRequest.getUserId());
+            log.info("사용자 {}는 이미 이벤트에 참여했습니다.", applyCouponRequest.getUserId());
             return " 이미 이벤트에 참여했습니다.";
         } else if (applyStatus == -1) {
-            log.warn("이벤트 ID {}의 쿠폰 한도가 초과되었습니다.", applyCouponRequest.getEventId());
+            log.info("이벤트 ID {}의 쿠폰 한도가 초과되었습니다.", applyCouponRequest.getEventId());
         } else {
             log.error("쿠폰 발급 중 알 수 없는 오류 발생 - 사용자 ID {}", applyCouponRequest.getUserId());
         }
