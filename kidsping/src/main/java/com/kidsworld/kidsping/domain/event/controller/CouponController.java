@@ -39,7 +39,7 @@ public class CouponController {
             @RequestParam("userId") Long userId) {
 
         CheckWinnerRequest request = CheckWinnerRequest.builder().eventId(eventId).userId(userId).build();
-        CheckWinnerResponse response = couponService.checkWinner(request);
+        CheckWinnerResponse response = couponService.isWinnerInCache(request);
 
         String message = response.isWinningYn() ? "축하합니다! 이벤트에 당첨되셨습니다." : "이벤트에 당첨되지 않았습니다.";
 

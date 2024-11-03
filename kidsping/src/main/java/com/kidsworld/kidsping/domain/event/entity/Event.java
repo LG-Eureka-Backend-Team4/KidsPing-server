@@ -32,4 +32,6 @@ public class Event extends BaseTimeEntity {
     private LocalDateTime announceTime;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    private boolean isDeleted;
 }
