@@ -15,10 +15,6 @@ import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
-import com.kidsworld.kidsping.domain.like.dto.request.DislikeCancelMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.DislikeMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.LikeCancelMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.response.LikeBookResponse;
 import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
@@ -107,8 +103,7 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        LikeMbtiRequest likeMbtiRequest = new LikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.like(likeMbtiRequest);
+        likeMbtiService.like(kid.getId(), book.getId());
 
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
         assertThat(findKidMbti)
@@ -130,8 +125,7 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        LikeMbtiRequest likeMbtiRequest = new LikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.like(likeMbtiRequest);
+        likeMbtiService.like(kid.getId(), book.getId());
 
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
         assertThat(findKidMbti)
@@ -153,10 +147,8 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        LikeMbtiRequest likeMbtiRequest = new LikeMbtiRequest(kid.getId(), book.getId());
-        LikeCancelMbtiRequest likeCancelMbtiRequest = new LikeCancelMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.like(likeMbtiRequest);
-        likeMbtiService.likeCancel(likeCancelMbtiRequest);
+        likeMbtiService.like(kid.getId(), book.getId());
+        likeMbtiService.likeCancel(kid.getId(), book.getId());
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
 
         // then
@@ -179,8 +171,7 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        DislikeMbtiRequest dislikeMbtiRequest = new DislikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.dislike(dislikeMbtiRequest);
+        likeMbtiService.dislike(kid.getId(), book.getId());
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
 
         // then
@@ -203,8 +194,7 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        DislikeMbtiRequest dislikeMbtiRequest = new DislikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.dislike(dislikeMbtiRequest);
+        likeMbtiService.dislike(kid.getId(), book.getId());
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
 
         // then
@@ -227,10 +217,8 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        DislikeMbtiRequest dislikeMbtiRequest = new DislikeMbtiRequest(kid.getId(), book.getId());
-        DislikeCancelMbtiRequest dislikeCancelMbtiRequest = new DislikeCancelMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.dislike(dislikeMbtiRequest);
-        likeMbtiService.dislikeCancel(dislikeCancelMbtiRequest);
+        likeMbtiService.dislike(kid.getId(), book.getId());
+        likeMbtiService.dislikeCancel(kid.getId(), book.getId());
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
 
         // then
@@ -253,10 +241,8 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        LikeMbtiRequest likeRequest = new LikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.like(likeRequest);
-        DislikeMbtiRequest dislikeRequest = new DislikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.dislike(dislikeRequest);
+        likeMbtiService.like(kid.getId(), book.getId());
+        likeMbtiService.dislike(kid.getId(), book.getId());
 
         // then
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
@@ -279,10 +265,8 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        DislikeMbtiRequest dislikeRequest = new DislikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.dislike(dislikeRequest);
-        LikeMbtiRequest likeRequest = new LikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.like(likeRequest);
+        likeMbtiService.dislike(kid.getId(), book.getId());
+        likeMbtiService.like(kid.getId(), book.getId());
 
         // then
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
@@ -305,10 +289,8 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        LikeMbtiRequest likeRequest = new LikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.like(likeRequest);
-        LikeCancelMbtiRequest likeCancelRequest = new LikeCancelMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.likeCancel(likeCancelRequest);
+        likeMbtiService.like(kid.getId(), book.getId());
+        likeMbtiService.likeCancel(kid.getId(), book.getId());
 
         // then
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());
@@ -331,10 +313,8 @@ class LikeMbtiServiceImplTest {
                 "http://url");
 
         // when
-        DislikeMbtiRequest dislikeRequest = new DislikeMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.dislike(dislikeRequest);
-        DislikeCancelMbtiRequest dislikeCancelRequest = new DislikeCancelMbtiRequest(kid.getId(), book.getId());
-        likeMbtiService.dislikeCancel(dislikeCancelRequest);
+        likeMbtiService.dislike(kid.getId(), book.getId());
+        likeMbtiService.dislikeCancel(kid.getId(), book.getId());
 
         // then
         Optional<KidMbti> findKidMbti = kidMbtiRepository.findById(kid.getKidMbti().getId());

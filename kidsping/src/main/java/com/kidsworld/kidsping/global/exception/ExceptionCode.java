@@ -30,6 +30,7 @@ public enum ExceptionCode {
     NOT_FOUND_KID(40401, HttpStatus.NOT_FOUND, "존재하지 않는 아이입니다."),
     INVALID_REQUEST_FORMAT(40201, HttpStatus.BAD_REQUEST, "잘못된 요청 형식입니다."),
     MAX_KID_LIMIT_REACHED(40202, HttpStatus.BAD_REQUEST, "최대 5명의 자녀만 등록할 수 있습니다."),
+    KID_MBTI_DIAGNOSIS_REQUIRED(10103, HttpStatus.BAD_REQUEST, "자녀 성향 진단이 필요합니다."),
 
 
     //Like
@@ -54,7 +55,6 @@ public enum ExceptionCode {
     KAKAO_TOKEN_EXPIRED(80205, HttpStatus.UNAUTHORIZED, "카카오 토큰이 만료되었습니다."),
     KAKAO_REFRESH_TOKEN_EXPIRED(80206, HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 재로그인이 필요합니다."),
     KAKAO_LOGIN_FAILED(80207, HttpStatus.BAD_REQUEST, "카카오 로그인 처리 중 오류가 발생했습니다."),
-
 
 
     // 500 예외

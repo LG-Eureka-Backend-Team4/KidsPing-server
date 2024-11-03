@@ -21,6 +21,7 @@ import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
 import com.kidsworld.kidsping.domain.kid.exception.InvalidRequestFormatException;
 import com.kidsworld.kidsping.domain.kid.exception.MaxKidLimitReachedException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
+import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidWithMbtiException;
 import com.kidsworld.kidsping.domain.kid.repository.KidBadgeAwardedRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
@@ -155,7 +156,7 @@ public class KidServiceImpl implements KidService {
     @Override
     public GetKidWithMbtiAndBadgeResponse getKid(Long kidId) {
         Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
-                .orElseThrow(NotFoundKidException::new);
+                .orElseThrow(() -> new NotFoundKidWithMbtiException(ExceptionCode.KID_MBTI_DIAGNOSIS_REQUIRED));
         List<KidBadgeAwardedResponse> kidBadgeAwardeds = kidBadgeAwardedRepository.findAllByKidId(kidId)
                 .stream()
                 .map(badge -> new KidBadgeAwardedResponse(badge.getBadge().getBadgeName(),
@@ -213,9 +214,6 @@ public class KidServiceImpl implements KidService {
 
         return new DeleteKidResponse(kidId);
     }
-
-
-
 
     /**
      * 자녀의 MBTI를 진단하는 메서드
