@@ -65,24 +65,14 @@ public class CouponRedisRepository {
         );
 
         try {
-            log.info("Executing Lua script with keys: {}", keys);
-            log.info("Executing Lua script with args: {}", args);
-
             DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>(luaScript, Long.class);
-            Long result = redisTemplate.execute(redisScript, keys, args.toArray());
-
-            log.info("DEBUG: EVENT_KEY SET members for key {}: {}", keys.get(0), redisTemplate.opsForSet().members(keys.get(0)));
-            log.info("DEBUG: EVENT_COUPON_COUNT current value for key {}: {}", keys.get(1), redisTemplate.opsForValue().get(keys.get(1)));
-            log.info("DEBUG: User Hash data for key {}: {}", keys.get(2), redisTemplate.opsForHash().entries(keys.get(2)));
-
-            return result;
-
+            return redisTemplate.execute(redisScript, keys, args.toArray());
         } catch (Exception e) {
             log.info("쿠폰 발급 중 예외 발생 - 사용자ID {}, 이벤트 ID {}, 이름 {}, 전화번호 {}", request.getUserId(), request.getEventId(),
                     request.getName(), request.getPhone());
         }
 
-        return 0L;
+        return 2L;
     }
 
     // 쿠폰 데이터를 Redis에서 삭제하는 메서드
