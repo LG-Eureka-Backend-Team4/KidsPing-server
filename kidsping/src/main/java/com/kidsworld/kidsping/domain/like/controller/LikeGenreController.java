@@ -15,28 +15,28 @@ public class LikeGenreController {
 
     // 좋아요 처리
     @PostMapping("/like")
-    public ResponseEntity<Void> likeGenre(@RequestBody LikeGenreRequest request) {
+    public ResponseEntity<Void> likeGenre(@RequestParam LikeGenreRequest request) {
         likeGenreService.like(request.getKidId(), request.getBookId());
         return ResponseEntity.ok().build();
     }
 
     // 좋아요 취소 처리
     @DeleteMapping("/like")
-    public ResponseEntity<Void> likeCancel(@RequestBody LikeGenreRequest request) {
+    public ResponseEntity<Void> likeCancel(@RequestParam LikeGenreRequest request) {
         likeGenreService.likeCancel(request.getKidId(), request.getBookId());
         return ResponseEntity.ok().build();
     }
 
     // 싫어요 처리
     @PostMapping("/dislike")
-    public ResponseEntity<Void> dislikeGenre(@RequestBody LikeGenreRequest request) {
+    public ResponseEntity<Void> dislikeGenre(@RequestParam LikeGenreRequest request) {
         likeGenreService.dislike(request.getKidId(), request.getBookId());
         return ResponseEntity.ok().build();
     }
 
     // 싫어요 취소 처리
     @DeleteMapping("/dislike")
-    public ResponseEntity<Void> dislikeCancel(@RequestBody LikeGenreRequest request) {
+    public ResponseEntity<Void> dislikeCancel(@RequestParam LikeGenreRequest request) {
         likeGenreService.dislikeCancel(request.getKidId(), request.getBookId());
         return ResponseEntity.ok().build();
     }
