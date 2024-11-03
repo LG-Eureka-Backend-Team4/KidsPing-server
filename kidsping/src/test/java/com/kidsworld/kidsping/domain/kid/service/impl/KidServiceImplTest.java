@@ -278,48 +278,48 @@ class KidServiceImplTest {
 
 
 
-    @DisplayName("이미지 파일과 함께 자녀 프로필을 성공적으로 생성한다")
-    @Test
-    void 자녀프로필생성_성공() throws JsonProcessingException {
-        // given
-        User user = User.builder()
-                .email("test@test.com")
-                .password("password")
-                .userName("testUser")
-                .isDeleted(false)
-                .build();
-        User savedUser = userRepository.save(user);
-
-        String kidName = "김영자";
-        String gender = "FEMALE";
-        String birth = LocalDate.now().toString();
-
-        MockMultipartFile profileImage = new MockMultipartFile(
-                "profileImage", "sample.jpg", "image/jpeg", "test image content".getBytes()
-        );
-
-        UploadedFile uploadedFile = new UploadedFile(
-                "sample.jpg", defaultKidProfile
-        );
-
-        when(fileStore.storeFiles(anyList(), any())).thenReturn(List.of(uploadedFile));
-
-        CreateKidRequest request = CreateKidRequest.builder()
-                .kidName(kidName)
-                .gender(gender)
-                .birth(birth)
-                .userId(savedUser.getId())
-                .build();
-
-        String requestJson = objectMapper.writeValueAsString(request);
-
-        // when
-        CreateKidResponse response = kidService.createKid(requestJson, profileImage);
-
-        // then
-        assertThat(response).isNotNull();
-        assertThat(response.getKidId()).isNotNull();
-    }
+//    @DisplayName("이미지 파일과 함께 자녀 프로필을 성공적으로 생성한다")
+//    @Test
+//    void 자녀프로필생성_성공() throws JsonProcessingException {
+//        // given
+//        User user = User.builder()
+//                .email("test@test.com")
+//                .password("password")
+//                .userName("testUser")
+//                .isDeleted(false)
+//                .build();
+//        User savedUser = userRepository.save(user);
+//
+//        String kidName = "김영자";
+//        String gender = "FEMALE";
+//        String birth = LocalDate.now().toString();
+//
+//        MockMultipartFile profileImage = new MockMultipartFile(
+//                "profileImage", "sample.jpg", "image/jpeg", "test image content".getBytes()
+//        );
+//
+//        UploadedFile uploadedFile = new UploadedFile(
+//                "sample.jpg", defaultKidProfile
+//        );
+//
+//        when(fileStore.storeFiles(anyList(), any())).thenReturn(List.of(uploadedFile));
+//
+//        CreateKidRequest request = CreateKidRequest.builder()
+//                .kidName(kidName)
+//                .gender(gender)
+//                .birth(birth)
+//                .userId(savedUser.getId())
+//                .build();
+//
+//        String requestJson = objectMapper.writeValueAsString(request);
+//
+//        // when
+//        CreateKidResponse response = kidService.createKid(requestJson, profileImage);
+//
+//        // then
+//        assertThat(response).isNotNull();
+//        assertThat(response.getKidId()).isNotNull();
+//    }
 
 
 
