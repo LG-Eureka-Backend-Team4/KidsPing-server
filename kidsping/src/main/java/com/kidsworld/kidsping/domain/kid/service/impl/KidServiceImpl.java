@@ -73,9 +73,9 @@ public class KidServiceImpl implements KidService {
     private String defaultProfileImage;
 
 
-    /*
-    자녀 프로필 생성
-    */
+    /**
+     * 자녀 프로필 생성
+     */
     @Override
     @Transactional
     public CreateKidResponse createKid(String request, MultipartFile profileImage) {
@@ -119,9 +119,9 @@ public class KidServiceImpl implements KidService {
         return CreateKidResponse.from(savedKid);
     }
 
-    /*
-    자녀 프로필 조회
-    */
+    /**
+     * 자녀 프로필 조회
+     */
     @Override
     public GetKidWithMbtiAndBadgeResponse getKid(Long kidId) {
         Kid kid = kidRepository.findKidWithMbtiByKidId(kidId)
@@ -135,9 +135,9 @@ public class KidServiceImpl implements KidService {
         return GetKidWithMbtiAndBadgeResponse.createKidWithMbtiAndBadgeResponse(kid, kidBadgeAwardeds);
     }
 
-    /*
-    자녀 프로필 수정
-    */
+    /**
+     * 자녀 프로필 수정
+     */
     @Override
     @Transactional
     public UpdateKidResponse updateKid(Long kidId, UpdateKidRequest request, MultipartFile profileImage) {
@@ -163,24 +163,10 @@ public class KidServiceImpl implements KidService {
         return UpdateKidResponse.from(kid);
     }
 
-    /*
-    자녀 프로필 삭제
-    */
-//    @Override
-//    @Transactional
-//    public DeleteKidResponse deleteKid(Long kidId) {
-//        if (!kidRepository.existsById(kidId)) {
-//            throw new NotFoundKidException();
-//        }
-//        kidRepository.softDeleteKidAndRelatedData(kidId);
-//        // 자녀 장르 점수, 도서 좋아요, 장르 좋아요 초기화
-//        genreScoreService.resetGenreScoreForKid(kidId);
-//        likeGenreService.resetGenreLikesForKid(kidId);
-//        likeMbtiService.resetMbtiLikesForKid(kidId);
-//
-//        return new DeleteKidResponse(kidId);
-//    }
-
+    
+    /**
+     * 자녀 프로필 삭제
+     */
     @Override
     @Transactional
     public DeleteKidResponse deleteKid(Long kidId) {
@@ -188,19 +174,15 @@ public class KidServiceImpl implements KidService {
             throw new NotFoundKidException();
         }
 
-        // 연관 데이터들 먼저 논리적 삭제
         kidRepository.softDeleteKidMbti(kidId);
         kidRepository.softDeleteKidMbtiHistory(kidId);
         kidRepository.softDeleteMbtiAnswer(kidId);
         kidRepository.softDeleteKidBadgeAwarded(kidId);
 
-        // Kid 엔티티 논리적 삭제
         kidRepository.softDeleteKid(kidId);
 
         return new DeleteKidResponse(kidId);
     }
-
-
 
 
 
@@ -304,9 +286,9 @@ public class KidServiceImpl implements KidService {
         kidMBTIHistoryRepository.save(kidMbtiHistory);
     }
 
-    /*
-    자녀 성향 히스토리 조회
-    */
+    /**
+     * 자녀 성향 히스토리 조회
+     */
     @Override
     public List<GetKidMbtiHistoryResponse> getKidMbtiHistory(Long kidId) {
         Kid kid = kidRepository.findById(kidId)
