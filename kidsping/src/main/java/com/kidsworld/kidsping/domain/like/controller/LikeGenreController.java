@@ -1,6 +1,5 @@
 package com.kidsworld.kidsping.domain.like.controller;
 
-import com.kidsworld.kidsping.domain.like.dto.request.LikeGenreRequest;
 import com.kidsworld.kidsping.domain.like.service.LikeGenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,29 +14,29 @@ public class LikeGenreController {
 
     // 좋아요 처리
     @PostMapping("/like")
-    public ResponseEntity<Void> likeGenre(@RequestParam LikeGenreRequest request) {
-        likeGenreService.like(request.getKidId(), request.getBookId());
+    public ResponseEntity<Void> likeGenre(@RequestParam Long kidId, @RequestParam Long bookId) {
+        likeGenreService.like(kidId, bookId);
         return ResponseEntity.ok().build();
     }
 
     // 좋아요 취소 처리
     @DeleteMapping("/like")
-    public ResponseEntity<Void> likeCancel(@RequestParam LikeGenreRequest request) {
-        likeGenreService.likeCancel(request.getKidId(), request.getBookId());
+    public ResponseEntity<Void> likeCancel(@RequestParam Long kidId, @RequestParam Long bookId) {
+        likeGenreService.likeCancel(kidId, bookId);
         return ResponseEntity.ok().build();
     }
 
     // 싫어요 처리
     @PostMapping("/dislike")
-    public ResponseEntity<Void> dislikeGenre(@RequestParam LikeGenreRequest request) {
-        likeGenreService.dislike(request.getKidId(), request.getBookId());
+    public ResponseEntity<Void> dislikeGenre(@RequestParam Long kidId, @RequestParam Long bookId) {
+        likeGenreService.dislike(kidId, bookId);
         return ResponseEntity.ok().build();
     }
 
     // 싫어요 취소 처리
     @DeleteMapping("/dislike")
-    public ResponseEntity<Void> dislikeCancel(@RequestParam LikeGenreRequest request) {
-        likeGenreService.dislikeCancel(request.getKidId(), request.getBookId());
+    public ResponseEntity<Void> dislikeCancel(@RequestParam Long kidId, @RequestParam Long bookId) {
+        likeGenreService.dislikeCancel(kidId, bookId);
         return ResponseEntity.ok().build();
     }
 }
