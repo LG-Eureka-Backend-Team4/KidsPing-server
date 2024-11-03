@@ -6,6 +6,7 @@ import com.kidsworld.kidsping.domain.event.dto.response.CheckWinnerResponse;
 import com.kidsworld.kidsping.domain.event.entity.Coupon;
 import com.kidsworld.kidsping.domain.event.repository.CouponRedisRepository;
 import com.kidsworld.kidsping.domain.event.repository.CouponRepository;
+import com.kidsworld.kidsping.domain.event.repository.CouponWinnerCacheRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRedisRepository couponRedisRepository;
     private final CouponRepository couponRepository;
+    private final CouponWinnerCacheRepository couponWinnerCacheRepository;
 
     @Override
     public String applyCouponAtomically(ApplyCouponRequest applyCouponRequest) {
@@ -67,4 +69,11 @@ public class CouponServiceImpl implements CouponService {
         }
     }
 
+    @Override
+    public CheckWinnerResponse isWinnerInCache(CheckWinnerRequest request) {
+        Long userId = request.getUserId();
+        Long eventId = request.getEventId();
+        boolean isWinner = couponWinnerCacheRepository.findWinnersIfAbsent(eventId, userId);
+        return CheckWinnerResponse.of(isWinner);
+    }
 }

@@ -11,4 +11,6 @@ public interface CouponService {
     String applyCouponAtomically(ApplyCouponRequest applyCouponRequest);
 
     CheckWinnerResponse checkWinner(CheckWinnerRequest request);
+
+    CheckWinnerResponse isWinnerInCache(CheckWinnerRequest request);
 }

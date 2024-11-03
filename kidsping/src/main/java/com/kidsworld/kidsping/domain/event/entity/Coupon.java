@@ -39,4 +39,6 @@ public class Coupon extends BaseTimeEntity {
 
     private String name;
     private String phone;
+
+    private boolean isDeleted;
 }
