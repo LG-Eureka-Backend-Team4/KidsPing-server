@@ -17,13 +17,18 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableCaching
 public class RedisCacheConfig {
 
     @Value("${spring.cache.redis.time-to-live}")
-    private Duration cacheTtl;
+    private Duration defaultTtl;
+
+    @Value("${spring.cache-ttl.eventPagesCacheTtl}")
+    private Duration eventPagesCacheTtl;
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
@@ -38,12 +43,17 @@ public class RedisCacheConfig {
         objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
 
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(cacheTtl)
+                .entryTtl(defaultTtl)
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())) // key: string
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper))); // value: json
 
+        // 각 캐시별 TTL 설정을 읽어오는 Map
+        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+        cacheConfigurations.put("eventPagesCache", cacheConfig.entryTtl(eventPagesCacheTtl));
+
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(cacheConfig)
+                .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
     }
 
