@@ -36,29 +36,29 @@ public class LikeMbtiController {
 
     @PostMapping("/like")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void like(@RequestParam("eventId") Long kidId,
-                     @RequestParam("userId") Long bookId) {
+    public void like(@RequestParam("kidId") Long kidId,
+                     @RequestParam("bookId") Long bookId) {
         likeMbtiService.like(kidId, bookId);
     }
 
     @DeleteMapping("/like")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void likeCancel(@RequestParam("eventId") Long kidId,
-                           @RequestParam("userId") Long bookId) {
+    public void likeCancel(@RequestParam("kidId") Long kidId,
+                           @RequestParam("bookId") Long bookId) {
         likeMbtiService.likeCancel(kidId, bookId);
     }
 
     @PostMapping("/dislike")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void dislike(@RequestParam("eventId") Long kidId,
-                        @RequestParam("userId") Long bookId) {
+    public void dislike(@RequestParam("kidId") Long kidId,
+                        @RequestParam("bookId") Long bookId) {
         likeMbtiService.dislike(kidId, bookId);
     }
 
     @DeleteMapping("/dislike")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void dislikeCancel(@RequestParam("eventId") Long kidId,
-                              @RequestParam("userId") Long bookId) {
+    public void dislikeCancel(@RequestParam("kidId") Long kidId,
+                              @RequestParam("bookId") Long bookId) {
         likeMbtiService.dislikeCancel(kidId, bookId);
     }
 }
