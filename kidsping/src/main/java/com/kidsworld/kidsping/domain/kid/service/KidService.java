@@ -1,6 +1,7 @@
 package com.kidsworld.kidsping.domain.kid.service;
 
 
+import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
@@ -15,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface KidService {
 
-    CreateKidResponse createKid(String request, MultipartFile profileImage);
+//  자녀 프로필 생성 s3
+//  CreateKidResponse createKid(String request, MultipartFile profileImage);
+    CreateKidResponse createKid(CreateKidRequest request);
 
     GetKidWithMbtiAndBadgeResponse getKid(Long kidId);
 

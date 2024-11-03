@@ -2,6 +2,7 @@ package com.kidsworld.kidsping.domain.kid.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.response.CreateKidResponse;
@@ -43,18 +44,33 @@ public class KidController {
     private final LevelBadgeService levelBadgeService;
 
     /*
+    자녀 프로필 생성 s3
+    */
+//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(
+//            @RequestPart String request,
+//            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+//
+//        CreateKidResponse response = kidService.createKid(request, profileImage);
+//        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response,
+//                ExceptionCode.CREATED.getMessage());
+//    }
+
+
+
+    /*
     자녀 프로필 생성
     */
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(
-            @RequestPart String request,
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
-
-        CreateKidResponse response = kidService.createKid(request, profileImage);
-        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response,
-                ExceptionCode.CREATED.getMessage());
+    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(@RequestBody CreateKidRequest request) {
+        CreateKidResponse response = kidService.createKid(request);
+        return ApiResponse.created("/api/kids/" + response.getKidId(),
+                ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
     }
+
+
 
     /*
     자녀 프로필 조회
