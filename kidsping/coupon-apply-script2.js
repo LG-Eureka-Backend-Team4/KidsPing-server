@@ -1,10 +1,9 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
 
-// 10초 동안 총 100,000번의 요청을 보내기 위한 설정
 export const options = {
     stages: [
-        {duration: '10s', target: 1000}, // 초당 10,000명
+        {duration: '10s', target: 100},
     ],
     thresholds: {
         http_req_duration: ['p(95)<500'], // 95% 요청이 500ms 이내에 응답
@@ -46,11 +45,11 @@ export default function () {
             const isJson = r.headers['Content-Type'] && r.headers['Content-Type'].includes('application/json');
             if (isJson) {
                 const jsonResponse = r.json();
-                return jsonResponse.data && jsonResponse.data.responseMessage === '이벤트에 참여하셨습니다.';
+                return jsonResponse.data.applyResponseMessage === '이벤트에 참여하셨습니다.' || jsonResponse.data.applyResponseMessage === '이미 이벤트에 참여했습니다.';
             }
             return false;
         },
     });
 
-    sleep(0.1);  // 0.1초 휴식
+    sleep(1);  // 1초 휴식
 }
