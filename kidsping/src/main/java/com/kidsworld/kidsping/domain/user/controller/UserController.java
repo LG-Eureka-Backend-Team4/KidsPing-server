@@ -1,6 +1,6 @@
 package com.kidsworld.kidsping.domain.user.controller;
 
-import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
+
 import com.kidsworld.kidsping.domain.user.dto.response.GetKidListResponse;
 import com.kidsworld.kidsping.domain.user.dto.request.LoginRequest;
 import com.kidsworld.kidsping.domain.user.dto.request.RegisterRequest;
@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,9 +40,10 @@ public class UserController {
     private final JwtUtil jwtUtil;
     private final KakaoService kakaoService;
 
-    /*
-    회원가입
-    */
+
+    /**
+     * 회원가입
+     */
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<RegisterResponse>> registerUser(@RequestBody RegisterRequest registerRequest) {
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
@@ -59,9 +59,9 @@ public class UserController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "회원가입에 성공했습니다.");
     }
 
-    /*
-    로그인
-    */
+    /**
+     * 로그인
+     */
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
         authenticationManager.authenticate(
@@ -83,10 +83,9 @@ public class UserController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), new LoginResponse(userDetails.getUsername(), jwt, refreshToken, user.getId(), kidsList), "로그인에 성공했습니다.");
     }
 
-
-    /*
-    로그아웃
-    */
+    /**
+     * 로그아웃
+     */
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal UserDetails userDetails) {
 
@@ -99,10 +98,9 @@ public class UserController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), null, "로그아웃 되었습니다.");
     }
 
-
-    /*
-    회원정보조회
-    */
+    /**
+     * 회원정보조회
+     */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<GetUserResponse>> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
@@ -129,19 +127,9 @@ public class UserController {
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, ExceptionCode.OK.getMessage());
     }
 
-
-    /*
-     회원 자녀 리스트 조회
+    /**
+     * 회원 자녀 리스트 조회
      */
-//    @GetMapping("/{userId}/kids/list")
-//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-//    public ResponseEntity<ApiResponse<List<Object>>> getKidList(@PathVariable("userId") Long userId,
-//                                                                @AuthenticationPrincipal UserDetails userDetails) {
-//        List<Object> responseData = userService.getUserKidsList(userId, userDetails.getUsername());
-//
-//        return ApiResponse.ok(ExceptionCode.OK.getCode(), responseData, "자녀 목록을 성공적으로 조회했습니다.");
-//    }
-    // 박종혁씨가 인증 풀어달라고 해서 풀어준 거
     @GetMapping("/{userId}/kids/list")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getKidList(@PathVariable("userId") Long userId) {
         Map<String, Object> responseData = userService.getUserKidsListNoAuth(userId);
@@ -152,20 +140,18 @@ public class UserController {
         );
     }
 
-
-    /*
-    카카오 로그인
-    */
+    /**
+     * 카카오 로그인
+     */
     @GetMapping("/login/kakao")
     public ResponseEntity<ApiResponse<LoginResponse>> kakaoLogin(@RequestParam("code") String code, HttpServletResponse httpServletResponse) {
         LoginResponse response = kakaoService.handleKakaoLogin(code);
         return ApiResponse.ok(ExceptionCode.OK.getCode(), response, "카카오 로그인에 성공했습니다.");
     }
 
-
-    /*
-    카카오 로그아웃
-    */
+    /**
+     * 카카오 로그아웃
+     */
     @PostMapping("/logout/kakao")
     public ResponseEntity<ApiResponse<Void>> kakaoLogout(@RequestHeader("Authorization") String bearerToken,
                                                          @AuthenticationPrincipal UserDetails userDetails) {
@@ -183,10 +169,9 @@ public class UserController {
 
 
 
-
-    /*
-    일반회원 리프레시 토큰
-    */
+    /**
+     * 일반회원 리프레시 토큰
+     */
     @PostMapping("/refresh/token")
     public ResponseEntity<ApiResponse<LoginResponse>> refreshNormalToken(
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -196,9 +181,8 @@ public class UserController {
     }
 
 
-
-    /*
-    카카오 리프레시 토큰
+    /**
+     * 카카오 리프레시 토큰
      */
     @PostMapping("/refresh/kakao")
     public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@AuthenticationPrincipal UserDetails userDetails) {

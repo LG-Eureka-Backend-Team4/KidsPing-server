@@ -12,16 +12,11 @@ import com.kidsworld.kidsping.domain.user.exception.UserNotFoundException;
 import com.kidsworld.kidsping.domain.user.handler.KakaoTokenHandler;
 import com.kidsworld.kidsping.domain.user.service.KakaoService;
 import com.kidsworld.kidsping.domain.user.service.UserServiceImpl;
-import com.kidsworld.kidsping.global.common.dto.ApiResponse;
-import com.kidsworld.kidsping.global.exception.ExceptionCode;
 import com.kidsworld.kidsping.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
@@ -38,6 +33,11 @@ public class KakaoServiceImpl implements KakaoService {
     private final JwtUtil jwtUtil;
     private final KakaoTokenHandler tokenHandler;
 
+
+
+    /**
+     * 카카오 인증 코드로 로그인 또는 회원가입을 처리하고 JWT 토큰 생성
+     */
     @Override
     public LoginResponse handleKakaoLogin(String code) {
         GetKakaoTokenResponse tokens = tokenHandler.getKakaoTokens(code);
@@ -45,6 +45,10 @@ public class KakaoServiceImpl implements KakaoService {
         return loginOrSignup(userInfo, tokens.getRefresh_token(), tokens.getAccess_token());
     }
 
+
+    /**
+     * 카카오 액세스 토큰을 사용하여 카카오 사용자 정보를 조회
+     */
     private GetKakaoUserResponse getKakaoUserInfo(String accessToken) {
         String userInfoUri = "https://kapi.kakao.com/v2/user/me";
 
@@ -57,6 +61,10 @@ public class KakaoServiceImpl implements KakaoService {
                 .block();
     }
 
+
+    /**
+     * 카카오 사용자 정보로 로그인 또는 회원가입하고 JWT 토큰 생성
+     */
     private LoginResponse loginOrSignup(GetKakaoUserResponse kakaoUserInfo, String refreshToken, String accessToken) {
         String email = (kakaoUserInfo.getKakao_account() != null &&
                 kakaoUserInfo.getKakao_account().getEmail() != null) ?
@@ -101,6 +109,10 @@ public class KakaoServiceImpl implements KakaoService {
                 .build();
     }
 
+
+    /**
+     * 카카오 로그아웃
+     */
     @Override
     public void kakaoLogout(String token, String email) {
         User user = userService.findByEmail(email)
@@ -122,8 +134,10 @@ public class KakaoServiceImpl implements KakaoService {
     }
 
 
-
-
+    /**
+     * 카카오 리프레시 토큰
+     */
+    @Override
     public LoginResponse refreshKakaoUserToken(String email) {
         User user = userService.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);

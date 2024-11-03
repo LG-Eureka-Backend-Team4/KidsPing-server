@@ -26,6 +26,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    /**
+     * 회원가입, 이메일 중복 확인 후 새로운 사용자 등록
+     */
     @Override
     public User registerUser(RegisterRequest registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
@@ -35,19 +38,28 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(registerRequest.toEntity());
     }
 
+    /**
+     * 이메일을 통한 사용자 조회 메서드
+     */
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
 
+    /**
+     * Spring Security에서 사용자를 로드하는 메서드 (이메일 기준)
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 
-    //순수하게 자녀 목록만 조회
+    /**
+     * 자녀 목록 조회 (해당 사용자와 논리적 삭제되지 않은 자녀들)
+     * 자녀 목록을 조회하는 데 있어 재사용성이 높고, 자녀 목록을 필요로 하는 다른 메서드에서도 사용
+     */
     @Override
     @Transactional(readOnly = true)
     public List<GetKidListResponse> getKidsList(Long userId) {
@@ -56,29 +68,10 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-
-    //Api를 위한 메서드 (User ID + 자녀 목록 반환)
-    //종혁님이 풀어달라해서 인증 풀어놓음 잠깐
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<Object> getUserKidsList(Long userId, String userEmail) {
-//        User user = findByEmail(userEmail)
-//                .orElseThrow(UserNotFoundException::new);
-//
-//        List<GetKidListResponse> kidsList = getKidsList(user.getId());
-//
-//        if (kidsList.isEmpty()) {
-//            return Collections.emptyList();
-//        }
-//
-//        List<Object> responseData = new ArrayList<>();
-//        responseData.add(Collections.singletonMap("userId", user.getId()));
-//        responseData.addAll(kidsList);
-//
-//        return responseData;
-//    }
-
-
+    /**
+     * 자녀 목록 조회 (해당 사용자와 논리적 삭제되지 않은 자녀들만)
+     *  Api를 위한 메서드
+     */
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getUserKidsListNoAuth(Long userId) {
@@ -95,19 +88,30 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * 사용자 정보 저장(회원가입 시 사용)
+     */
     @Override
     public User save(RegisterRequest registerRequest) { return userRepository.save(registerRequest.toEntity());}
 
+
+    /**
+     * 기존 사용자 정보 수정
+     */
     //기존 유저 정보 수정
     @Override
     public User update(User user) { return userRepository.save(user);}
 
-    //소셜 ID로 사용자를 조회
+    /**
+     * 소셜 ID로 사용자 조회 ( 특정 소셜 ID를 가진 사용자를 조회 )
+     */
     @Override
     public Optional<User> findBySocialId(String socialId) { return userRepository.findBySocialId(socialId);}
 
 
-    // 일반 회원 리프레시 토큰 발급
+    /**
+     * 일반 회원 리프레시 토큰
+     */
     @Override
     @Transactional
     public LoginResponse refreshNormalUserToken(String email) {
