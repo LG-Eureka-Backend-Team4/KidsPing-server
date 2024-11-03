@@ -7,10 +7,6 @@ import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
 import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
-import com.kidsworld.kidsping.domain.like.dto.request.DislikeCancelMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.DislikeMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.LikeCancelMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.response.LikeBookResponse;
 import com.kidsworld.kidsping.domain.like.entity.LikeMbti;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
@@ -51,12 +47,13 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     /**
      * 자녀가 도서를 좋아요 하는 메서드
      *
-     * @param likeMbtiRequest 자녀의 id와 좋아요할 도서의 id 데이터를 담고 있는 객체
+     * @param kidId  자녀의 id
+     * @param bookId 좋아요할 도서의 id
      */
     @Override
-    public void like(LikeMbtiRequest likeMbtiRequest) {
-        Kid kid = findKidByKidId(likeMbtiRequest.getKidId());
-        Book book = findBookByBookId(likeMbtiRequest.getBookId());
+    public void like(Long kidId, Long bookId) {
+        Kid kid = findKidByKidId(kidId);
+        Book book = findBookByBookId(bookId);
         LikeMbti like = handleLikeOrDislike(kid, book, LikeStatus.LIKE);
 
         updateKidMbtiScoreAndStatus(kid, book, like, LikeStatus.LIKE);
@@ -65,12 +62,13 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     /**
      * 자녀가 도서 좋아요를 취소 하는 메서드
      *
-     * @param likeCancelMbtiRequest 자녀의 id와 좋아요할 도서의 id 데이터를 담고 있는 객체
+     * @param kidId  자녀의 id
+     * @param bookId 좋아요할 도서의 id
      */
     @Override
-    public void likeCancel(LikeCancelMbtiRequest likeCancelMbtiRequest) {
-        Kid kid = findKidByKidId(likeCancelMbtiRequest.getKidId());
-        Book book = findBookByBookId(likeCancelMbtiRequest.getBookId());
+    public void likeCancel(Long kidId, Long bookId) {
+        Kid kid = findKidByKidId(kidId);
+        Book book = findBookByBookId(bookId);
         LikeMbti like = findLikeMbtiByKidAndBook(kid, book);
 
         cancelLikeAndUpdateKidMbti(kid, like, LikeStatus.LIKE, book);
@@ -79,12 +77,13 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     /**
      * 자녀가 도서 싫어요를 하는 메서드
      *
-     * @param disLikeMbtiRequest 자녀의 id와 좋아요할 도서의 id 데이터를 담고 있는 객체
+     * @param kidId  자녀의 id
+     * @param bookId 좋아요할 도서의 id
      */
     @Override
-    public void dislike(DislikeMbtiRequest disLikeMbtiRequest) {
-        Kid kid = findKidByKidId(disLikeMbtiRequest.getKidId());
-        Book book = findBookByBookId(disLikeMbtiRequest.getBookId());
+    public void dislike(Long kidId, Long bookId) {
+        Kid kid = findKidByKidId(kidId);
+        Book book = findBookByBookId(bookId);
         LikeMbti disLike = handleLikeOrDislike(kid, book, LikeStatus.DISLIKE);
 
         updateKidMbtiScoreAndStatus(kid, book, disLike, LikeStatus.DISLIKE);
@@ -93,12 +92,13 @@ public class LikeMbtiServiceImpl implements LikeMbtiService {
     /**
      * 자녀가 도서 싫어요를 취소 하는 메서드
      *
-     * @param dislikeCancelMbtiRequest 자녀의 id와 좋아요할 도서의 id 데이터를 담고 있는 객체
+     * @param kidId  자녀의 id
+     * @param bookId 좋아요할 도서의 id
      */
     @Override
-    public void dislikeCancel(DislikeCancelMbtiRequest dislikeCancelMbtiRequest) {
-        Kid kid = findKidByKidId(dislikeCancelMbtiRequest.getKidId());
-        Book book = findBookByBookId(dislikeCancelMbtiRequest.getBookId());
+    public void dislikeCancel(Long kidId, Long bookId) {
+        Kid kid = findKidByKidId(kidId);
+        Book book = findBookByBookId(bookId);
         LikeMbti like = findLikeMbtiByKidAndBook(kid, book);
 
         cancelLikeAndUpdateKidMbti(kid, like, LikeStatus.DISLIKE, book);
