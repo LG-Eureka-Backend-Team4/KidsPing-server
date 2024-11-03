@@ -41,25 +41,25 @@ public class LikeMbtiController {
 
     @PostMapping("/like")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void like(@RequestBody LikeMbtiRequest likeMbtiRequest) {
+    public void like(@RequestParam LikeMbtiRequest likeMbtiRequest) {
         likeMbtiService.like(likeMbtiRequest);
     }
 
     @DeleteMapping("/like")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void likeCancel(@RequestBody LikeCancelMbtiRequest likeCancelMbtiRequest) {
+    public void likeCancel(@RequestParam LikeCancelMbtiRequest likeCancelMbtiRequest) {
         likeMbtiService.likeCancel(likeCancelMbtiRequest);
     }
 
     @PostMapping("/dislike")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void dislike(@RequestBody DislikeMbtiRequest disLikeMbtiRequest) {
+    public void dislike(@RequestParam DislikeMbtiRequest disLikeMbtiRequest) {
         likeMbtiService.dislike(disLikeMbtiRequest);
     }
 
     @DeleteMapping("/dislike")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void dislikeCancel(@RequestBody DislikeCancelMbtiRequest dislikeCancelMbtiRequest) {
+    public void dislikeCancel(@RequestParam DislikeCancelMbtiRequest dislikeCancelMbtiRequest) {
         likeMbtiService.dislikeCancel(dislikeCancelMbtiRequest);
     }
 }
