@@ -1,9 +1,5 @@
 package com.kidsworld.kidsping.domain.like.controller;
 
-import com.kidsworld.kidsping.domain.like.dto.request.DislikeCancelMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.DislikeMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.LikeCancelMbtiRequest;
-import com.kidsworld.kidsping.domain.like.dto.request.LikeMbtiRequest;
 import com.kidsworld.kidsping.domain.like.dto.response.LikeBookResponse;
 import com.kidsworld.kidsping.domain.like.service.LikeMbtiService;
 import com.kidsworld.kidsping.global.common.dto.ApiResponse;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,25 +36,29 @@ public class LikeMbtiController {
 
     @PostMapping("/like")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void like(@RequestParam LikeMbtiRequest likeMbtiRequest) {
-        likeMbtiService.like(likeMbtiRequest);
+    public void like(@RequestParam("eventId") Long kidId,
+                     @RequestParam("userId") Long bookId) {
+        likeMbtiService.like(kidId, bookId);
     }
 
     @DeleteMapping("/like")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void likeCancel(@RequestParam LikeCancelMbtiRequest likeCancelMbtiRequest) {
-        likeMbtiService.likeCancel(likeCancelMbtiRequest);
+    public void likeCancel(@RequestParam("eventId") Long kidId,
+                           @RequestParam("userId") Long bookId) {
+        likeMbtiService.likeCancel(kidId, bookId);
     }
 
     @PostMapping("/dislike")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void dislike(@RequestParam DislikeMbtiRequest disLikeMbtiRequest) {
-        likeMbtiService.dislike(disLikeMbtiRequest);
+    public void dislike(@RequestParam("eventId") Long kidId,
+                        @RequestParam("userId") Long bookId) {
+        likeMbtiService.dislike(kidId, bookId);
     }
 
     @DeleteMapping("/dislike")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public void dislikeCancel(@RequestParam DislikeCancelMbtiRequest dislikeCancelMbtiRequest) {
-        likeMbtiService.dislikeCancel(dislikeCancelMbtiRequest);
+    public void dislikeCancel(@RequestParam("eventId") Long kidId,
+                              @RequestParam("userId") Long bookId) {
+        likeMbtiService.dislikeCancel(kidId, bookId);
     }
 }
