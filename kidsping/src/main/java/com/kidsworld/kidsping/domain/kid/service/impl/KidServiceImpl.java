@@ -74,20 +74,61 @@ public class KidServiceImpl implements KidService {
     private String defaultProfileImage;
 
 
-    /**
-     * 자녀 프로필 생성
-     */
+//    /**
+//     * 자녀 프로필 생성 s3
+//     */
+//    @Override
+//    @Transactional
+//    public CreateKidResponse createKid(String request, MultipartFile profileImage) {
+//        CreateKidRequest kidRequest;
+//        try {
+//            kidRequest = objectMapper.readValue(request, CreateKidRequest.class);
+//        } catch (JsonProcessingException e) {
+//            throw new InvalidRequestFormatException();
+//        }
+//
+//        User user = userRepository.findById(kidRequest.getUserId())
+//                .orElseThrow(UnauthorizedUserException::new);
+//
+//        long userKidCount = kidRepository.countByUserId(user.getId());
+//        if (userKidCount >= 5) {
+//            throw new MaxKidLimitReachedException();
+//        }
+//
+//        // 프로필 이미지 처리
+//        UploadedFile uploadedFile;
+//        if (profileImage != null && !profileImage.isEmpty()) {
+//            List<UploadedFile> uploadedFiles = fileStore.storeFiles(List.of(profileImage), FileStore.KID_PROFILE_DIR);
+//            uploadedFile = uploadedFiles.isEmpty() ?
+//                    new UploadedFile("default-profile.png", defaultProfileImage) :
+//                    uploadedFiles.get(0);
+//        } else {
+//            uploadedFile = new UploadedFile("default-profile.png", defaultProfileImage);
+//        }
+//
+//        Kid kid = Kid.builder()
+//                .gender(Gender.valueOf(kidRequest.getGender()))
+//                .name(kidRequest.getKidName())
+//                .birth(LocalDate.parse(kidRequest.getBirth()))
+//                .isDeleted(false)
+//                .user(user)
+//                .uploadedFile(uploadedFile)
+//                .build();
+//
+//        Kid savedKid = kidRepository.save(kid);
+//
+//        return CreateKidResponse.from(savedKid);
+//    }
+
+
+
+    /*
+    자녀 프로필 생성
+    */
     @Override
     @Transactional
-    public CreateKidResponse createKid(String request, MultipartFile profileImage) {
-        CreateKidRequest kidRequest;
-        try {
-            kidRequest = objectMapper.readValue(request, CreateKidRequest.class);
-        } catch (JsonProcessingException e) {
-            throw new InvalidRequestFormatException();
-        }
-
-        User user = userRepository.findById(kidRequest.getUserId())
+    public CreateKidResponse createKid(CreateKidRequest request) {
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(UnauthorizedUserException::new);
 
         long userKidCount = kidRepository.countByUserId(user.getId());
@@ -95,30 +136,19 @@ public class KidServiceImpl implements KidService {
             throw new MaxKidLimitReachedException();
         }
 
-        // 프로필 이미지 처리
-        UploadedFile uploadedFile;
-        if (profileImage != null && !profileImage.isEmpty()) {
-            List<UploadedFile> uploadedFiles = fileStore.storeFiles(List.of(profileImage), FileStore.KID_PROFILE_DIR);
-            uploadedFile = uploadedFiles.isEmpty() ?
-                    new UploadedFile("default-profile.png", defaultProfileImage) :
-                    uploadedFiles.get(0);
-        } else {
-            uploadedFile = new UploadedFile("default-profile.png", defaultProfileImage);
-        }
-
         Kid kid = Kid.builder()
-                .gender(Gender.valueOf(kidRequest.getGender()))
-                .name(kidRequest.getKidName())
-                .birth(LocalDate.parse(kidRequest.getBirth()))
+                .gender(Gender.valueOf(request.getGender()))
+                .name(request.getKidName())
+                .birth(LocalDate.parse(request.getBirth()))
                 .isDeleted(false)
                 .user(user)
-                .uploadedFile(uploadedFile)
                 .build();
 
         Kid savedKid = kidRepository.save(kid);
 
         return CreateKidResponse.from(savedKid);
     }
+
 
     /**
      * 자녀 프로필 조회
