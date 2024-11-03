@@ -2,21 +2,33 @@ package com.kidsworld.kidsping.domain.kid.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
-import com.kidsworld.kidsping.domain.kid.entity.Kid;
-import com.kidsworld.kidsping.domain.kid.entity.KidMbti;
-import com.kidsworld.kidsping.domain.kid.entity.KidMbtiHistory;
+import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
+import com.kidsworld.kidsping.domain.kid.dto.response.*;
+import com.kidsworld.kidsping.domain.kid.entity.*;
 import com.kidsworld.kidsping.domain.kid.entity.enums.Gender;
+import com.kidsworld.kidsping.domain.kid.exception.InvalidRequestFormatException;
 import com.kidsworld.kidsping.domain.kid.exception.NotFoundKidException;
+import com.kidsworld.kidsping.domain.kid.repository.KidBadgeAwardedRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiHistoryRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidMbtiRepository;
 import com.kidsworld.kidsping.domain.kid.repository.KidRepository;
 import com.kidsworld.kidsping.domain.kid.service.KidService;
 import com.kidsworld.kidsping.domain.question.entity.MbtiAnswer;
 import com.kidsworld.kidsping.domain.question.repository.MbtiAnswerRepository;
+import com.kidsworld.kidsping.domain.user.entity.User;
+import com.kidsworld.kidsping.domain.user.repository.UserRepository;
+import com.kidsworld.kidsping.global.common.entity.UploadedFile;
 import com.kidsworld.kidsping.global.common.enums.MbtiStatus;
 import com.kidsworld.kidsping.global.exception.ExceptionCode;
+import com.kidsworld.kidsping.infra.s3.FileStore;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,8 +37,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 
 @ActiveProfiles("local")
 @Transactional
@@ -41,13 +56,28 @@ class KidServiceImplTest {
 
     @Autowired
     private KidService kidService;
+
     @Autowired
     private KidMbtiRepository kidMbtiRepository;
+
     @Autowired
     private MbtiAnswerRepository mbtiAnswerRepository;
 
     @Autowired
     private EntityManager entityManager;
+
+    //시은
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private FileStore fileStore;
+
+    @Value("${cloud.aws.s3.default-kid-profile}")
+    private String defaultKidProfile;
 
     @DisplayName("자녀 성향을 진단하여 자녀의 성향과 성향 히스토리를 생성한다.")
     @Test
@@ -204,12 +234,13 @@ class KidServiceImplTest {
                 .hasMessage(ExceptionCode.NOT_FOUND_KID.getMessage());
     }
 
+
     @DisplayName("자녀 삭제 시 자녀와 연관되어 있는 데이터들이 soft delete 된다.")
     @Test
     void softDeleteKidAndRelatedData() {
         // given
         Kid kid = createKid(Gender.MALE, "테스트아이", LocalDate.now());
-        Kid saveKid = kidRepository.save(kid);
+        Kid savedKid = kidRepository.save(kid);
         KidMbti kidMbti = createKidMbti(1, 2, 3, 4, 5, 6, 7, 8, MbtiStatus.ENFJ);
         kid.updateKidMbti(kidMbti);
         kidMbtiRepository.save(kidMbti);
@@ -220,18 +251,18 @@ class KidServiceImplTest {
         // when
         kidMbtiHistoryRepository.save(kidMbtiHistory);
         mbtiAnswerRepository.save(mbtiAnswer);
-        kidRepository.softDeleteKidAndRelatedData(saveKid.getId());
+        kidService.deleteKid(savedKid.getId());
 
         // Hibernate 캐시 플러시 및 클리어
         entityManager.flush();
         entityManager.clear();
 
+        // then
         Kid deletedKid = kidRepository.findById(kid.getId()).orElse(null);
         KidMbti deletedKidMbti = kidMbtiRepository.findById(kidMbti.getId()).orElse(null);
         KidMbtiHistory deletedKidMbtiHistory = kidMbtiHistoryRepository.findById(kidMbtiHistory.getId()).orElse(null);
         MbtiAnswer deletedMbtiAnswer = mbtiAnswerRepository.findById(mbtiAnswer.getId()).orElse(null);
 
-        // then
         assertThat(deletedKid).isNotNull();
         assertThat(deletedKid.isDeleted()).isTrue();
 
@@ -244,6 +275,187 @@ class KidServiceImplTest {
         assertThat(deletedMbtiAnswer).isNotNull();
         assertThat(deletedMbtiAnswer.getIsDeleted()).isTrue();
     }
+
+
+
+    @DisplayName("이미지 파일과 함께 자녀 프로필을 성공적으로 생성한다")
+    @Test
+    void 자녀프로필생성_성공() throws JsonProcessingException {
+        // given
+        User user = User.builder()
+                .email("test@test.com")
+                .password("password")
+                .userName("testUser")
+                .isDeleted(false)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        String kidName = "김영자";
+        String gender = "FEMALE";
+        String birth = LocalDate.now().toString();
+
+        MockMultipartFile profileImage = new MockMultipartFile(
+                "profileImage", "sample.jpg", "image/jpeg", "test image content".getBytes()
+        );
+
+        UploadedFile uploadedFile = new UploadedFile(
+                "sample.jpg", defaultKidProfile
+        );
+
+        when(fileStore.storeFiles(anyList(), any())).thenReturn(List.of(uploadedFile));
+
+        CreateKidRequest request = CreateKidRequest.builder()
+                .kidName(kidName)
+                .gender(gender)
+                .birth(birth)
+                .userId(savedUser.getId())
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // when
+        CreateKidResponse response = kidService.createKid(requestJson, profileImage);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getKidId()).isNotNull();
+    }
+
+
+
+    @DisplayName("자녀 프로필 기본 정보를 성공적으로 수정한다")
+    @Test
+    void 자녀프로필수정_성공() {
+        // given
+        String originalName = "김영자";
+        String updatedName = "김순자";
+        LocalDate originalBirth = LocalDate.of(2020, 1, 1);
+        LocalDate updatedBirth = LocalDate.of(2020, 12, 31);
+
+        User user = User.builder()
+                .id(1L)
+                .build();
+        userRepository.save(user);
+
+        Kid kid = Kid.builder()
+                .gender(Gender.MALE)
+                .name(originalName)
+                .birth(originalBirth)
+                .isDeleted(false)
+                .user(user)
+                .uploadedFile(new UploadedFile("sample.jpg", defaultKidProfile))
+                .build();
+
+        Kid savedKid = kidRepository.save(kid);
+
+        UpdateKidRequest updateRequest = UpdateKidRequest.builder()
+                .kidName(updatedName)
+                .gender("FEMALE")
+                .birth(updatedBirth.toString())
+                .build();
+
+        // when
+        UpdateKidResponse response = kidService.updateKid(savedKid.getId(), updateRequest, null);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getKidId()).isEqualTo(savedKid.getId());
+
+        Kid updatedKid = kidRepository.findById(savedKid.getId()).orElseThrow();
+        assertThat(updatedKid)
+                .extracting("name", "gender", "birth")
+                .containsExactly(updatedName, Gender.FEMALE, updatedBirth);
+    }
+
+
+    @DisplayName("자녀 프로필을 성공적으로 조회한다")
+    @Test
+    void 자녀프로필조회_성공() {
+        // given
+        String kidName = "김영자";
+        LocalDate birth = LocalDate.now();
+        Gender gender = Gender.MALE;
+
+        User user = User.builder()
+                .id(1L)
+                .build();
+        userRepository.save(user);
+
+        Kid kid = Kid.builder()
+                .gender(gender)
+                .name(kidName)
+                .birth(birth)
+                .isDeleted(false)
+                .user(user)
+                .uploadedFile(new UploadedFile("sample.jpg", defaultKidProfile))
+                .build();
+
+        KidMbti kidMbti = createKidMbti(10, 5, 8, 7, 6, 9, 11, 4, MbtiStatus.ENFP);
+        KidMbti savedKidMbti = kidMbtiRepository.save(kidMbti);
+        kid.updateKidMbti(savedKidMbti);
+
+        Kid savedKid = kidRepository.save(kid);
+
+        // when
+        GetKidWithMbtiAndBadgeResponse response = kidService.getKid(savedKid.getId());
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response)
+                .extracting("kidId", "kidName", "gender", "birth", "mbtiStatus")
+                .containsExactly(savedKid.getId(), kidName, gender, birth, MbtiStatus.ENFP);
+
+        assertThat(response.getKidBadgeAwardedResponses()).isEmpty();
+
+        assertThat(response)
+                .extracting("eScore", "iScore", "sScore", "nScore", "tScore", "fScore", "jScore", "pScore")
+                .containsExactly(10, 5, 8, 7, 6, 9, 4, 11);
+
+        assertThat(response.getKidMbtiId()).isEqualTo(savedKidMbti.getId());
+    }
+
+
+    @Test
+    @DisplayName("자녀의 최근 5개 성향 히스토리를 조회한다")
+    void 자녀성향5개_조회() {
+        // Given
+        User user = User.builder()
+                .email("test@test.com")
+                .password("password")
+                .userName("testUser")
+                .build();
+        userRepository.save(user);
+
+        Kid kid = Kid.builder()
+                .name("김영자")
+                .gender(Gender.MALE)
+                .birth(LocalDate.of(2020, 1, 1))
+                .user(user)
+                .isDeleted(false)
+                .build();
+        Kid savedKid = kidRepository.save(kid);
+
+        for (int i = 0; i < 6; i++) {
+            KidMbtiHistory history = createKidMbtiHistory(savedKid);
+            kidMbtiHistoryRepository.save(history);
+        }
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // When
+        List<GetKidMbtiHistoryResponse> result = kidService.getKidMbtiHistory(kid.getId());
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(5);
+
+        result.forEach(history -> {
+            assertThat(history.getMbtiStatus()).isEqualTo("INFJ");
+        });
+    }
+
+
 
     private static KidMbtiHistory createKidMbtiHistory(Kid kid) {
         return KidMbtiHistory.builder()
@@ -307,4 +519,9 @@ class KidServiceImplTest {
                 .perceivingScore(p)
                 .build();
     }
+
+
+
+
+
 }

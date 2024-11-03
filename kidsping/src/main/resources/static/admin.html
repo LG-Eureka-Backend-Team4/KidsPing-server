@@ -8,10 +8,10 @@
         :root {
             --primary-color: #FF6B6B;
             --secondary-color: #4ECDC4;
-            --accent-color: #45B7D1;
+            --accent-color: rgba(241, 173, 0, 0.2);
             --warning-color: #FFD93D;
             --error-color: #FF8066;
-            --background-gradient: #e0c3fc; /* 연보라색 단색 배경 */
+            --background-gradient: #ffffff; /* 연보라색 단색 배경 */
             --card-gradient: linear-gradient(to right, rgba(255,239,245, 0.9), rgba(255,239,245, 0.95)); /* 연한 핑크톤 그라데이션 */
             --box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
             --hover-transform: translateY(-3px);
@@ -21,7 +21,7 @@
 
         body {
             font-family: 'Poppins', 'Segoe UI', sans-serif;
-            background: var(--background-gradient);
+            background: #fffef7;
             min-height: 100vh;
             margin: 0;
             color: #2C3E50;
@@ -31,7 +31,7 @@
         .container {
             width: 100%;
             max-width: 900px;
-            background: var(--card-gradient);
+            background: #fffcec;
             padding: 40px;
             border-radius: 30px;
             box-shadow: var(--box-shadow);
@@ -40,13 +40,13 @@
             transition: transform 0.3s ease;
         }
 
-        .container:hover {
-            transform: var(--hover-transform);
-        }
+        /*.container:hover {*/
+        /*    transform: var(--hover-transform);*/
+        /*}*/
 
         h1 {
             text-align: center;
-            color: #6C63FF; /* 보라색 단색 */
+            color: #796e54;
             font-size: 3em;
             margin-bottom: 40px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -54,7 +54,7 @@
 
 
         h2 {
-            color: var(--accent-color);
+            color: #b6a58e;
             font-size: 2em;
             margin: 30px 0;
             text-align: center;
@@ -66,7 +66,7 @@
             display: block;
             width: 50px;
             height: 4px;
-            background: var(--accent-color);
+            background: #bdb69b;
             margin: 10px auto;
             border-radius: 2px;
         }
@@ -81,10 +81,10 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .book-form:hover, .book-list:hover {
-            transform: var(--hover-transform);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
+        /*.book-form:hover, .book-list:hover {*/
+        /*    transform: var(--hover-transform);*/
+        /*    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);*/
+        /*}*/
 
         .form-group {
             margin-bottom: 25px;
@@ -94,7 +94,7 @@
         label {
             display: block;
             margin-bottom: 10px;
-            color: var(--accent-color);
+            color: #796a4e;
             font-weight: 600;
             font-size: 1em;
             transition: color 0.3s ease;
@@ -118,7 +118,7 @@
         select:focus {
             border-color: var(--accent-color);
             outline: none;
-            box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.2);
+            box-shadow: 0 0 0 4px rgba(243, 231, 60, 0.49);
             transform: translateY(-2px);
         }
 
@@ -142,24 +142,24 @@
         }
 
         .save-btn {
-            background: #FF6F61; /* 따뜻한 주황색 단색 */
+            background: #ddcc99;
             color: white;
         }
 
 
         .save-btn:hover {
             transform: var(--hover-transform);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 5px 15px rgba(186, 184, 184, 0.4);
         }
 
         .cancel-btn {
-            background: linear-gradient(45deg, var(--warning-color), #FFA41B);
+            background: #ddcc99;
             color: white;
         }
 
         .cancel-btn:hover {
             transform: var(--hover-transform);
-            box-shadow: 0 5px 15px rgba(255, 217, 61, 0.4);
+            box-shadow: 0 5px 15px rgba(186, 184, 184, 0.4);
         }
 
         .book-item {
@@ -167,14 +167,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
-            border-bottom: 2px solid rgba(78, 205, 196, 0.2);
+            border-bottom: 2px solid rgba(140, 116, 64, 0.2);
             transition: all 0.3s ease;
             border-radius: 12px;
             margin-bottom: 10px;
         }
 
         .book-item:hover {
-            background: linear-gradient(to right, rgba(132, 250, 176, 0.1), rgba(143, 211, 244, 0.1));
+            background:rgba(231, 225, 208);
             transform: translateX(10px);
         }
 
@@ -206,23 +206,23 @@
         }
 
         .edit-btn {
-            background: linear-gradient(45deg, var(--accent-color), #3498db);
+            background: #f1deaf;
             color: white;
         }
 
         .edit-btn:hover {
             transform: var(--hover-transform);
-            box-shadow: 0 5px 15px rgba(69, 183, 209, 0.4);
+            box-shadow: 0 5px 15px rgba(186, 184, 184, 0.4);
         }
 
         .delete-btn {
-            background: linear-gradient(45deg, var(--error-color), #ff6b6b);
+            background: #e0ddc9;
             color: white;
         }
 
         .delete-btn:hover {
             transform: var(--hover-transform);
-            box-shadow: 0 5px 15px rgba(255, 128, 102, 0.4);
+            box-shadow: 0 5px 15px rgba(186, 184, 184, 0.4);
         }
 
         .pagination {
@@ -238,7 +238,7 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            background: #9C27B0; /* 보라색 계열 단색 */
+            background: #c6b68f;
             color: white;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -250,7 +250,7 @@
 
         .pagination button:hover:not(:disabled) {
             transform: var(--hover-transform);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 5px 15px rgba(186, 184, 184, 0.4);
         }
 
         .pagination button:disabled {
@@ -260,7 +260,7 @@
 
         #page-info {
             font-weight: 600;
-            color: var(--accent-color);
+            color: #665a4c;
             font-size: 1.1em;
         }
 
@@ -320,7 +320,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>도서 관리 페이지</h1>
+    <h1>🐥도서 관리 페이지🐥</h1>
 
     <!-- 도서 목록 -->
     <div class="book-list">
