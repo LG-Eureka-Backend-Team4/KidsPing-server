@@ -20,13 +20,35 @@
 ## 기술 스택
 
 ### Frontend
+- kotlin
+- html/css/js
+
 
 
 ### Backend
+- Java 17, Spring boot 3.3.3
+- Spring batch
+- Spring security
+- Oauth
+- JUnit 5, Mockito
+
+### Database
+- MySql
+- Redis
+### 협업툴
+- Notion, Jira, Slack
+### 클라우드
+- Aws
+- Amazon S3
+### 인프라
+- Docker
+
+
 
 
 
 ## 전체 아키텍처
+![image](https://github.com/user-attachments/assets/10b2981b-f725-4538-abc0-cd0b7dbc8b9f)
 
 
 ## 역할 분담
