@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CouponWinnerCacheRepository {
 
-    private volatile ConcurrentHashMap<Long, Set<Long>> couponWinnerCacheStore = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Set<Long>> couponWinnerCacheStore = new ConcurrentHashMap<>();
     private final CouponRepository couponRepository;
 
     public boolean findWinnersIfAbsent(Long eventId, Long userId) {
