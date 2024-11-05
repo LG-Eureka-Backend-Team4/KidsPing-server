@@ -2,12 +2,17 @@ package com.kidsworld.kidsping.domain.event.entity;
 
 
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -28,7 +33,5 @@ public class Event extends BaseTimeEntity {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
-    private List<EventParticipant> eventParticipants = new ArrayList<>();
-
+    private boolean isDeleted;
 }

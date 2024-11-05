@@ -5,22 +5,20 @@ import com.kidsworld.kidsping.domain.kid.entity.Kid;
 import com.kidsworld.kidsping.domain.like.entity.enums.LikeStatus;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Table(name = "likes_genre")
+@Builder
 public class LikeGenre extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_genre_id")
     private Long id;
-
-    @Column(name= "is_deleted")
-    private boolean isDeleted;
 
     @Enumerated(EnumType.STRING)
     private LikeStatus likeStatus;
@@ -32,4 +30,15 @@ public class LikeGenre extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @Transient
+    private LikeStatus previousLikeStatus;
+
+    public void changeLikeStatus(LikeStatus newStatus) {
+        this.likeStatus = newStatus;
+    }
+
+    public void savePreviousLikeStatus(LikeStatus previousStatus) {
+        this.previousLikeStatus = previousStatus;
+    }
 }

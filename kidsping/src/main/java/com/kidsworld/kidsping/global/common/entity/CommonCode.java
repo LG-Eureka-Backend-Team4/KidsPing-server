@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class CommonCode {
 
     @Id
-    @Column(name = "common_code", length = 3)
+    @Column(name = "common_code", length = 5)
     private String commonCode;
 
     @ManyToOne(fetch = FetchType.LAZY)

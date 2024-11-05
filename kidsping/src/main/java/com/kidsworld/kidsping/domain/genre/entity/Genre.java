@@ -2,13 +2,19 @@ package com.kidsworld.kidsping.domain.genre.entity;
 
 import com.kidsworld.kidsping.domain.book.entity.Book;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -23,15 +29,18 @@ public class Genre extends BaseTimeEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name= "is_deleted")
+    @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @OneToOne(mappedBy = "genre", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private GenreFile genreFile;
+    private String imageUrl;
 
-    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GenreScore> genreScores = new ArrayList<>();
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private Set<GenreScore> genreScores = new HashSet<>();
 
-    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Book> books = new ArrayList<>();
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private Set<Book> books = new HashSet<>();
+
+    public Genre(String title) {
+        this.title = title;
+    }
 }

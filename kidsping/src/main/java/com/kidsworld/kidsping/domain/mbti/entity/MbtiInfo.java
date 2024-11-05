@@ -1,6 +1,5 @@
 package com.kidsworld.kidsping.domain.mbti.entity;
 
-import com.kidsworld.kidsping.domain.kid.entity.enums.MbtiStatus;
 import com.kidsworld.kidsping.domain.mbti.entity.enums.RoleModel;
 import com.kidsworld.kidsping.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
@@ -10,13 +9,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "mbti_info")
 public class MbtiInfo extends BaseTimeEntity {
 
     @Id
@@ -24,14 +29,18 @@ public class MbtiInfo extends BaseTimeEntity {
     @Column(name = "mbti_info_id")
     private Long id;
 
-    private MbtiStatus mbtiStatus;
+    @Column(name = "mbti_status", length = 4)
+    private String mbtiStatus;
 
     private String title;
 
+    private String description;
+
+    private final boolean isDeleted = Boolean.FALSE;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "role_model", length = 50)
     private RoleModel roleModel;
 
-    private String hashtag;
-
-    private String description;
+    private String imageUrl;
 }

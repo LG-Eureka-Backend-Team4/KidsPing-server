@@ -14,21 +14,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "likes_mbti")
 public class LikeMbti extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_mbti_id")
     private Long id;
-
-    private boolean isDeleted;
 
     @Enumerated(EnumType.STRING)
     private LikeStatus likeStatus;
@@ -40,4 +42,23 @@ public class LikeMbti extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @Transient
+    private LikeStatus previousLikeStatus;
+
+    @Builder
+    public LikeMbti(LikeStatus likeStatus, Kid kid, Book book, LikeStatus previousLikeStatus) {
+        this.likeStatus = likeStatus;
+        this.kid = kid;
+        this.book = book;
+        this.previousLikeStatus = previousLikeStatus;
+    }
+
+    public void changeLikeStatus(LikeStatus likeStatus) {
+        this.likeStatus = likeStatus;
+    }
+
+    public void savePreviousLikeStatus(LikeStatus previousLikeStatus) {
+        this.previousLikeStatus = previousLikeStatus;
+    }
 }

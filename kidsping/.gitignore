@@ -5,6 +5,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+/Dockerfile
+
 /src/main/resources
 
 ### STS ###

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #E9DEFA 0%, #FBFCDB 100%);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .login-container {
+            width: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .login-header {
+            background: linear-gradient(to right, #fefbeb, #f4ecc1);
+            color: #c7bb93;
+            text-align: center;
+            padding: 20px;
+            font-weight: 500;
+            font-size: 1.5em;
+            letter-spacing: 1px;
+        }
+
+        .login-form {
+            padding: 30px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #b1b1b1;
+            outline: none;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .input-group label {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: white;
+            padding: 0 5px;
+            font-size: 12px;
+            color: #b4aa9f;
+            transition: all 0.3s ease;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background:linear-gradient(to right, #fefbeb, #f4ecc1);
+            color: #c1b99b;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-header">로그인</div>
+    <div class="login-form">
+        <div class="input-group">
+            <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required>
+            <label for="email">이메일</label>
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+            <label for="password">비밀번호</label>
+        </div>
+        <button type="button" class="login-button" onclick="login()">로그인</button>
+    </div>
+</div>
+
+<script>
+    function login() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        fetch('/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        })
+            .then(response => {
+                console.log('Response status:', response.status);
+
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Login failed');
+                }
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                window.location.href = "/admin.html";
+            })
+            .catch(error => {
+                console.error("로그인 요청 에러:", error);
+                alert("로그인에 실패했습니다.");
+            });
+    }
+</script>
+</body>
+</html>
