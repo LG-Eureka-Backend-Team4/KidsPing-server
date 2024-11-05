@@ -13,40 +13,9 @@
 
 ## 팀 소개
 
-- 저희 팀은 총 백엔드 4명으로 이루어진 팀입니다.
-- 각각 Spring 개발자 2명, Node.js 개발자 1명, ASP.NET Core 개발자 1명으로 이루어져 있습니다.
-
-<table align="center">
-    <tr align="center">
-        <td><B>김영현(Spring)<B></td>
-        <td><B>홍지현(ASP.NET)<B></td>
-        <td><B>안재진(Spring)<B></td>
-        <td><B>최성민(Node.js)<B></td>
-    </tr>
-    <tr align="center">
-        <td>
-            <img src="https://github.com/0chord.png" style="max-width: 100px">
-            <br>
-            <a href="https://github.com/0chord"><I>0chord</I></a>
-        </td>
-        <td>
-          <img src="https://github.com/Hong-Study.png" style="max-width: 100px">
-            <br>
-            <a href="https://github.com/Hong-Study"><I>Hong-Study</I></a>
-        </td>
-        <td>
-            <img src="https://github.com/acs0209.png" style="max-width: 100px">
-            <br>
-            <a href="https://github.com/acs0209"><I>acs0209</I></a>
-        </td>
-        <td>
-            <img src="https://github.com/smaivnn.png" style="max-width: 100px">
-            <br>
-            <a href="https://github.com/smaivnn"><I>smaivnn</I></a>
-        </td>
-        </td>
-    </tr>
-</table>
+| **박종혁** | **서민수**| **안재진** | **이지윤** | **정시은** | **최준하** |
+| :------: |  :------: | :------: | :------: | :------: | :------: |
+| [<img src="https://avatars.githubusercontent.com/u/30859374?v=4" height=150 width=150> <br/> @pardessuccess](https://github.com/pardessuccess) | [<img src="https://avatars.githubusercontent.com/u/89891511?v=4" height=150 width=150> <br/> @Minsu17](https://github.com/hellokorea) | [<img src="https://avatars.githubusercontent.com/u/69111959?v=4" height=150 width=150> <br/> @acs0209](https://github.com/acs0209) | [<img src="https://avatars.githubusercontent.com/u/51826219?v=4" height=150 width=150> <br/> @howecofe](https://github.com/howecofe) | [<img src="https://avatars.githubusercontent.com/u/80161733?v=4" height=150 width=150> <br/> @Sieun53](https://github.com/Sieun53) |[<img src="https://avatars.githubusercontent.com/u/128604591?v=4" height=150 width=150> <br/> @choijh0309](https://github.com/choijh0309) |
 
 ## 기술 스택
 
