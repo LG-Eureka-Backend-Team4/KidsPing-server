@@ -38,7 +38,7 @@ public class KidController {
 //    /*
 //    자녀 프로필 생성 s3
 //    */
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PostMapping
 //    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 //    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(
 //            @RequestPart("request") CreateKidRequest request,
