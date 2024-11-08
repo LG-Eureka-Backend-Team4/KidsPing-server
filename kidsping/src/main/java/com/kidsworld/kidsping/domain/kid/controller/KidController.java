@@ -2,6 +2,7 @@ package com.kidsworld.kidsping.domain.kid.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidFormRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.CreateKidRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.KidMbtiDiagnosisRequest;
 import com.kidsworld.kidsping.domain.kid.dto.request.UpdateKidRequest;
@@ -23,15 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -43,21 +36,18 @@ public class KidController {
     private final KidService kidService;
     private final LevelBadgeService levelBadgeService;
 
-    /*
-    자녀 프로필 생성 s3
-    */
+//    /*
+//    자녀 프로필 생성 s3
+//    */
 //    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 //    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(
-//            @RequestPart String request,
-//            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+//            @ModelAttribute CreateKidFormDto formDto) {
 //
-//        CreateKidResponse response = kidService.createKid(request, profileImage);
-//        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response,
-//                ExceptionCode.CREATED.getMessage());
+//        CreateKidResponse response = kidService.createKid(formDto.toCreateKidRequest(), formDto.getProfileImage());
+//        return ApiResponse.created(
+//                "/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
 //    }
-
-
 
     /*
     자녀 프로필 생성
@@ -69,6 +59,19 @@ public class KidController {
         return ApiResponse.created("/api/kids/" + response.getKidId(),
                 ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
     }
+
+
+
+//    /*
+//    자녀 프로필 생성
+//    */
+//    @PostMapping
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(@RequestBody CreateKidRequest request) {
+//        CreateKidResponse response = kidService.createKid(request);
+//        return ApiResponse.created("/api/kids/" + response.getKidId(),
+//                ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
+//    }
 
 
 

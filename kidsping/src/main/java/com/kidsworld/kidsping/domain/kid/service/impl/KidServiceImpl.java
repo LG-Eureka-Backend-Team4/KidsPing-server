@@ -79,15 +79,8 @@ public class KidServiceImpl implements KidService {
 //     */
 //    @Override
 //    @Transactional
-//    public CreateKidResponse createKid(String request, MultipartFile profileImage) {
-//        CreateKidRequest kidRequest;
-//        try {
-//            kidRequest = objectMapper.readValue(request, CreateKidRequest.class);
-//        } catch (JsonProcessingException e) {
-//            throw new InvalidRequestFormatException();
-//        }
-//
-//        User user = userRepository.findById(kidRequest.getUserId())
+//    public CreateKidResponse createKid(CreateKidRequest request, MultipartFile profileImage) {
+//        User user = userRepository.findById(request.getUserId())
 //                .orElseThrow(UnauthorizedUserException::new);
 //
 //        long userKidCount = kidRepository.countByUserId(user.getId());
@@ -107,9 +100,9 @@ public class KidServiceImpl implements KidService {
 //        }
 //
 //        Kid kid = Kid.builder()
-//                .gender(Gender.valueOf(kidRequest.getGender()))
-//                .name(kidRequest.getKidName())
-//                .birth(LocalDate.parse(kidRequest.getBirth()))
+//                .gender(Gender.valueOf(request.getGender()))
+//                .name(request.getKidName())
+//                .birth(LocalDate.parse(request.getBirth()))
 //                .isDeleted(false)
 //                .user(user)
 //                .uploadedFile(uploadedFile)
@@ -119,7 +112,6 @@ public class KidServiceImpl implements KidService {
 //
 //        return CreateKidResponse.from(savedKid);
 //    }
-
 
 
     /*
