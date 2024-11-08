@@ -114,7 +114,8 @@ public class KidServiceImpl implements KidService {
 //    }
 
 
-    /*
+
+    /**
     자녀 프로필 생성
     */
     @Override
