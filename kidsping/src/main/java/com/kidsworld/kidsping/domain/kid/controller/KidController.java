@@ -23,15 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -43,18 +35,17 @@ public class KidController {
     private final KidService kidService;
     private final LevelBadgeService levelBadgeService;
 
-    /*
-    자녀 프로필 생성 s3
-    */
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    /*
+//    자녀 프로필 생성 s3
+//    */
+//    @PostMapping
 //    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 //    public ResponseEntity<ApiResponse<CreateKidResponse>> createKid(
-//            @RequestPart String request,
+//            @RequestPart("request") CreateKidRequest request,
 //            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 //
 //        CreateKidResponse response = kidService.createKid(request, profileImage);
-//        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response,
-//                ExceptionCode.CREATED.getMessage());
+//        return ApiResponse.created("/api/kids/" + response.getKidId(), ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
 //    }
 
 
@@ -69,6 +60,7 @@ public class KidController {
         return ApiResponse.created("/api/kids/" + response.getKidId(),
                 ExceptionCode.CREATED.getCode(), response, ExceptionCode.CREATED.getMessage());
     }
+
 
 
 

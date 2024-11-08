@@ -17,7 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 public interface KidService {
 
 //  자녀 프로필 생성 s3
-//  CreateKidResponse createKid(String request, MultipartFile profileImage);
+//  CreateKidResponse createKid(CreateKidRequest request, MultipartFile profileImage);
+
     CreateKidResponse createKid(CreateKidRequest request);
 
     GetKidWithMbtiAndBadgeResponse getKid(Long kidId);
