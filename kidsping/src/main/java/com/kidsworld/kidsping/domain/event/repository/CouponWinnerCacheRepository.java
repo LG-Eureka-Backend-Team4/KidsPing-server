@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,8 +18,33 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CouponWinnerCacheRepository {
 
-    private volatile ConcurrentHashMap<Long, Set<Long>> couponWinnerCacheStore = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Set<Long>> couponWinnerCacheStore = new ConcurrentHashMap<>();
     private final CouponRepository couponRepository;
+    private final ReentrantLock lock = new ReentrantLock();
+
+//    public boolean findWinnersIfAbsent(Long eventId, Long userId) {
+//        if (couponWinnerCacheStore.isEmpty()) {
+//            try {
+//                if (lock.tryLock(10, TimeUnit.SECONDS)) {
+//                    try {
+//                        if (couponWinnerCacheStore.isEmpty()) {
+//                            updateTodayWinners();
+//                        }
+//                    } finally {
+//                        lock.unlock();
+//                    }
+//                } else {
+//                    log.warn("Lock 획득 실패 - 다른 스레드에서 캐시를 업데이트 중");
+//                }
+//            } catch (InterruptedException e) {
+//                Thread.currentThread().interrupt();
+//                log.error("Lock 대기 중 인터럽트 발생", e);
+//            }
+//        }
+//
+//        return couponWinnerCacheStore.containsKey(eventId) &&
+//                couponWinnerCacheStore.get(eventId).contains(userId);
+//    }
 
     public boolean findWinnersIfAbsent(Long eventId, Long userId) {
         if (couponWinnerCacheStore.isEmpty()) {
@@ -30,6 +56,13 @@ public class CouponWinnerCacheRepository {
         }
         return couponWinnerCacheStore.containsKey(eventId) && couponWinnerCacheStore.get(eventId).contains(userId);
     }
+
+//    public boolean findWinnersIfAbsent(Long eventId, Long userId) {
+//        if (couponWinnerCacheStore.isEmpty()) {
+//            updateTodayWinners();
+//        }
+//        return couponWinnerCacheStore.containsKey(eventId) && couponWinnerCacheStore.get(eventId).contains(userId);
+//    }
 
     // 새벽 2시에 당첨자 캐시 초기화
     @Scheduled(cron = "0 0 2 * * *")
